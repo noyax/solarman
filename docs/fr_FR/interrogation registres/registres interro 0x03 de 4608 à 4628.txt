@@ -1,0 +1,21 @@
+Register: 04608	0x1200	Value: 00000 (0x0000)
+Register: 04609	0x1201	Value: 02590 (0x0a1e)
+Register: 04610	0x1202	Value: 02590 (0x0a1e)
+Register: 04611	0x1203	Value: 02590 (0x0a1e)
+Register: 04612	0x1204	Value: 02590 (0x0a1e)
+Register: 04613	0x1205	Value: 03000 (0x0bb8)
+Register: 04614	0x1206	Value: 03000 (0x0bb8)
+Register: 04615	0x1207	Value: 00000 (0x0000)
+Register: 04616	0x1208	Value: 05647 (0x160f)
+Register: 04617	0x1209	Value: 01325 (0x052d)
+Register: 04618	0x120a	Value: 00095 (0x005f)
+Register: 04619	0x120b	Value: 01000 (0x03e8)
+Register: 04620	0x120c	Value: 00257 (0x0101)
+Register: 04621	0x120d	Value: 03103 (0x0c1f)
+Register: 04622	0x120e	Value: 00127 (0x007f)
+Register: 04623	0x120f	Value: 00001 (0x0001)
+Register: 04624	0x1210	Value: inconnue
+Register: 04625	0x1211	Value: inconnue
+Register: 04626	0x1212	Value: inconnue
+Register: 04627	0x1213	Value: inconnue
+Register: 04628	0x1214	Value: inconnue
