@@ -178,12 +178,31 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 							</div>
 							<div class="form-group">
 								<label class="col-sm-4 control-label">{{Port utilisé par votre clé wifi}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé}}"></i></sup>
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé, en général 8899}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="portCleWifi">
 								</div>
-								<label class="col-sm-10 control-label">{{Pour trouver le port aller sur http://Adresse_Ip_De_Votre_clé_wifi/config_hide.html (utilisateur et mot de passe =admin)}} </label>
+								<label class="col-sm-10 control-label">{{Pour trouver le port, en général 8899, aller sur http://Adresse_Ip_De_Votre_clé_wifi/config_hide.html (utilisateur et mot de passe = "admin")}} </label>
+							</div>
+							<br><br>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Numéro de série de votre clé wifi}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="serialCleWifi">
+								</div>
+								<label class="col-sm-10 control-label">{{Pour trouver le numéro de série aller sur http://Adresse_Ip_De_Votre_clé_wifi/ (dans "STATUS" puis "Device Informations")}} </label>
+							</div>
+							<br><br>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Modbus Slave ID}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre onduleur, en général 1}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="mbSlaveId" placeholder="{{1}}">
+								</div>
 							</div>
 							<!-- Exemple de champ de saisie du cron d'auto-actualisation avec assistant -->
 							<!-- La fonction cron de la classe du plugin doit contenir le code prévu pour que ce champ soit fonctionnel -->
@@ -202,6 +221,7 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 									</div>
 								</div>
 							</div>
+							<br><br>
 							<div class="form-group">
 								<div class="col-sm-2">
 									<span> </span>
