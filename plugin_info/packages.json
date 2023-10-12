@@ -1,0 +1,9 @@
+{
+  "pip3" :{
+    "pyyaml" : {},
+    "pysolarmanv5" : {}
+  },
+  "npm": {
+    "js-yaml" : {}
+  }
+}

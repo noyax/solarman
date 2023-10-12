@@ -1,0 +1,23 @@
+{
+	"id" : "solarman",
+	"name" : "Solarman",
+	"description" : {
+		"fr_FR": "Plugin permettant d'interroger directement les onduleurs monitorés par Solarman, https://home.solarmanpv.com/ , comme par exemple les Sofar Solar HYD 6K ES"
+	},
+	"licence" : "AGPL",
+	"author" : "Noyax37",
+	"require" : "4.2.0",
+	"category" : "programming",
+	"hasDependency" : true,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 45,
+	"changelog" : "https://jeedom.github.io/plugin-solarman/#language#/changelog",
+	"documentation" : "https://jeedom.github.io/plugin-solarman/#language#/",
+	"changelog_beta" : "https://jeedom.github.io/plugin-solarman/#language#/beta/changelog",
+	"documentation_beta" : "https://jeedom.github.io/plugin-solarman/#language#/beta/",
+	"link" : {
+		"forum":"https://community.jeedom.com/tag/plugin-solarman",
+		"Fil d'actualité du plugin":"https://community.jeedom.com/t/plugin-solarman-actualites/"
+	},
+	"pluginVersion" : "1.0.0"
+}
