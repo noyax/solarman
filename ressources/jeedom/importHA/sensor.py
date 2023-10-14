@@ -26,8 +26,8 @@ except ImportError as ex:
     sys.exit(1)
 
 from pysolarmanv5 import PySolarmanV5
-from .solarman import Inverter
-from .scanner import InverterScanner
+from .solarmanHA import Inverter
+from .jeedom.importHA.scanner import InverterScanner
 from .services import *
 from datetime import date, datetime
 

@@ -219,6 +219,7 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 											</a>
 										</span>
 									</div>
+									<label class="col-sm-12 control-label">{{Seuls les auto actualisation à 1, 5, 10, 15 et 30 minutes sont fonctionnelles}} </label>
 								</div>
 							</div>
 							<br><br>

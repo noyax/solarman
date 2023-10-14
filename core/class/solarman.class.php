@@ -50,19 +50,66 @@ class solarman extends eqLogic {
         solarman::interroSolarman($eqLogic);
       }
     }
-    
   }
   
   public static function cron5() {    
+    $debug = false;
+    $idOnduleur = 'Aucun';
+    system::kill('solarman.py');
+    foreach (eqLogic::byType('solarman') as $eqLogic) {
+      $autorefresh = $eqLogic->getConfiguration('autorefresh');
+      if ($autorefresh=='*/5 * * *'){
+        $idOnduleur = $eqLogic->getId();
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      }
+    }
   }
   
   public static function cron10() {    
+    $debug = false;
+    $idOnduleur = 'Aucun';
+    system::kill('solarman.py');
+    foreach (eqLogic::byType('solarman') as $eqLogic) {
+      $autorefresh = $eqLogic->getConfiguration('autorefresh');
+      if ($autorefresh=='*/10 * * *'){
+        $idOnduleur = $eqLogic->getId();
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      }
+    }
   }
   
   public static function cron15() {    
+    $debug = false;
+    $idOnduleur = 'Aucun';
+    system::kill('solarman.py');
+    foreach (eqLogic::byType('solarman') as $eqLogic) {
+      $autorefresh = $eqLogic->getConfiguration('autorefresh');
+      if ($autorefresh=='*/10 * * *'){
+        $idOnduleur = $eqLogic->getId();
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      }
+    }
   }
   
   public static function cron30() {    
+    $debug = false;
+    $idOnduleur = 'Aucun';
+    system::kill('solarman.py');
+    foreach (eqLogic::byType('solarman') as $eqLogic) {
+      $autorefresh = $eqLogic->getConfiguration('autorefresh');
+      if ($autorefresh=='*/30 * * *'){
+        $idOnduleur = $eqLogic->getId();
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      }
+    }
   }
   
   public static function cronHourly() {    
@@ -249,13 +296,12 @@ class solarman extends eqLogic {
   	return $return;
 	}
 
-  public static function razConfigInverter($fichInverter='Aucun', $id = 0){
+  public static function raz_ConfigInverter($fichInverter, $id, $eqLogic){
     log::add('solarman', 'debug', ' fichier conf onduleur : ' . '  ' . $fichInverter . '    Id Onduleur à modifier : ' . $id);
-    $eqLogic = solarman::byId($id);
-
+    $eqLogic = eqLogic::byId($id);
     $fichYaml = '../../data/inverters/' . $fichInverter;
     $fichexist = file_exists($fichYaml);
-    if ($fichexist){
+    if (($fichexist) && is_object($eqLogic)){
       log::add('solarman', 'debug', ' fichier conf onduleur : ' . '  ' . $fichYaml);
       $infoYaml = yaml_parse_file($fichYaml);
       $parametres = $infoYaml['parameters'];
@@ -288,12 +334,11 @@ class solarman extends eqLogic {
                   //toutes les autres valeurs
               }
             }
-            log::add('solarman', 'debug', ' récupération des infos item: ' . $name . ' logicalId: ' . $registers[0]);
-            $cmd = $cmd->getLogicalId($registers[0]);
-            //$cmd = $eqLogic->getCmd('info', $registers[0]);
-            log::add('solarman', 'debug', ' commande selectionnée : ' . '  ' . $cmd->getLogicalId());
+            //$cmd = $cmd->getLogicalId($registers[0]);
+            log::add('solarman', 'debug', ' récupération des infos item : ' . $name . ' logicalId: ' . intval($registers[0]));
+            $cmd = $eqLogic->getCmd('info', intval($registers[0]));
             if (is_object($cmd)) {
-              log::add('solarman', 'debug', ' commande existante modifiée : ' . '  ' . $cmd);
+              log::add('solarman', 'debug', ' commande existante modifiée : ' . '  ' . $cmd->getName());
               $cmd->setname($name);
               $cmd->setUnite($unite);
               $cmd->setSubType($isstr);
@@ -323,6 +368,7 @@ class solarman extends eqLogic {
       log::add('solarman', 'debug', " Le fichier conf onduleur n'existe pas");
     }
   }
+  
 }
 
 class solarmanCmd extends cmd {

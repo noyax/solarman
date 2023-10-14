@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-from solarman import Inverter
+from plugins.solarman.ressources.jeedom.importHA.solarmanHA import Inverter
 
 
 SERVICE_WRITE_REGISTER = 'write_holding_register'

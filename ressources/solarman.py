@@ -55,7 +55,7 @@ def lire():
 			end = request['end']
 			mb_fc = request['mb_functioncode']
 			logging.debug(f"Querying [{start} - {end}]...")
-
+			_SendData = {}
 			attempts_left = QUERY_RETRY_ATTEMPTS
 			while attempts_left > 0:
 				attempts_left -= 1
@@ -83,36 +83,33 @@ def lire():
 			if result == 0:
 				logging.warning(f"Querying registers [{start} - {end}] failed, aborting.")
 				sys.exit()
-				break
 		if result == 1:
 			logging.debug(f"All queries succeeded, exposing updated values.")
 			current_val = params.get_result()
 			logging.debug('Resultat')
 			logging.debug(current_val)
+			try:
+				_SendData = current_val
+				logging.debug(_SendData)
+				globals.JEEDOM_COM.add_changes('device::' + globals.ideqpmnt, _SendData)
+			except Exception:
+				error_com = "Connection error"
+				logging.error(error_com)
+				sys.exit()
+			sys.exit()
 		else:
 			current_val = {}
 			logging.info(f"Disconnecting from solarman data logger {globals.inverter_host}:{globals.inverter_port}")
 			modbus.disconnect()
+			sys.exit()
 	except Exception as e:
 		logging.warning(f"Querying inverter {globals.inverter_sn} at {globals.inverter_host}:{globals.inverter_port} failed on connection start with exception [{type(e).__name__}: {e}]")
 		current_val = {}
 		logging.info(f"Disconnecting from solarman data logger {globals.inverter_host}:{globals.inverter_port}")
 		modbus.disconnect()
+		sys.exit()
 
     
-
-# ----------------------------------------------------------------------------
-
-def handler(signum=None, frame=None):
-	logging.debug("Signal %i caught, exiting...", int(signum))
-	shutdown()
-
-def shutdown():
-	logging.debug("Shutdown")
-	logging.debug("Removing PID file %s", _pidfile)
-	logging.debug("Exit 0")
-	sys.stdout.flush()
-	os._exit(0)
 
 # ------------------------------------------------------------------------------
 # MAIN
@@ -173,7 +170,7 @@ logging.info('SOLARMAN------ Id modbus de l onduleur : ' + str(globals.inverter_
 
 if not globals.JEEDOM_COM.test():
     logging.error('MODEM------ Network communication issues. Please fix your Jeedom network configuration.')
-    shutdown()
+    sys.exit()
 
 lire()
 sys.exit()

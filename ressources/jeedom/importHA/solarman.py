@@ -7,7 +7,7 @@ import yaml
 import struct
 import globals
 from datetime import datetime
-from .parser import ParameterParser
+from ...parser import ParameterParser
 from pysolarmanv5 import PySolarmanV5
 
 

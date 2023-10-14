@@ -42,7 +42,7 @@ try {
       # Rechargement des données Onduleur
       case 'razConfigInverter':
         log::add('solarman', 'debug', ' Action: razConfigInverter fichier conf onduleur : ' . init('configInverter') . ' id équipement: ' . init('id'));
-        solarman::razConfigInverter(init('configInverter'), init('id'));
+        solarman::raz_ConfigInverter(init('configInverter'), init('id'));
         ajax::success($return);
         break;
 
