@@ -34,12 +34,14 @@ except ImportError as ex:
     print(ex)
     sys.exit(1)
 
-from pysolarmanv5 import PySolarmanV5
+#from pysolarmanv5 import PySolarmanV5
+from pySolarman import PySolarmanV5
 from parser import ParameterParser
 
 QUERY_RETRY_ATTEMPTS = 2
 
 def lire():
+	pid = str(os.getpid())
 	with open(globals.path + globals.lookup_file) as f:
 		parameter_definition = yaml.full_load(f)
 	
