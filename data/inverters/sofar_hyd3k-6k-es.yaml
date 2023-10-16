@@ -260,8 +260,8 @@ parameters:
       state_class: "total"
       uom: "kWh"
       scale: 1
-      rule: 1
-      registers: [0x0227]
+      rule: 3
+      registers: [0x0227,0x0226]
       icon: 'mdi:battery-clock'
 
     - name: "Battery Total Energy Dischaged"
@@ -270,7 +270,7 @@ parameters:
       uom: "kWh"
       scale: 1
       rule: 1
-      registers: [0x0229]
+      registers: [0x0229,0x0228]
       icon: 'mdi:battery-clock-outline'
 
     - name: "Battery Cicles"
@@ -298,6 +298,20 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x10B0]
+      isstr: true
+      lookup:
+      -  key: 0
+         value: "Darfon"
+      -  key: 1
+         value: "Pylon"
+      -  key: 2
+         value: "Soltaro"
+      -  key: 3
+         value: "Alpha Ess"
+      -  key: 4
+         value: "Général"
+      -  key: 256
+         value: "Défaut"
       icon: 'mdi:battery'
 
     - name: "Battery Capacity"
