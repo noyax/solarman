@@ -24,7 +24,7 @@ requests:
 parameters:
   - group: Solar
     items:
-      - name: 'PV Generation today'
+      - name: 'Production photovoltaïque aujourd’hui'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -33,7 +33,7 @@ parameters:
         registers: [0x0685,0x0684]
         icon: 'mdi:solar-power'
 
-      - name: 'PV Generation total'
+      - name: 'Production photovoltaïque totale'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -42,7 +42,7 @@ parameters:
         registers: [0x0687,0x0686]
         icon: 'mdi:solar-power'
 
-      - name: 'PV1 Power'
+      - name: 'Puissance PV1'
         class: 'power'
         state_class: 'measurement'
         uom: 'W'
@@ -51,7 +51,7 @@ parameters:
         registers: [0x0586]
         icon: 'mdi:solar-power'
 
-      - name: 'PV2 Power'
+      - name: 'Puissance PV2'
         class: 'power'
         state_class: 'measurement'
         uom: 'W'
@@ -60,7 +60,7 @@ parameters:
         registers: [0x0589]
         icon: 'mdi:solar-power'
 
-      - name: 'PV1 Voltage'
+      - name: 'Tension PV1'
         class: 'voltage'
         state_class: 'measurement'
         uom: 'V'
@@ -69,7 +69,7 @@ parameters:
         registers: [0x0584]
         icon: 'mdi:solar-power'
 
-      - name: 'PV2 Voltage'
+      - name: 'Tension PV2'
         class: 'voltage'
         state_class: 'measurement'
         uom: 'V'
@@ -78,7 +78,7 @@ parameters:
         registers: [0x0587]
         icon: 'mdi:solar-power'
 
-      - name: 'PV1 Current'
+      - name: 'Courant PV1'
         class: 'current'
         state_class: 'measurement'
         uom: 'A'
@@ -87,7 +87,7 @@ parameters:
         registers: [0x0585]
         icon: 'mdi:solar-power'
 
-      - name: 'PV2 Current'
+      - name: 'Courant PV2'
         class: 'current'
         state_class: 'measurement'
         uom: 'A'
@@ -98,7 +98,7 @@ parameters:
 
   - group: batteries
     items:
-      - name: "Battery 1 Voltage"
+      - name: "Tension Batterie 1"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -107,7 +107,7 @@ parameters:
         registers: [0x0604]
         icon: 'mdi:battery-charging'
 
-      - name: "Battery Charge / Discharge current"
+      - name: "Courant de charge / décharge de la batterie"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -116,7 +116,7 @@ parameters:
         registers: [0x0605]
         icon: 'mdi:battery-charging-10'
 
-      - name: "Battery SoC"
+      - name: "SoC de batterie"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -125,7 +125,7 @@ parameters:
         registers: [0x0608]
         icon: 'mdi:battery'
 
-      - name: "Battery SoH"
+      - name: "Batterie SoH"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -134,7 +134,7 @@ parameters:
         registers: [0x0609]
         icon: 'mdi:battery'
 
-      - name: "Battery Temperature"
+      - name: "Température de la batterie"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -144,7 +144,7 @@ parameters:
         registers: [0x0607]
         icon: 'mdi:battery-heart-outline'
 
-      - name: "Battery Charge Total"
+      - name: "Charge totale de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -153,7 +153,7 @@ parameters:
         registers: [0x0697,0x0696]
         icon: 'mdi:battery-clock'
 
-      - name: "Battery Discharge Total"
+      - name: "Total de décharge de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -162,7 +162,7 @@ parameters:
         registers: [0x069B,0x069A]
         icon: 'mdi:battery-clock-outline'
 
-      - name: "Battery Cycles"
+      - name: "Cycles de la batterie"
         class: ""
         state_class: ""
         uom: "Charges"
@@ -171,7 +171,7 @@ parameters:
         registers: [0x060A]
         icon: 'mdi:battery-check-outline'
 
-      - name: "Battery Power"
+      - name: "Alimentation de la batterie"
         class: "power"
         state_class: "measurement"
         uom: "KW"
@@ -180,7 +180,7 @@ parameters:
         registers: [0x0606]
         icon: 'mdi:battery-charging-high'
 
-      - name: 'Battery Charge Today'
+      - name: 'Charge de la batterie aujourd’hui'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -189,7 +189,7 @@ parameters:
         registers: [0x0695,0x0694]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: 'Battery Discharge Today'
+      - name: 'Décharge de la batterie aujourd’hui'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -200,7 +200,7 @@ parameters:
 
   - group: Grid
     items:
-      - name: 'Grid Frequency'
+      - name: 'Fréquence de la grille'
         class: 'frequency'
         state_class: 'measurement'
         uom: 'Hz'
@@ -209,7 +209,7 @@ parameters:
         registers: [0x0484]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: 'Active Power Output Total'
+      - name: 'Puissance de sortie active Total'
         class: 'power'
         state_class: 'measurement'
         uom: 'W'
@@ -218,7 +218,7 @@ parameters:
         registers: [0x0485]
         icon: 'mdi:home-lightning-bolt'
         
-      - name: 'Active Power Load Total'
+      - name: 'Charge de puissance active totale'
         class: 'power'
         state_class: 'measurement'
         uom: 'W'
@@ -227,7 +227,7 @@ parameters:
         registers: [0x0504]
         icon: 'mdi:home-lightning-bolt'
         
-      - name: 'Energy Purchase Today'
+      - name: 'Achat d’énergie aujourd’hui'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -236,7 +236,7 @@ parameters:
         registers: [0x068D,0x068C]
         icon: 'mdi:home-lightning-bolt'
         
-      - name: 'Energy Purchase Total'
+      - name: 'Total des achats d’énergie'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -245,7 +245,7 @@ parameters:
         registers: [0x068F,0x068E]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: 'Energy Selling Today'
+      - name: 'La vente d’énergie aujourd’hui'
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -254,7 +254,7 @@ parameters:
         registers: [0x0691,0x0690]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: 'Energy Selling Total'      
+      - name: 'Total des ventes d’énergie'      
         class: 'energy'
         state_class: 'total_increasing'
         uom: 'kWh'
@@ -265,7 +265,7 @@ parameters:
 
   - group: Inverter
     items:
-      - name: 'Inverter status'
+      - name: 'État de l’onduleur'
         class: ''
         state_class: 'measurement'
         uom: ''
@@ -274,18 +274,18 @@ parameters:
         registers: [0x0404]
         lookup:
           - key: 0
-            value: 'Stand-by'
+            value: 'Veille'
           - key: 1
-            value: 'Self-checking'
+            value: 'Autocontrôle'
           - key: 2
             value: 'Normal'
           - key: 3
-            value: 'FAULT'
+            value: 'Erreur'
           - key: 4
             value: 'Permanent'
         icon: 'mdi:wrench'
 
-      - name: 'Module temperature'
+      - name: 'Température du module'
         class: 'temperature'
         uom: '°C'
         scale: 0.1
@@ -293,7 +293,7 @@ parameters:
         registers: [0x0683]
         icon: 'mdi:thermometer'
 
-      - name: 'Ambient temperature'
+      - name: 'Température ambiante'
         class: 'temperature'
         uom: '°C'
         scale: 1
@@ -301,7 +301,7 @@ parameters:
         registers: [0x0418]
         icon: 'mdi:thermometer'
 
-      - name: 'Radiator temperature'
+      - name: 'Température du radiateur'
         class: 'temperature'
         uom: '°C'
         scale: 1
@@ -309,7 +309,7 @@ parameters:
         registers: [0x041A]
         icon: 'mdi:thermometer'
 
-      - name: 'Insulation Resistance'
+      - name: 'Résistance d’isolation'
         class: ''
         state_class: 'measurement'
         uom: 'Ω'
@@ -320,7 +320,7 @@ parameters:
 
   - group: Alert
     items:
-      - name: 'Alert'
+      - name: 'Alerte'
         class: ''
         state_class: ''
         uom: ''
@@ -353,33 +353,33 @@ parameters:
         icon: 'mdi:wrench'
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID01 Grid Over Voltage Protection'
+            value: 'ID01 Protection contre les surtensions du réseau'
           - key: 2
-            value: 'ID02 Grid Under Voltage Protection'
+            value: 'ID02 Grille de protection sous tensionn'
           - key: 4
-            value: 'ID03 Grid Over Frequency Protection'
+            value: 'ID03 Protection contre les surfréquences de grille'
           - key: 8
-            value: 'ID04 Grid Under Frequency Protection'
+            value: 'ID04 Protection contre les surfréquences de grille'
           - key: 16
-            value: 'ID05 Leakage current fault'
+            value: 'ID05 Défaut de courant de fuite'
           - key: 32
-            value: 'ID06 High penetration error'
+            value: 'ID06 Erreur de pénétration élevée'
           - key: 64
-            value: 'ID07 Low penetration error'
+            value: 'ID07 Erreur de faible pénétration'
           - key: 128
-            value: 'ID08 Islanding error'
+            value: 'ID08 Erreur d’îlot'
           - key: 256
-            value: 'ID09 Grid voltage transient value overvoltage 1'
+            value: 'ID09 Surtension de la valeur transitoire de la tension du réseau 1'
           - key: 512
-            value: 'ID10 Grid voltage transient value overvoltage 2'
+            value: 'ID10 Surtension transitoire de la tension du réseau 2'
           - key: 1024
-            value: 'ID11 Grid line voltage error'
+            value: 'ID11 Erreur de tension de ligne de réseau'
           - key: 2048
-            value: 'ID12 Inverter voltage error'
+            value: 'ID12 Erreur de tension de l’onduleur'
           - key: 4096
-            value: 'ID13 Anti-backflow overload'
+            value: 'ID13 Surcharge anti-refoulement'
           - key: 8192
             value: 'ID14'
           - key: 16384
@@ -387,7 +387,7 @@ parameters:
           - key: 32768
             value: 'ID16'
 
-      - name: 'Fault 2'
+      - name: 'Défaut 2'
         class: ''
         state_class: ''
         uom: ''
@@ -398,41 +398,41 @@ parameters:
         registers: [0x0406]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID17 Grid current sampling error'
+            value: 'ID17 Erreur d’échantillonnage du courant de grille'
           - key: 2
-            value: 'ID18 Grid current DC component sampling error (AC side)'
+            value: 'ID18 Erreur d’échantillonnage de la composante CC du courant de grille (côté CA)'
           - key: 4
-            value: 'ID19 Grid voltage sampling error (DC side)'
+            value: 'ID19 Erreur d’échantillonnage de tension du réseau (côté CC))'
           - key: 8
-            value: 'ID20 Grid voltage sampling error (AC side)'
+            value: 'ID20 Erreur d’échantillonnage de la tension du réseau (côté CA)'
           - key: 16
-            value: 'ID21 Leakage current sampling error (DC side)'
+            value: 'ID21 Erreur d’échantillonnage du courant de fuite (côté CC)'
           - key: 32
-            value: 'ID22 Leakage current sampling error (AC side)'
+            value: 'ID22 Erreur d’échantillonnage du courant de fuite (côté CA)'
           - key: 64
-            value: 'ID23 Load voltage DC component sampling error'
+            value: 'ID23 Erreur d’échantillonnage du composant CC de tension de charge'
           - key: 128
-            value: 'ID24 DC input current sampling error'
+            value: 'ID24 Erreur d’échantillonnage du courant d’entrée CC'
           - key: 256
-            value: 'ID25 DC component sampling error of grid current (DC side)'
+            value: 'ID25 Erreur d’échantillonnage de la composante CC du courant de réseau (côté CC)'
           - key: 512
-            value: 'ID26 DC input branch current sampling error'
+            value: 'ID26 Erreur d’échantillonnage actuel de la branche d’entrée CC'
           - key: 1024
             value: 'ID27'
           - key: 2048
             value: 'ID28'
           - key: 4096
-            value: 'ID29 Leakage current consistency error'
+            value: 'ID29 Erreur de cohérence du courant de fuite'
           - key: 8192
-            value: 'ID30 Grid voltage consistency error'
+            value: 'ID30 Erreur de cohérence de tension du réseau'
           - key: 16384
-            value: 'ID31 DCI consistency error'
+            value: 'Erreur de cohérence ID31 DCI'
           - key: 32768
             value: 'ID32'
 
-      - name: 'Fault 3'
+      - name: 'Erreur 3'
         class: ''
         state_class: ''
         uom: ''
@@ -443,41 +443,41 @@ parameters:
         registers: [0x0407]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Pas d’erreur'
           - key: 1
-            value: 'ID033 SPI communication error (DC side)'
+            value: 'ID033 Erreur de communication SPI (côté CC)'
           - key: 2
-            value: 'ID034 SPI communication error (AC side)'
+            value: 'ID034 Erreur de communication SPI (côté secteur)'
           - key: 4
-            value: 'ID035 Chip error (DC side)'
+            value: 'ID035 Erreur de puce (côté CC)'
           - key: 8
-            value: 'ID036 Chip error (AC side)'
+            value: 'ID036 Erreur de puce (côté secteur)'
           - key: 16
-            value: 'ID037 Auxiliary power error'
+            value: 'ID037 Erreur d’alimentation auxiliaire'
           - key: 32
-            value: 'ID038 Inverter soft start failure'
+            value: 'ID038 Échec du démarrage progressif de l’onduleur'
           - key: 64
             value: 'ID039 '
           - key: 128
             value: 'ID040 '
           - key: 256
-            value: 'ID041 Relay detection failure'
+            value: 'ID041 Échec de détection de relais'
           - key: 512
-            value: 'ID042 Low insulation impedance'
+            value: 'ID042 Faible impédance d’isolation'
           - key: 1024
-            value: 'ID043 Grounding error'
+            value: 'ID043 Erreur de mise à la terre'
           - key: 2048
-            value: 'ID044 Input mode setting error'
+            value: 'ID044 Erreur de réglage du mode d’entrée'
           - key: 4096
-            value: 'ID045 CT error'
+            value: 'ID045 Erreur CT'
           - key: 8192
-            value: 'ID046 Input reversal error'
+            value: 'ID046 Erreur d’inversion d’entrée'
           - key: 16384
-            value: 'ID047 Parallel error'
+            value: 'ID047 Erreur parallèle'
           - key: 32768
-            value: 'ID048 Serial number error'
+            value: 'ID048 Erreur de numéro de série'
 
-      - name: 'Fault 4'
+      - name: 'Erreur 4'
         class: ''
         state_class: ''
         uom: ''
@@ -488,41 +488,41 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Pas d’erreur'
           - key: 1
-            value: 'ID049 Battery temperature protection'
+            value: 'ID049 Protection contre la température de la batterie'
           - key: 2
-            value: 'ID050 Heat sink 1 temperature protection'
+            value: 'ID050 Dissipateur de chaleur 1 protection contre la température'
           - key: 4
-            value: 'ID051 Heater 2 temperature protection'
+            value: 'ID051 Protection thermique du chauffage 2'
           - key: 8
-            value: 'ID052 Heater 3 temperature protection'
+            value: 'ID052 Protection de la température du réchauffeur 3'
           - key: 16
-            value: 'ID053 Heatsink 4 temperature protection'
+            value: 'ID053 Dissipateur thermique 4 protection contre la température'
           - key: 32
-            value: 'ID054 Heatsink 5 temperature protection'
+            value: 'ID054 Protection thermique du dissipateur thermique 5'
           - key: 64
-            value: 'ID055 Radiator 6 temperature protection'
+            value: 'ID055 Protection thermique du radiateur 6'
           - key: 128
             value: 'ID056 '
           - key: 256
-            value: 'ID057 Ambient temperature 1 protection'
+            value: 'ID057 Protection contre la température ambiante 1'
           - key: 512
-            value: 'ID058 Ambient temperature 2 protection'
+            value: 'ID058 Protection contre la température ambiante 2'
           - key: 1024
-            value: 'ID059 Module 1 temperature protection'
+            value: 'ID059 Module 1 protection de la température'
           - key: 2048
-            value: 'ID060 Module 2 temperature protection'
+            value: 'ID060 Module 2 protection contre la température'
           - key: 4096
-            value: 'ID061 Module 3 temperature protection'
+            value: 'ID061 Module 3 protection de la température'
           - key: 8192
-            value: 'ID062 Module temperature difference is too large'
+            value: 'ID062 La différence de température du module est trop importante'
           - key: 16384
             value: 'ID063 '
           - key: 32768
             value: 'ID064 '
 
-      - name: 'Fault 5'
+      - name: 'Erreur 5'
         class: ''
         state_class: ''
         uom: ''
@@ -533,29 +533,29 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID065 Bus voltage RMS unbalance'
+            value: 'ID065 Déséquilibre RMS de tension de bus'
           - key: 2
-            value: 'ID066 Bus voltage transient   value unbalance'
+            value: 'ID066 Déséquilibre de la valeur transitoire de la tension du bus'
           - key: 4
-            value: 'ID067 Undervoltage of busbar during grid connection'
+            value: 'ID067 Sous-tension de la barre omnibus lors de la connexion au réseau'
           - key: 8
-            value: 'ID068 Bus bar low voltage'
+            value: 'ID068 Barre omnibus basse tension'
           - key: 16
-            value: 'ID069 PV overvoltage'
+            value: 'ID069 Surtension PV'
           - key: 32
-            value: 'ID070 Battery over-voltage'
+            value: 'ID070 Surtension de la batterie'
           - key: 64
-            value: 'ID071 LLCBus overvoltage protection'
+            value: 'ID071 LLCBus protection contre les surtensions'
           - key: 128
-            value: 'ID072 Inverter bus voltage RMS software overvoltage'
+            value: 'ID072 Tension du bus onduleur Surcharge du logiciel RMS'
           - key: 256
-            value: 'ID073 Inverter bus voltage transient value software overvoltage'
+            value: 'ID073 Tension de la bus de l’onduleur surtension du logiciel de valeur transitoire'
           - key: 512
-            value: 'ID074 Flying Cross Capacitor Overvoltage Protection'
+            value: 'ID074 Protection contre les surtensions des condensateurs Flying Cross'
           - key: 1024
-            value: 'ID075 Flying Cross capacitor undervoltage protection'
+            value: 'ID075 Protection contre les sous-tensions du condensateur Flying Crossn'
           - key: 2048
             value: 'ID076 '
           - key: 4096
@@ -567,7 +567,7 @@ parameters:
           - key: 32768
             value: 'ID080 '
 
-      - name: 'Fault 6'
+      - name: 'Erreur 6'
         class: ''
         state_class: ''
         uom: ''
@@ -578,29 +578,29 @@ parameters:
         registers: [0x040A]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID081 Battery overcurrent software protection'
+            value: 'ID081 Protection logicielle contre les surintensités de la batterie'
           - key: 2
-            value: 'ID082 Dci overcurrent protection'
+            value: 'ID082 Protection contre les surintensités Dci'
           - key: 4
-            value: 'ID083 Output transient current protection'
+            value: 'ID083 Protection contre le courant transitoire de sortie'
           - key: 8
-            value: 'ID084 BuckBoost software overcurrent'
+            value: 'ID084 Surintensité logicielle BuckBoost'
           - key: 16
-            value: 'ID085 Output RMS current protection'
+            value: 'ID085 Protection du courant RMS de sortie'
           - key: 32
-            value: 'ID086 PV instantaneous current overcurrent software protection'
+            value: 'ID086 Protection logicielle contre les surintensités de courant instantané PV'
           - key: 64
-            value: 'ID087 PV parallel uneven current'
+            value: 'ID087 Courant parallèle inégal PV'
           - key: 128
-            value: 'ID088 Output current unbalance'
+            value: 'ID088 Déséquilibre du courant de sortie'
           - key: 256
-            value: 'ID089 PV software overcurrent protection'
+            value: 'ID089 Protection contre les surintensités du logiciel PV'
           - key: 512
-            value: 'ID090 Balanced circuit overcurrent protection'
+            value: 'ID090 Protection contre les surintensités du circuit équilibré'
           - key: 1024
-            value: 'ID091 Resonance protection'
+            value: 'ID091 Protection par résonance'
           - key: 2048
             value: 'ID092 '
           - key: 4096
@@ -612,7 +612,7 @@ parameters:
           - key: 32768
             value: 'ID096 '
 
-      - name: 'Fault 7'
+      - name: 'erreur 7'
         class: ''
         state_class: ''
         uom: ''
@@ -623,27 +623,27 @@ parameters:
         registers: [0x040B]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID097 LLC bus hardware overvoltage'
+            value: 'ID097 LLC bus surtension matérielle'
           - key: 2
-            value: 'ID098 Inverter bus hardware overvoltage'
+            value: 'ID098 Surtension matérielle du bus Inverter'
           - key: 4
-            value: 'ID099 BuckBoost hardware overcurrent'
+            value: 'ID099 Surintensité matérielle BuckBoost'
           - key: 8
-            value: 'ID100 Battery hardware overcurrent'
+            value: 'ID100 Surintensité matérielle de la batterie'
           - key: 16
             value: 'ID101 '
           - key: 32
-            value: 'ID102 PV hardware overcurrent'
+            value: 'ID102 Surintensité matérielle PV'
           - key: 64
-            value: 'ID103 AC output hardware overcurrent'
+            value: 'ID103 Surintensité matérielle de sortie CA'
           - key: 128
             value: 'ID104 '
           - key: 256
-            value: 'ID105 Power meter error'
+            value: 'ID105 Erreur de capteur de puissance'
           - key: 512
-            value: 'ID106 Serial number model error'
+            value: 'ID106 Erreur de modèle de numéro de série'
           - key: 1024
             value: 'ID107 '
           - key: 2048
@@ -651,13 +651,13 @@ parameters:
           - key: 4096
             value: 'ID109 '
           - key: 8192
-            value: 'ID110 Overload protection 1'
+            value: 'ID110 Protection contre les surcharges 1'
           - key: 16384
-            value: 'ID111 Overload protection 2'
+            value: 'ID111 Protection contre les surcharges 2'
           - key: 32768
-            value: 'ID112 Overload protection 3'
+            value: 'ID112 Protection contre les surcharges 3'
 
-      - name: 'Fault 8'
+      - name: 'Erreur 8'
         class: ''
         state_class: ''
         uom: ''
@@ -668,17 +668,17 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID113 Overtemperature derating'
+            value: 'ID113 Déclassement en cas de surchauffe'
           - key: 2
-            value: 'ID114 Frequency down load'
+            value: 'ID114 Fréquence descendante'
           - key: 4
-            value: 'ID115 Frequency loading'
+            value: 'ID115 Chargement de fréquence'
           - key: 8
-            value: 'ID116 Voltage down load'
+            value: 'ID116 Charge descendante de tension'
           - key: 16
-            value: 'ID117 Voltage loading'
+            value: 'ID117 Charge de tension'
           - key: 32
             value: 'ID118 '
           - key: 64
@@ -686,23 +686,23 @@ parameters:
           - key: 128
             value: 'ID120 '
           - key: 256
-            value: 'ID121 Lightning protection failure (DC)'
+            value: 'ID121 Défaillance de la protection contre la foudre (DC)'
           - key: 512
-            value: 'ID122 Lightning protection failure (AC)'
+            value: 'ID122 Défaillance de la protection contre la foudre (AC)'
           - key: 1024
             value: 'ID123 '
           - key: 2048
-            value: 'ID124 Battery low voltage protection'
+            value: 'ID124 Protection basse tension de la batterie'
           - key: 4096
-            value: 'ID125 Battery low voltage shutdown'
+            value: 'ID125 Arrêt basse tension de la batterie'
           - key: 8192
-            value: 'ID126 Battery low voltage pre-alarm'
+            value: 'ID126 Pré-alarme basse tension de la batterie'
           - key: 16384
             value: 'ID127 '
           - key: 32768
             value: 'ID128 '
 
-      - name: 'Fault 9'
+      - name: 'Erreur 9'
         class: ''
         state_class: ''
         uom: ''
@@ -713,41 +713,41 @@ parameters:
         registers: [0x040D]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID129 Output hardware overcurrent permanent fault'
+            value: 'ID129 Défaut permanent de surintensité matérielle de sortie'
           - key: 2
-            value: 'ID130 Bus overvoltage permanent fault'
+            value: 'ID130 Défaut permanent de surtension de bus'
           - key: 4
-            value: 'ID131 Bus hardware over-voltage permanent fault'
+            value: 'ID131 Défaut permanent de surtension matérielle du bus'
           - key: 8
-            value: 'ID132 PV uneven flow permanent fault'
+            value: 'ID132 PV défaut permanent à débit inégal'
           - key: 16
-            value: 'ID133 Battery overcurrent permanent fault in EPS mode'
+            value: 'ID133 Défaut permanent de surintensité de la batterie en mode EPS'
           - key: 32
-            value: 'ID134 Output transient overcurrent permanent fault'
+            value: 'ID134 Défaut permanent de surintensité transitoire de sortie'
           - key: 64
-            value: 'ID135 Output current unbalance permanent fault'
+            value: 'ID135 Défaut permanent de déséquilibre du courant de sortie'
           - key: 128
             value: 'ID136 '
           - key: 256
-            value: 'ID137 Input mode setting error permanent fault'
+            value: 'ID137 Erreur de réglage du mode d’entrée défaut permanent'
           - key: 512
-            value: 'ID138 Input overcurrent permanent fault'
+            value: 'ID138 Défaut permanent de surintensité d’entrée'
           - key: 1024
-            value: 'ID139 Input hardware overcurrent permanent fault'
+            value: 'ID139 Défaut permanent de surintensité matérielle d’entrée'
           - key: 2048
-            value: 'ID140 Relay permanent fault'
+            value: 'ID140 Relais défaut permanent'
           - key: 4096
-            value: 'ID141 Bus unbalance permanent fault'
+            value: 'ID141 Bus déséquilibrant une défaillance permanente'
           - key: 8192
-            value: 'ID142 Lightning protection permanent fault - DC side'
+            value: 'ID142 Défaut permanent de protection contre la foudre - côté CC'
           - key: 16384
-            value: 'ID143 Lightning protection permanent fault - AC side'
+            value: 'ID143 Défaut permanent de protection contre la foudre - côté secteur'
           - key: 32768
             value: 'ID144 '
 
-      - name: 'Fault 10'
+      - name: 'erreur 10'
         class: ''
         state_class: ''
         uom: ''
@@ -758,41 +758,41 @@ parameters:
         registers: [0x040E]
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Aucune erreur'
           - key: 1
-            value: 'ID145 USB fault'
+            value: 'ID145 Défaut USB'
           - key: 2
-            value: 'ID146 WIFI fault'
+            value: 'ID146 Erreur WIFI'
           - key: 4
-            value: 'ID147 Bluetooth fault'
+            value: 'ID147 Erreur Bluetooth'
           - key: 8
-            value: 'ID148 RTC clock fault'
+            value: 'ID148 Erreur d’horloge RTC'
           - key: 16
-            value: 'ID149 Communication board EEPROM error'
+            value: 'ID149 Erreur EEPROM de la carte de communication'
           - key: 32
-            value: 'ID150 Communication board FLASH error'
+            value: 'ID150 Carte de communication Erreur FLASH'
           - key: 64
             value: 'ID151 '
           - key: 128
-            value: 'ID152 Safety regulation version error'
+            value: 'ID152 Erreur de version du règlement de sécurité'
           - key: 256
-            value: 'ID153 SCI communication error (DC side)'
+            value: 'Erreur de communication SCI ID153 (côté CC)'
           - key: 512
-            value: 'ID154 SCI communication error (AC side)'
+            value: 'ID154 Erreur de communication SCI (côté CA)'
           - key: 1024
-            value: 'ID155 SCI communication error (convergence board side)'
+            value: 'ID155 Erreur de communication SCI (côté carte de convergence)'
           - key: 2048
-            value: 'ID156 Software version inconsistency'
+            value: 'ID156 Incohérence de version du logiciel'
           - key: 4096
-            value: 'ID157 Lithium battery 1 communication error'
+            value: 'ID157 Batterie au lithium 1 erreur de communication'
           - key: 8192
-            value: 'ID158 Li-ion battery 2 communication error'
+            value: 'ID158 Erreur de communication de la batterie Li-ion 2'
           - key: 16384
-            value: 'ID159 Lithium battery 3 communication error'
+            value: 'ID159 Erreur de communication de la batterie au lithium 3'
           - key: 32768
-            value: 'ID160 Lithium battery 4 communication failure'
+            value: 'ID160 Batterie au lithium 4 panne de communication'
 
-      - name: 'Fault 11'
+      - name: 'Erreur 11'
         class: ''
         state_class: ''
         uom: ''
@@ -803,41 +803,41 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Pas d’erreur'
           - key: 1
-            value: 'ID161 Forced shutdown'
+            value: 'ID161 Arrêt forcé'
           - key: 2
-            value: 'ID162 Remote shutdown'
+            value: 'ID162 Arrêt à distance'
           - key: 4
-            value: 'ID163 Drms0 shutdown'
+            value: 'ID163 Drms0 arrêt'
           - key: 8
             value: 'ID164 '
           - key: 16
-            value: 'ID165 Remote down load'
+            value: 'ID165 Chargement descendant à distance'
           - key: 32
-            value: 'ID166 Logic interface down load'
+            value: 'ID166 Interface logique en charge descendante'
           - key: 64
-            value: 'ID167 Anti-Reverse Flow Downgrade'
+            value: 'ID167 Déclassement anti-flux inverse'
           - key: 128
             value: 'ID168 '
           - key: 256
-            value: 'ID169 Fan 1 failure'
+            value: 'ID169 Défaillance du ventilateur 1'
           - key: 512
-            value: 'ID170 Fan 2 failure'
+            value: 'ID170 Défaillance du ventilateur 2'
           - key: 1024
-            value: 'ID171 Fan 3 failure'
+            value: 'ID171 Défaillance du ventilateur 3'
           - key: 2048
-            value: 'ID172 Fan 4 failure'
+            value: 'ID172 Défaillance du ventilateur 4'
           - key: 4096
-            value: 'ID173 Fan 5 failure'
+            value: 'ID173 Défaillance du ventilateur 5'
           - key: 8192
-            value: 'ID174 Fan 6 failure'
+            value: 'ID174 Défaillance du ventilateur 6'
           - key: 16384
-            value: 'ID175 Fan 7 fault'
+            value: 'ID175 Défaut du ventilateur 7'
           - key: 32768
-            value: 'ID176 Meter communication failure'
+            value: 'ID176 Défaillance de la communication du compteur'
 
-      - name: 'Fault 12'
+      - name: 'Erreur 12'
         class: ''
         state_class: ''
         uom: ''
@@ -848,25 +848,25 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'No error'
+            value: 'Pas d’erreur'
           - key: 1
-            value: 'ID177 BMS over-voltage alarm'
+            value: 'ID177 Alarme de surtension BMS'
           - key: 2
-            value: 'ID178 BMS undervoltage alarm'
+            value: 'ID178 Alarme de sous-tension BMS'
           - key: 4
-            value: 'ID179 BMS high temperature alarm'
+            value: 'ID179 Alarme haute température BMS'
           - key: 8
-            value: 'ID180 BMS low temperature alarm'
+            value: 'ID180 Alarme BMS basse température'
           - key: 16
-            value: 'ID181 BMS charge/discharge overload alarm'
+            value: 'ID181 Alarme de surcharge de charge/décharge BMS'
           - key: 32
-            value: 'ID182 BMS short circuit alarm'
+            value: 'ID182 Alarme de court-circuit BMS'
           - key: 64
-            value: 'ID183 BMS version inconsistency'
+            value: 'ID183 Incohérence de version BMS'
           - key: 128
-            value: 'ID184 BMS CAN version inconsistency'
+            value: 'ID184 Incohérence de version BMS CAN'
           - key: 256
-            value: 'ID185 BMS CAN version is too low'
+            value: 'ID185 La version BMS CAN est trop basse'
           - key: 512
             value: 'ID186 '
           - key: 1024
@@ -874,10 +874,10 @@ parameters:
           - key: 2048
             value: 'ID188 '
           - key: 4096
-            value: 'ID189 Arc device communication failure'
+            value: 'ID189 Échec de la communication du dispositif Arc'
           - key: 8192
-            value: 'ID190 DC arc alarm fault'
+            value: 'ID190 Défaut d’alarme d’arc CC'
           - key: 16384
-            value: 'ID191 PID repair failed'
+            value: 'ID191 Échec de la réparation PID'
           - key: 32768
-            value: 'ID192 PLC module heartbeat loss'
+            value: 'ID192 Perte de pulsation du module PLC'

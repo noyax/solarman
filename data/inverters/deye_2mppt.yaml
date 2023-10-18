@@ -12,7 +12,7 @@ requests:
 parameters:
   - group: solar
     items: 
-    - name: "PV1 Voltage"
+    - name: "Tension du PV1"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -21,7 +21,7 @@ parameters:
       registers: [0x006D]
       icon: 'mdi:solar-power'
 
-    - name: "PV2 Voltage"
+    - name: "Tension du PV2"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -30,7 +30,7 @@ parameters:
       registers: [0x006F]
       icon: 'mdi:solar-power'
 
-    - name: "PV1 Current"
+    - name: "Courant du PV1"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -39,7 +39,7 @@ parameters:
       registers: [0x006E]
       icon: 'mdi:solar-power'
 
-    - name: "PV2 Current"
+    - name: "Courant du PV2"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -48,7 +48,7 @@ parameters:
       registers: [0x0070]
       icon: 'mdi:solar-power'
 
-    - name: "Daily Production"
+    - name: "Production journalière"
       class: "energy"
       state_class: "total"
       uom: "kWh"
@@ -57,7 +57,7 @@ parameters:
       registers: [0x003C]
       icon: 'mdi:solar-power'
 
-    - name: "Daily Production 1"
+    - name: "Production journalière 1"
       class: "energy"
       state_class: "total"
       uom: "kWh"
@@ -66,7 +66,7 @@ parameters:
       registers: [0x0041]
       icon: 'mdi:solar-power'
 
-    - name: "Daily Production 2"
+    - name: "Production journalière 2"
       class: "energy"
       state_class: "total"
       uom: "kWh"
@@ -75,7 +75,7 @@ parameters:
       registers: [0x0042]
       icon: 'mdi:solar-power'
 
-    - name: "Total Production"
+    - name: "Production totale"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -86,7 +86,7 @@ parameters:
       validation:
         min: 0.1
 
-    - name: "Total Production 1"
+    - name: "Production totale 1"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -95,7 +95,7 @@ parameters:
       registers: [0x0045]
       icon: 'mdi:solar-power'
 
-    - name: "Total Production 2"
+    - name: "Production totale 2"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -104,7 +104,7 @@ parameters:
       registers: [0x0047]
       icon: 'mdi:solar-power'
 
-    - name: "Active Power Regulations"
+    - name: "Régulations de puissance active"
       class: ""
       state_class: ""
       uom: "%"
@@ -115,7 +115,7 @@ parameters:
 
   - group: Grid
     items:
-    - name: "AC Voltage"
+    - name: "Tension alternative"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -124,7 +124,7 @@ parameters:
       registers: [0x0049]
       icon: 'mdi:transmission-tower'
 
-    - name: "Grid Current"
+    - name: "Courant du réseau"
       class: "current"
       state_class: "measurement"      
       uom: "A"
@@ -133,7 +133,7 @@ parameters:
       registers: [0x004C]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "AC Output Frequency"
+    - name: "Fréquence de sortie en courant alternatif"
       class: "frequency"
       state_class: "measurement"
       uom: "Hz"
@@ -142,7 +142,7 @@ parameters:
       registers: [0x004F]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Grid Voltage Upp Limit"
+    - name: "Limite haute de la tension du réseau"
       class: "voltage"
       state_class: ""
       uom: "V"
@@ -151,7 +151,7 @@ parameters:
       registers: [0x001B]
       icon: 'mdi:transmission-tower'
 
-    - name: "Grid Voltage Lower Limit"
+    - name: "Limite basse de la tension du réseau"
       class: "voltage"
       state_class: ""
       uom: "V"
@@ -160,7 +160,7 @@ parameters:
       registers: [0x001C]
       icon: 'mdi:transmission-tower'
 
-    - name: "Grid Frequency Upper Limit"
+    - name: "Limite haute de la fréquence du réseau"
       class: "frequency"
       state_class: ""
       uom: "Hz"
@@ -169,7 +169,7 @@ parameters:
       registers: [0x001D]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Grid Frequency Lower Limit"
+    - name: "Limite basse de la fréquence du réseau"
       class: "frequency"
       state_class: ""
       uom: "Hz"
@@ -178,7 +178,7 @@ parameters:
       registers: [0x001E]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Overfrequency And Load Reduction Starting Point"
+    - name: "Point de départ pour la réduction de la charge en cas de surfréquence"
       class: "frequency"
       state_class: ""
       uom: "Hz"
@@ -187,7 +187,7 @@ parameters:
       registers: [0x0022]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Overfrequency And Load Reduction Percentage"
+    - name: "Pourcentage de réduction de la charge en cas de surfréquence"
       class: ""
       state_class: ""
       uom: "%"
@@ -211,7 +211,7 @@ parameters:
         value: "ON"
       icon: 'mdi:toggle-switch'
 
-    - name: "Island Protection Enable"
+    - name: "Activation de la protection en cas d'îlotage"
       class: ""
       state_class: ""
       uom: ""
@@ -221,12 +221,12 @@ parameters:
       isstr: true
       lookup:
       - key: 0
-        value: "Disabled"
+        value: "Désactivé"
       - key: 1
-        value: "Enabled"
+        value: "Activé"
       icon: 'mdi:island'
 
-    - name: "Overfrequency&Load-shedding Enable"
+    - name: "Activation de la réduction de charge en cas de surfréquence"
       class: ""
       state_class: ""
       uom: ""
@@ -236,14 +236,14 @@ parameters:
       isstr: true
       lookup:
       - key: 0
-        value: "Disabled"
+        value: "Désactivé"
       - key: 1
-        value: "Enabled"
+        value: "Activé"
       icon: 'mdi:toggle-switch'
 
   - group: Inverter
     items:
-    - name: "Running Status"
+    - name: "État de fonctionnement"
       class: ""
       state_class: ""
       uom: ""
@@ -253,18 +253,18 @@ parameters:
       isstr: true
       lookup:
       - key: 0
-        value: "Stand-by"
+        value: "Veille"
       - key: 1
-        value: "Self-check"
+        value: "Auto-contrôle"
       - key: 2
         value: "Normal"
       - key: 3
-        value: "Warning"
+        value: "Avertissement"
       - key: 4
-        value: "Fault"
+        value: "Erreur"
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Total AC Output Power (Active)"
+    - name: "Puissance active de sortie CA totale"
       class: "power"
       state_class: "measurement"
       uom: "W"
@@ -273,7 +273,7 @@ parameters:
       registers: [0x0056, 0x0057]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Radiator Temperature"
+    - name: "Température du radiateur"
       class: "temperature"
       uom: "°C"
       state_class: "measurement"
@@ -282,7 +282,7 @@ parameters:
       offset: 1000
       registers: [0x005a]
 
-    - name: "Inverter ID"
+    - name: "Identifiant de l'onduleur"
       class: ""
       state_class: ""
       uom: ""
@@ -291,7 +291,7 @@ parameters:
       registers: [0x0003,0x0004,0x0005,0x0006,0x0007]
       isstr: true
 
-    - name: "Hardware Version"
+    - name: "Version matérielle"
       class: ""
       state_class: ""
       uom: ""
@@ -300,7 +300,7 @@ parameters:
       registers: [0x000C]
       isstr: true
 
-    - name: "DC Master Firmware Version"
+    - name: "Version du firmware maître DC"
       class: ""
       state_class: ""
       uom: ""
@@ -309,7 +309,7 @@ parameters:
       registers: [0x000D]
       isstr: true
 
-    - name: "AC Version. Number"
+    - name: "Numéro de version du courant alternatif"
       class: ""
       state_class: ""
       uom: ""
@@ -318,7 +318,7 @@ parameters:
       registers: [0x000E]
       isstr: true
 
-    - name: "Rated Power"
+    - name: "Puissance nominale"
       class: "energy"
       state_class: ""
       uom: "W"
@@ -327,7 +327,7 @@ parameters:
       registers: [0x0010]
       icon: 'mdi:solar-power'
 
-    - name: "Communication Protocol Version"
+    - name: "Version du protocole de communication"
       class: ""
       state_class: ""
       uom: ""
@@ -336,7 +336,7 @@ parameters:
       registers: [0x0012]
       isstr: true
 
-    - name: "Start-up Self-checking Time "
+    - name: "Durée d'auto-vérification au démarrage "
       class: ""
       state_class: ""
       uom: "s"
@@ -345,7 +345,7 @@ parameters:
       registers: [0x0015]
       icon: 'mdi:solar-power'
 
-    - name: "Update Time"
+    - name: "Temps de mise à jour"
       class: ""
       state_class: ""
       uom: ""
@@ -354,7 +354,7 @@ parameters:
       registers: [0x0016,0x0017,0x0018]
       isstr: true
 
-    - name: "Soft Start Enable"
+    - name: "Activation du démarrage progressif"
       class: ""
       state_class: ""
       uom: ""
@@ -364,12 +364,12 @@ parameters:
       isstr: true
       lookup:
       - key: 0
-        value: "Disabled"
+        value: "Désactivé"
       - key: 1
-        value: "Enabled"
+        value: "Activé"
       icon: 'mdi:toggle-switch'
 
-    - name: "Power Factor Regulation"
+    - name: "Régulation du facteur de puissance"
       class: ""
       state_class: ""
       uom: ""
@@ -378,7 +378,7 @@ parameters:
       registers: [0x0032]
       icon: ''
 
-    - name: "Restore Factory Settings"
+    - name: "Restaurer les paramètres d'usine"
       class: ""
       state_class: ""
       uom: ""
@@ -388,7 +388,7 @@ parameters:
       isstr: true
       lookup:
       - key: 0
-        value: "Disabled"
+        value: "Désactivé"
       - key: 1
-        value: "Enabled"
+        value: "Activé"
       icon: 'mdi:factory'

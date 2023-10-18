@@ -32,18 +32,17 @@ try {
     ###################################################################################################################
       # Inverter selection
       case 'getInverterList':
-        $return = array();
-        $dir = '../../data/inverters/';
-        $dir = __DIR__;
-        $return = array_diff(scandir($dir), array('.', '..'));
-        ajax::success($return);
+//        $return = array();
+//        $return = solarman::getInvertersLists();
+//        log::add('solarman', 'error', 'test ' . var_dump($return));
+        ajax::success(solarman::getInvertersLists());
       break;
 
       # Rechargement des données Onduleur
       case 'razConfigInverter':
-        log::add('solarman', 'debug', ' Action: razConfigInverter fichier conf onduleur : ' . init('configInverter') . ' id équipement: ' . init('id'));
+//        log::add('solarman', 'debug', ' Action: razConfigInverter fichier conf onduleur : ' . init('configInverter') . ' id équipement: ' . init('id'));
         solarman::raz_ConfigInverter(init('configInverter'), init('id'));
-        ajax::success($return);
+        ajax::success();
         break;
 
     ###################################################################################################################

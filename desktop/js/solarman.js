@@ -121,34 +121,34 @@ $('.eqLogicAction[data-action=addSolarmanEq]').off('click').on('click', function
 		}}
 	});
 
+  /*
   opts = '<option value="">{{Aucun}}</option>';
   var inverters = ["Afore_BNTxxxKTL-2mppt", "deye_2mppt", "deye_4mppt", "deye_hybrid", "deye_sg04lp3", "deye_string", "hyd-zss-hp-3k-6k", "kstar_hybrid", "sofar_g3hyd", "sofar_hyd3k-6k-es", "sofar_lsw3", "sofar_wifikit", "solis_1p8k-5g", "solis_3p-4g", "solis_hybrid", "solis_s6-gr1p", "zcs_azzurro-ktl-v3"];
   for (var i in inverters) {
     opts += '<option value="' + inverters[i] + '.yaml">' + inverters[i] + '</option>';
   }
   $('#addSolarmanInverterSelector').html(opts);
+*/
 
-  /* à mettre au point
+  // à mettre au point
   $.ajax({// fonction permettant de faire de l'ajax
-    type: "POST", // methode de transmission des données au fichier php
+//    type: "POST", // methode de transmission des données au fichier php
     url: "plugins/solarman/core/ajax/solarman.ajax.php", // url du fichier php
     data: {
         action: "getInverterList",
     },
     dataType: 'json',
-    error: function(request, status, error) {
-        handleAjaxError(request, status, error);
-    },
-    success: function(data) { // si l'appel a bien fonctionné
-//      $.fn.showAlert({message: "{{gnagnagna !" + data + "}}", level: 'warning'});
+    error: function(error) {},
+    success: function(dataresult) { // si l'appel a bien fonctionné
       opts = '<option value="">{{Aucun}}</option>';
-      for (var i in data) {
-        opts += '<option value="' + data[i] + '">' + data[i] + '</option>';
+      for (var value1 in dataresult.result) {
+//        console.log(dataresult[value1]);
+        opts += '<option value="' + dataresult.result[value1] + '">' + dataresult.result[value1] + '</option>';
       }
       $('#addSolarmanInverterSelector').html(opts);
     }
   });
-  */
+  
 
 });
 

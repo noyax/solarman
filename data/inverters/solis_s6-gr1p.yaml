@@ -15,7 +15,7 @@ requests:
 parameters:
  - group: InverterStatus
    items:
-    - name: "Inverter Status"
+    - name: "État de l’onduleur"
       class: ""
       state_class: ""
       uom: ""
@@ -25,103 +25,103 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
       lookup: 
       -  key: 0x0
-         value: "Waiting State"
+         value: "État d’attente"
       -  key:  0x1
-         value: "Open Loop Operation"
+         value: "Fonctionnement en boucle ouverte"
       -  key: 0x2
-         value: "Soft Start"
+         value: "Démarrage progressif"
       -  key: 0x3
-         value: "On Grid/Generating"
+         value: "Sur le réseau/Génération"
       -  key: 0x1004
-         value: "Grid OverVoltage"         
+         value: "Surtension du réseau"         
       -  key: 0x1010
-         value: "Grid UnderVoltage"        
+         value: "Sous-tension du réseau"        
       -  key: 0x1012
-         value: "Grid OverFrequency"         
+         value: "Surfréquence de la grille"         
       -  key: 0x1013
-         value: "Grid UnderFrequency"          
+         value: "Sous-fréquence de la grille"          
       -  key: 0x1014
-         value: "Grid Imp too large"
+         value: "Grille Diablotin trop grande"
       -  key: 0x1015
-         value: "No Grid"         
+         value: "Pas de grille"         
       -  key: 0x1016
-         value: "Grid Imbalance"         
+         value: "Déséquilibre du réseau"         
       -  key: 0x1017
-         value: "Grid Freq Jitter"         
+         value: "Gigue de fréquence de grille"         
       -  key: 0x1018
-         value: "Grid Overcurrent"         
+         value: "Surintensité du réseau"         
       -  key: 0x1019
-         value: "Grid Tracking Fault"         
+         value: "Défaut de suivi du réseau"         
       -  key: 0x1020
-         value: "DC OverVoltage"         
+         value: "Surtension CC"         
       -  key: 0x1021
-         value: "DC Bus Overvoltage"
+         value: "Surtension du bus CC"
       -  key: 0x1022
-         value: "DC Bus Uneven Voltage"         
+         value: "Tension inégale du bus CC"         
       -  key: 0x1024
-         value: "DC Bus Uneven Voltage2"
+         value: "Tension inégale du bus CC2"
       -  key: 0x1025
-         value: "DC A path OverCurrent"
+         value: "Surintensité du chemin DC A"
       -  key: 0x1026
-         value: "DC B path OverCurrent"         
+         value: "Surintensité du chemin DC B"         
       -  key: 0x1027
-         value: "DC Input Disturbance"         
+         value: "Perturbation de l’entrée CC"         
       -  key: 0x1030
-         value: "Grid Disturbance"         
+         value: "Perturbation du réseau"         
       -  key: 0x1031
-         value: "DSP Initialization Protection "         
+         value: "DSP Protection de l’initialisation"         
       -  key: 0x1032
-         value: "Over Temp Protection"         
+         value: "Protection contre les surchauffes"         
       -  key: 0x1033
-         value: "PV Insulation Fault"         
+         value: "Défaut d’isolation PV"         
       -  key: 0x1034
-         value: "Leakage Current Protection"         
+         value: "Protection contre les courants de fuite"         
       -  key: 0x1035
-         value: "Relay Detection Protection"         
+         value: "Protection contre la détection de relais"         
       -  key: 0x1036
          value: "DSP_B Protection"         
       -  key: 0x1037
-         value: "DC Component too Large"         
+         value: "Composant CC trop grand"         
       -  key: 0x1038
-         value: "12v UnderVoltage Protection"         
+         value: "Protection contre les sous-tensions 12v"         
       -  key: 0x1039
-         value: "Under Temperature Protection"         
+         value: "Protection contre la température"         
       -  key: 0x1040
-         value: "Arc Self-Test Protection"         
+         value: "Protection contre l’auto-test de l’arc électrique"         
       -  key: 0x1041
-         value: "Arc Protection"         
+         value: "Protection contre les arcs électriques"         
       -  key: 0x1042
-         value: "DSP on-chip SRAM exception"         
+         value: "Exception SRAM DSP sur puce"         
       -  key: 0x1043
-         value: "DSP on-chip FLASH exception"
+         value: "Exception FLASH DSP sur puce"
       -  key: 0x1044
-         value: "DSP on-chip PC pointer is abnormal"        
+         value: "Le pointeur PC DSP sur puce est anormal"        
       -  key: 0x1045
-         value: "DSP key register exception"
+         value: "Exception de registre de clé DSP"
       -  key: 0x1046
-         value: "Grid disturbance 02"         
+         value: "Perturbation du réseau 02"         
       -  key: 0x1047
-         value: "Grid current sampling abnormality"         
+         value: "Anomalie d’échantillonnage du courant de grille"         
       -  key: 0x1048
-         value: "IGBT overcurrent"
+         value: "Surintensité IGBT"
       -  key: 0x1050
-         value: "Network current transient overcurrent"         
+         value: "Surintensité transitoire de courant réseau"         
       -  key: 0x1051
-         value: "Battery overvoltage hardware failure"         
+         value: "Défaillance matérielle de surtension de la batterie"         
       -  key: 0x1052
-         value: "LLC hardware overcurrent"         
+         value: "Surintensité matérielle LLC"         
       -  key: 0x1053
-         value: "Battery overvoltage detection"         
+         value: "Détection de surtension de la batterie"         
       -  key: 0x1054
-         value: "Battery undervoltage detection"         
+         value: "Détection de sous-tension de la batterie"         
       -  key: 0x1055
-         value: "Battery no connected"         
+         value: "Batterie non connectée"         
       -  key: 0x1056
-         value: "Bypass overvoltage fault"         
+         value: "Défaut de surtension de dérivation"         
       -  key: 0x1057
-         value: "Bypass overload fault"        
+         value: "Défaut de surcharge de dérivation"        
 
-    - name: "Operating Status"
+    - name: "État de fonctionnement"
       class: ""
       state_class: ""
       uom: ""
@@ -131,23 +131,23 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
       lookup: 
       -  key: 0x1
-         value: "Normal Operation"
+         value: "Fonctionnement normal"
       -  key: 0x2
-         value: "Initial Standby"
+         value: "Mise en veille initiale"
       -  key: 0x4
-         value: "Control Shutdown"
+         value: "Arrêt de la commande"
       -  key: 0x8
-         value: "Downtime"
+         value: "Temps d'arrêt"
       -  key: 0x10
-         value: "Standby"         
+         value: "Veille"         
       -  key: 0x20
-         value: "Derating Operation"        
+         value: "Opération de déclassement"        
       -  key: 0x40
-         value: "Limit Operation"      
+         value: "Limiter l’opération"      
       -  key: 0x80
-         value: "Bypass Overload" 
+         value: "Dériver la surcharge" 
 
-    - name: "Inverter Temperature"
+    - name: "Température de l’onduleur"
       class: "temperature"
       state_class: "measurement"
       uom: "°C"
@@ -158,7 +158,7 @@ parameters:
       
 # Sensors below are outside of modbus request ranges.
 # If enabling, ensure to amend the request start register.
-#    - name: "Inverter ID"
+#    - name: "ID de l’onduleur"
 #      class: ""
 #      state_class: ""
 #      uom: ""
@@ -167,7 +167,7 @@ parameters:
 #      registers: [33004,33005,33006,33007,33008,33009,33010,33011,33012,33013,33014,33015,33016,33017,33018,33019]
 #      isstr: true
 
-#    - name: "Product Model"
+#    - name: "Modèle de produit"
 #      class: ""
 #     state_class: ""
 #     uom: ""
@@ -176,7 +176,7 @@ parameters:
 #      registers: [2999]
 #      isstr: true
 
-#    - name: "DSP Software Version"
+#    - name: "Version du logiciel DSP"
 #      class: ""
 #      state_class: ""
 #      uom: ""
@@ -185,7 +185,7 @@ parameters:
 #     registers: [3000]
 #      isstr: true
 
-#    - name: "LCD Software Version"
+#    - name: "Version du logiciel LCD"
 #      class: ""
 #      state_class: ""
 #      uom: ""
@@ -196,7 +196,7 @@ parameters:
 
  - group: InverterDC
    items:
-    - name: "PV1 Voltage"
+    - name: "Tension PV1"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -205,7 +205,7 @@ parameters:
       registers: [3021]
       icon: 'mdi:solar-power'
 
-    - name: "PV2 Voltage"
+    - name: "Tension PV2"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -214,7 +214,7 @@ parameters:
       registers: [3023]
       icon: 'mdi:solar-power'
 
-    - name: "PV1 Current"
+    - name: "Courant PV1"
       class: "current"
       uom: "A"
       scale: 0.1
@@ -222,7 +222,7 @@ parameters:
       registers: [3022]
       icon: 'mdi:current-dc'
 
-    - name: "PV2 Current"
+    - name: "Courant PV2"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -231,7 +231,7 @@ parameters:
       registers: [3024]
       icon: 'mdi:current-dc'
 
-    - name: "Total DC Power"
+    - name: "Puissance CC totale"
       class: "power"
       state_class: "measurement"
       uom: "kW"
@@ -242,7 +242,7 @@ parameters:
 
  - group: InverterAC
    items:
-    - name: "Inverter AC Power"
+    - name: "Alimentation CA de l’onduleur"
       class: "power"
       state_class: "measurement"
       uom: "W"
@@ -251,7 +251,7 @@ parameters:
       registers: [3005, 3004]
       icon: 'mdi:solar-power'
 
-    - name: "Inverter Voltage"
+    - name: "Tension de l’onduleur"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -260,7 +260,7 @@ parameters:
       registers: [3035]
       icon: 'mdi:transmission-tower'
 
-    - name: "Inverter Current"
+    - name: "Courant de l’onduleur"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -269,7 +269,7 @@ parameters:
       registers: [3038]
       icon: 'mdi:current-ac'
 
-    - name: "Inverter Frequency"
+    - name: "Fréquence de l’onduleur"
       class: "frequency"
       state_class: "measurement"
       uom: "Hz"
@@ -280,7 +280,7 @@ parameters:
 
  - group: Generation
    items:
-    - name: "Daily Generation"
+    - name: "Génération quotidienne"
       class: "energy"
       state_class: "measurement"
       uom: "kWh"
@@ -289,7 +289,7 @@ parameters:
       registers: [3014]
       icon: 'mdi:solar-power'
 
-    - name: "Monthly Generation"
+    - name: "Génération mensuelle"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -298,7 +298,7 @@ parameters:
       registers: [3011, 3010]
       icon: 'mdi:solar-power'
 
-    - name: "Yearly Generation"
+    - name: "Génération annuelle"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -307,7 +307,7 @@ parameters:
       registers: [3017, 3016]
       icon: 'mdi:solar-power'
 
-    - name: "Total Generation"
+    - name: "Production totale"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
