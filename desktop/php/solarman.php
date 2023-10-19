@@ -230,6 +230,15 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 								<div class="col-sm-8">
 									<a class="btn btn-warning raz_configInverter" data-choix="raz_configInverter"><i class="fas fa-cogs"></i> {{Rechargement des paramètres de l'onduleur (modification config, suppression par erreur de commande, ...)}}</a>
 								</div>
+								</div>
+							<br><br>
+							<div class="form-group">
+								<div class="col-sm-2">
+									<span> </span>
+								</div>
+								<div class="col-sm-8">
+									<a class="btn btn-success maj_commandes" data-choix="maj_commandes"><i class="fas fa-cogs"></i> {{Mise à jour de la valeur des commandes de l'onduleur}}</a>
+								</div>
 							</div>
 						</div>
 
@@ -293,6 +302,25 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
                 }
             	});
 	        });
+
+	        $('.maj_commandes').on('click', function () {
+				$.ajax({// fonction permettant de faire de l'ajax
+                type: "POST", // methode de transmission des données au fichier php
+                url: "plugins/solarman/core/ajax/solarman.ajax.php", // url du fichier php
+                data: {
+                    action: "majCommandes",
+					id: $('.eqLogicAttr[data-l1key=id]').value()
+                },
+                dataType: 'json',
+                error: function (request, status, error) {
+                    handleAjaxError(request, status, error);
+                },
+                success: function (data) { // si l'appel a bien fonctionné
+                    $.fn.showAlert({message: '{{Actualisation des données réussie}}', level: 'success'});
+                }
+            	});
+	        });
+
 </script>
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->

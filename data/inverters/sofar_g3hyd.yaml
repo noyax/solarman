@@ -16,7 +16,7 @@ requests:
     end: 0x0589
     mb_functioncode: 0x03
   - start: 0x0604
-    end: 0x060A
+    end: 0x060A # end of first battery after this continue battery pack 2,3,4
     mb_functioncode: 0x03
   - start: 0x0684
     end: 0x069B
@@ -620,7 +620,7 @@ parameters:
         rule: 1
         registers: [ 0x0507 ]
         icon: 'mdi:home-lightning-bolt'
-      - name: ""Tension de sortie de la phase R de l'alimentation électrique sans interruption (EPS)"
+      - name: "Tension de sortie de la phase R de l'alimentation électrique sans interruption (EPS)"
         class: "voltage"
         state_class: "measurement"
         uom: "V"

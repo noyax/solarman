@@ -28,9 +28,22 @@ Besoin d'explications? Ok, alors une fois le plugin installé faites une mise à
 
 Configuration générale du plugin
 ===
-![Config générale](config_plugin.png)
+![Config générale](recherche.png)
 
-Rien de particulier. Un champ non accessible pour une éventuelle évolution mais pas certain qu'elle voit le jour.
+<br>
+<br>
+Un bouton permet de chercher sur le réseau les onduleurs qui s'y trouvent:
+<br>
+
+Pour rechercher: cliquer sur 1, si le bouton de log 3 n'apparait pas alors cliquer sur 4 et enfin cliquer sur le bouton 3.
+
+Voici le genre de log que vous verrez apparaitre:
+
+![Log recherche réseau](log_recherche.png)
+
+Vous n'aurez plus qu'à copier l'adresse IP et le serial dans la configuration de votre onduleur.
+
+Rien de particulier en plus. Un champ non accessible pour une éventuelle évolution mais pas certain qu'elle voit le jour.
 
 <br>
 <br>

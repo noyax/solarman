@@ -54,6 +54,7 @@ if (isset($result['device'])) {
     }
 }
 
+
 function array_flatten($array) {
     global $var_to_log;
     $return = array();

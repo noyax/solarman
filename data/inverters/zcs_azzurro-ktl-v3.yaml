@@ -215,7 +215,7 @@ parameters:
         icon: 'mdi:wrench'
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID01 Protection contre les surtensions du réseau'
           - key: 2
@@ -260,7 +260,7 @@ parameters:
         registers: [0x0406]
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID17 Erreur d’échantillonnage du courant de grille'
           - key: 2
@@ -305,7 +305,7 @@ parameters:
         registers: [0x0407]
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID033 Erreur de communication SPI (côté CC)'
           - key: 2
@@ -350,7 +350,7 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID049 Protection contre la température de la batterie'
           - key: 2
@@ -395,7 +395,7 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID065 Déséquilibre RMS de la tension du bus'
           - key: 2
@@ -440,7 +440,7 @@ parameters:
         registers: [0x040A]
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID081 Battery overcurrent software protection'
           - key: 2
@@ -485,7 +485,7 @@ parameters:
         registers: [0x040B]
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID097 Surtension matérielle du bus LLC'
           - key: 2
@@ -530,7 +530,7 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID113 Déclassement en cas de surchauffe'
           - key: 2
@@ -575,7 +575,7 @@ parameters:
         registers: [0x040D]
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID129 Défaut permanent de surintensité matérielle de sortie'
           - key: 2
@@ -620,7 +620,7 @@ parameters:
         registers: [0x040E]
         lookup:
           - key: 0
-            value: 'pas d'erreur'
+            value: "pas d'erreur"
           - key: 1
             value: 'ID145 Défaut USB'
           - key: 2
@@ -665,7 +665,7 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID161 Arrêt forcé'
           - key: 2
@@ -710,7 +710,7 @@ parameters:
         isstr: true
         lookup:
           - key: 0
-            value: 'Pas d'erreur'
+            value: "Pas d'erreur"
           - key: 1
             value: 'ID177 Alarme de surtension BMS'
           - key: 2

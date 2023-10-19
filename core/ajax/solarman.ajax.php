@@ -44,6 +44,17 @@ try {
         solarman::raz_ConfigInverter(init('configInverter'), init('id'));
         ajax::success();
         break;
+        
+
+        case 'majCommandes':
+        solarman::majCommandes(init('id'));
+        ajax::success();
+        break;
+          
+        case 'rechercheOndul':
+          solarman::searchSolarman();
+          ajax::success();
+          break;
 
     ###################################################################################################################
 

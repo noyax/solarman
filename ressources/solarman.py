@@ -42,7 +42,7 @@ QUERY_RETRY_ATTEMPTS = 2
 
 def lire():
 	pid = str(os.getpid())
-	with open(globals.path + globals.lookup_file) as f:
+	with open('/var/www/html/plugins/solarman/data/inverters/' + globals.lookup_file) as f:
 		parameter_definition = yaml.full_load(f)
 	
 	result = 1
@@ -138,7 +138,7 @@ globals.log_level = args.loglevel
 globals.callback = args.callback
 globals.cycle_sommeil = args.cyclesommeil
 globals.cycle = args.cycle
-globals.inverter_name = args.nameonduleur
+globals.inverter_name = str(args.nameonduleur)
 globals.lookup_file = args.configonduleur
 globals.ideqpmnt = args.idonduleur
 globals.inverter_host = args.ipclewifi
