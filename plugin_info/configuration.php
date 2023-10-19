@@ -44,6 +44,12 @@ try {
     <div class="configGenerale">
       <legend><i class="icon fas fa-warning"></i> {{Options du Plugin}}</legend>
       <div class="form-group">
+        <label class="col-sm-4 control-label">{{Recherche d'onduleurs}}</label>
+        <div class="col-sm-8">
+          <a class="btn btn-warning recherche_ondul" data-choix="recherche_ondul"><i class="fas fa-cogs"></i> {{Scanner le réseau pour trouver les onduleurs qui y sont présents (résultats dans le log "Solarman_recherche_reseau")}}</a>
+        </div>
+      </div>
+      <div class="form-group">
           <label class="col-lg-4 control-label">{{Cycle d'interrogation des onduleurs (en minute)}}</label>
           <div class="col-lg-2">
               <input class="configKey form-control" data-l1key="cron" placeholder="{{non utilisé, saisir en cron de l'équipement}}" disabled="disabled"/>
@@ -67,3 +73,28 @@ try {
   </fieldset>
 
 </form>
+
+<script>
+      $('.recherche_ondul').on('click', function () {
+				$.ajax({// fonction permettant de faire de l'ajax
+                type: "POST", // methode de transmission des données au fichier php
+                url: "plugins/solarman/core/ajax/solarman.ajax.php", // url du fichier php
+                data: {
+                    action: "rechercheOndul",
+					id: $('.eqLogicAttr[data-l1key=id]').value()
+                },
+                dataType: 'json',
+                error: function (request, status, error) {
+                    handleAjaxError(request, status, error);
+                },
+                success: function (data) { // si l'appel a bien fonctionné
+                    $.fn.showAlert({message: "{{Recherches terminées, aller voir le résultat dans les log 'Solarman_recherche_reseau' }}", level: 'success'});
+                }
+            	});
+	    });
+
+</script>
+
+<!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
+<?php include_file('desktop', 'solarman', 'js', 'solarman'); ?>
+

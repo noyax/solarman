@@ -15,7 +15,7 @@ requests:
 parameters:
  - group: Inverter
    items:
-    - name: "Working Mode"
+    - name: "Mode de fonctionnement"
       class: ""
       state_class: ""
       uom: ""
@@ -25,21 +25,21 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
       lookup:
           - key: 0
-            value: "No response mode"
+            value: "Pas de mode de réponse"
           - key: 1
-            value: "Volt–watt default"
+            value: "Volt-watt par défaut"
           - key: 2
             value: "Volt–var"
           - key: 3
-            value: "Fixed power factor"
+            value: "Facteur de puissance fixe"
           - key: 4
-            value: "Fix reactive power"
+            value: "Fixer la puissance réactive"
           - key: 5
-            value: "Power-PF"
+            value: "Puissance-PF"
           - key: 6
-            value: "Rule21Volt–watt"
+            value: "Règle21Volt–watt"
 
-    - name: "Grid status"
+    - name: "État de "
       class: ""
       state_class: ""
       uom: ""
@@ -48,7 +48,7 @@ parameters:
       registers: [4999]
       icon: 'mdi:home-lightning-bolt'
 
-    - name: "Inverter Temperature"
+    - name: "Température de l’onduleur"
       class: "temperature"
       state_class: "measurement"
       uom: "°C"
@@ -57,7 +57,7 @@ parameters:
       registers: [3041]
       icon: 'mdi:thermometer'
 
-    - name: "Product Model"
+    - name: "Modèle de produit"
       class: ""
       state_class: ""
       uom: ""
@@ -66,7 +66,7 @@ parameters:
       registers: [2999]
       isstr: true
 
-    - name: "DSP Software Version"
+    - name: "Version du logiciel DSP"
       class: ""
       state_class: ""
       uom: ""
@@ -75,7 +75,7 @@ parameters:
       registers: [3000]
       isstr: true
 
-    - name: "LCD Software Version"
+    - name: "Version du logiciel LCD"
       class: ""
       state_class: ""
       uom: ""
@@ -84,7 +84,7 @@ parameters:
       registers: [3001]
       isstr: true
 
-    - name: "Inverter Status"
+    - name: "État de l’onduleur"
       class: ""
       state_class: ""
       uom: ""
@@ -95,21 +95,21 @@ parameters:
       isstr: true
       lookup:
         - key: 0
-          value: "Waiting"
+          value: "Attente"
         - key: 1
-          value: "OpenRun"
+          value: "Ouvrir l’exécution"
         - key: 2
-          value: "SoftRun"
+          value: "Course en douceur"
         - key: 3
-          value: "Generating"
+          value: "Générer"
         - key: 1004
-          value: "Grid off"
+          value: "Grille désactivée"
         - key: 2011
-          value: "Fail Safe"
+          value: "Sécurité intégrée"
 
  - group: InverterDC
    items:
-    - name: "DC Voltage 1"
+    - name: "Tension continue 1"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -118,7 +118,7 @@ parameters:
       registers: [3021]
       icon: 'mdi:solar-power'
 
-    - name: "DC Voltage 2"
+    - name: "Tension CC 2"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -127,7 +127,7 @@ parameters:
       registers: [3023]
       icon: 'mdi:solar-power'
 
-    - name: "DC Current 1"
+    - name: "Courant continu 1"
       class: "current"
       uom: "A"
       scale: 0.1
@@ -135,7 +135,7 @@ parameters:
       registers: [3022]
       icon: 'mdi:current-dc'
 
-    - name: "DC Current 2"
+    - name: "Courant continu 2"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -144,7 +144,7 @@ parameters:
       registers: [3024]
       icon: 'mdi:current-dc'
 
-    - name: "Total DC Power"
+    - name: "Puissance CC totale"
       class: "power"
       state_class: "measurement"
       uom: "kW"
@@ -155,7 +155,7 @@ parameters:
 
  - group: InverterAC
    items:
-    - name: "Active power"
+    - name: "Puissance active"
       class: "power"
       state_class: "measurement"
       uom: "kW"
@@ -165,7 +165,7 @@ parameters:
       icon: 'mdi:solar-power'
 
    
-    - name: "Inverter AC Power"
+    - name: "Alimentation CA de l’onduleur"
       class: "power"
       state_class: "measurement"
       uom: "kW"
@@ -174,7 +174,7 @@ parameters:
       registers: [3005, 3004]
       icon: 'mdi:solar-power'
 
-    - name: "A phase voltage"
+    - name: "Une tension de phase"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -183,7 +183,7 @@ parameters:
       registers: [3033]
       icon: 'mdi:transmission-tower'
 
-    - name: "B phase voltage"
+    - name: "Tension de phase B"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -192,7 +192,7 @@ parameters:
       registers: [3034]
       icon: 'mdi:transmission-tower'
 
-    - name: "C phase voltage"
+    - name: "Tension de phase C"
       class: "voltage"
       state_class: "measurement"
       uom: "V"
@@ -201,7 +201,7 @@ parameters:
       registers: [3035]
       icon: 'mdi:transmission-tower'
 
-    - name: "A phase current"
+    - name: "Un courant de phase"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -210,7 +210,7 @@ parameters:
       registers: [3036]
       icon: 'mdi:current-ac'
 
-    - name: "B phase current"
+    - name: "Courant de phase B"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -219,7 +219,7 @@ parameters:
       registers: [3037]
       icon: 'mdi:current-ac'
 
-    - name: "C phase current"
+    - name: "Courant de phase C"
       class: "current"
       state_class: "measurement"
       uom: "A"
@@ -229,7 +229,7 @@ parameters:
       icon: 'mdi:current-ac'
 
 
-    - name: "Inverter Frequency"
+    - name: "Fréquence de l’onduleur"
       class: "frequency"
       state_class: "measurement"
       uom: "Hz"
@@ -240,7 +240,7 @@ parameters:
 
  - group: Generation
    items:
-    - name: "Daily Generation"
+    - name: "Génération quotidienne"
       class: "energy"
       state_class: "measurement"
       uom: "kWh"
@@ -249,7 +249,7 @@ parameters:
       registers: [3014]
       icon: 'mdi:solar-power'
 
-    - name: "Monthly Generation"
+    - name: "Génération mensuelle"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -258,7 +258,7 @@ parameters:
       registers: [3011, 3010]
       icon: 'mdi:solar-power'
 
-    - name: "Yearly Generation"
+    - name: "Génération annuelle"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"
@@ -267,7 +267,7 @@ parameters:
       registers: [3017, 3016]
       icon: 'mdi:solar-power'
 
-    - name: "Total Generation"
+    - name: "Production totale"
       class: "energy"
       state_class: "total_increasing"
       uom: "kWh"

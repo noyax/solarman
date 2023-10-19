@@ -39,51 +39,28 @@ $var_to_log = '';
 
 if (isset($result['device'])) {
     foreach ($result['device'] as $key => $data) {
-            log::add('solarman','debug','This is a message from solarman program ' . $key);
-    		$eqlogic = solarman::byLogicalId($data['device'], 'solarman');
-    		if (is_object($eqlogic)) {
-                $healthCmd = $eqlogic->getCmd('info','health');
-                $healthEnable = false;
-                if (is_object($healthCmd)) {
-                    $healthEnable = true;
-                }
-                $flattenResults = array_flatten($data);
-                foreach ($flattenResults as $key => $value) {
-                    $cmd = $eqlogic->getCmd('info',$key);
-                    if ($cmd === false) {
-                        if($key != 'device'){
-                            solarman::createCmdFromDef($eqlogic->getLogicalId(), $key, $value);
-                            if($healthEnable) {
-                                $healthCmd->setConfiguration($key, array("name" => $key, "value" => $value, "update_time" => date("Y-m-d H:i:s")));
-                                $healthCmd->save();
-                            }
-                        }
-                    }
-                    else{
-                        $cmd->event($value);
-                        if($healthEnable) {
-                            $healthCmd->setConfiguration($key, array("name" => $key, "value" => $value, "update_time" => date("Y-m-d H:i:s")));
-                            $healthCmd->save();
-                        }
-                    }
+        log::add('solarman','debug',"This is a message from solarman program. Id de l'équipement : " . $key);
+        $eqlogic = eqLogic::byId(intval($key), 'solarman');
+        //if (is_object($eqlogic)) {
+            $flattenResults = array_flatten($data);
+            foreach ($flattenResults as $key => $value) {
+                log::add('solarman','debug','Clé décodée en hexa : ' . $key . ' en décimal : ' . intval($key,0) . ' = ' . $value);
+                $cmd = $eqlogic->getCmd('info',intval($key,0));
+                if (is_object($cmd)){
+                    $cmd->event($value);
                 }
             }
-            else {
-                $solarman = ($data['device'] != '') ? solarman::createFromDef($data['device']) : solarman::createFromDef($data['device']);
-                if (!is_object($solarman)) {
-                    log::add('solarman', 'info', 'Aucun équipement trouvé pour le compteur n°' . $data['device']);
-                    die();
-                }
-            }
-            log::add('solarman','debug',$var_to_log);
-        }
+        //}
     }
+}
+
 
 function array_flatten($array) {
     global $var_to_log;
     $return = array();
     foreach ($array as $key => $value) {
         $var_to_log = $var_to_log . $key . '=' . $value . '|';
+        
         if (is_array($value))
             $return = array_merge($return, array_flatten($value));
         else
@@ -91,3 +68,4 @@ function array_flatten($array) {
     }
     return $return;
 }
+ 

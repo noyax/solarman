@@ -1,7 +1,7 @@
 {
   "pip3" :{
     "pyyaml" : {},
-    "pysolarmanv5" : {}
+    "umodbus" : {}
   },
   "npm": {
     "js-yaml" : {}

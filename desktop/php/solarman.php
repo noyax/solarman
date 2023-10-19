@@ -178,12 +178,31 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 							</div>
 							<div class="form-group">
 								<label class="col-sm-4 control-label">{{Port utilisé par votre clé wifi}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé}}"></i></sup>
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé, en général 8899}}"></i></sup>
 								</label>
 								<div class="col-sm-6">
 									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="portCleWifi">
 								</div>
-								<label class="col-sm-10 control-label">{{Pour trouver le port aller sur http://Adresse_Ip_De_Votre_clé_wifi/config_hide.html (utilisateur et mot de passe =admin)}} </label>
+								<label class="col-sm-10 control-label">{{Pour trouver le port, en général 8899, aller sur http://Adresse_Ip_De_Votre_clé_wifi/config_hide.html (utilisateur et mot de passe = "admin")}} </label>
+							</div>
+							<br><br>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Numéro de série de votre clé wifi}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre clé}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="serialCleWifi">
+								</div>
+								<label class="col-sm-10 control-label">{{Pour trouver le numéro de série aller sur http://Adresse_Ip_De_Votre_clé_wifi/ (dans "STATUS" puis "Device Informations")}} </label>
+							</div>
+							<br><br>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Modbus Slave ID}}
+									<sup><i class="fas fa-question-circle tooltips" title="{{A chercher dans les config de votre onduleur, en général 1}}"></i></sup>
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="mbSlaveId" placeholder="{{1}}">
+								</div>
 							</div>
 							<!-- Exemple de champ de saisie du cron d'auto-actualisation avec assistant -->
 							<!-- La fonction cron de la classe du plugin doit contenir le code prévu pour que ce champ soit fonctionnel -->
@@ -200,14 +219,25 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 											</a>
 										</span>
 									</div>
+									<label class="col-sm-12 control-label">{{Seuls les auto actualisation à 1, 5, 10, 15 et 30 minutes sont fonctionnelles}} </label>
 								</div>
 							</div>
+							<br><br>
 							<div class="form-group">
 								<div class="col-sm-2">
 									<span> </span>
 								</div>
 								<div class="col-sm-8">
 									<a class="btn btn-warning raz_configInverter" data-choix="raz_configInverter"><i class="fas fa-cogs"></i> {{Rechargement des paramètres de l'onduleur (modification config, suppression par erreur de commande, ...)}}</a>
+								</div>
+								</div>
+							<br><br>
+							<div class="form-group">
+								<div class="col-sm-2">
+									<span> </span>
+								</div>
+								<div class="col-sm-8">
+									<a class="btn btn-success maj_commandes" data-choix="maj_commandes"><i class="fas fa-cogs"></i> {{Mise à jour de la valeur des commandes de l'onduleur}}</a>
 								</div>
 							</div>
 						</div>
@@ -272,6 +302,25 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
                 }
             	});
 	        });
+
+	        $('.maj_commandes').on('click', function () {
+				$.ajax({// fonction permettant de faire de l'ajax
+                type: "POST", // methode de transmission des données au fichier php
+                url: "plugins/solarman/core/ajax/solarman.ajax.php", // url du fichier php
+                data: {
+                    action: "majCommandes",
+					id: $('.eqLogicAttr[data-l1key=id]').value()
+                },
+                dataType: 'json',
+                error: function (request, status, error) {
+                    handleAjaxError(request, status, error);
+                },
+                success: function (data) { // si l'appel a bien fonctionné
+                    $.fn.showAlert({message: '{{Actualisation des données réussie}}', level: 'success'});
+                }
+            	});
+	        });
+
 </script>
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->

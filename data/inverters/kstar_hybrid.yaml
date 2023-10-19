@@ -38,7 +38,7 @@ requests:
 parameters:
   - group: solar
     items:
-      - name: "PV1 Voltage"
+      - name: "Tension PV1"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -47,7 +47,7 @@ parameters:
         registers: [ 3000 ]
         icon: 'mdi:solar-power'
 
-      - name: "PV2 Voltage"
+      - name: "Tension PV2"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -56,7 +56,7 @@ parameters:
         registers: [ 3001 ]
         icon: 'mdi:solar-power'
 
-      - name: "PV1 Current"
+      - name: "Courant PV1"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -65,7 +65,7 @@ parameters:
         registers: [ 3012 ]
         icon: 'mdi:solar-power'
 
-      - name: "PV2 Current"
+      - name: "Courant PV2"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -74,7 +74,7 @@ parameters:
         registers: [ 3013 ]
         icon: 'mdi:solar-power'
 
-      - name: "PV1 Power"
+      - name: "Puissance PV1"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -83,7 +83,7 @@ parameters:
         registers: [ 3024 ]
         icon: 'mdi:solar-power'
 
-      - name: "PV2 Power"
+      - name: "Puissance PV2"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -92,7 +92,7 @@ parameters:
         registers: [ 3025 ]
         icon: 'mdi:solar-power'
 
-      - name: "Daily Production"
+      - name: "Production quotidienne"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -101,7 +101,7 @@ parameters:
         registers: [ 3036 ]
         icon: 'mdi:solar-power'
 
-      - name: "Monthly Production"
+      - name: "Production mensuelle"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -110,7 +110,7 @@ parameters:
         registers: [ 3038, 3037 ]
         icon: 'mdi:solar-power'
 
-      - name: "Yearly Production"
+      - name: "Production annuelle"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -119,7 +119,7 @@ parameters:
         registers: [ 3040, 3039 ]
         icon: 'mdi:solar-power'
 
-      - name: "Cumulative Production"
+      - name: "Production cumulée"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -128,7 +128,7 @@ parameters:
         registers: [ 3042, 3041 ]
         icon: 'mdi:solar-power'
 
-  - group: Power Grid
+  - group: Réseau électrique
     items:
       # Should this be the sum of the 3 phases "Meter Power"?
       - name: "Total Grid Power"
@@ -140,7 +140,7 @@ parameters:
         registers: [ 3100 ]
         icon: 'mdi:transmission-tower'
 
-      - name: "Daily Energy Purchased"
+      - name: "Énergie quotidienne achetée"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -149,7 +149,7 @@ parameters:
         registers: [ 3109 ]
         icon: 'mdi:transmission-tower-import'
 
-      - name: "Monthly Energy Purchased"
+      - name: "Consommation mensuelle d’énergie achetée"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -158,7 +158,7 @@ parameters:
         registers: [ 3111, 3110 ]
         icon: 'mdi:transmission-tower-import'
 
-      - name: "Yearly Energy Purchased"
+      - name: "Énergie annuelle achetée"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -167,7 +167,7 @@ parameters:
         registers: [ 3113, 3112 ]
         icon: 'mdi:transmission-tower-import'
 
-      - name: "Cumulative Energy Purchased"
+      - name: "Énergie cumulée achetée"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -176,7 +176,7 @@ parameters:
         registers: [ 3115, 3114 ]
         icon: 'mdi:transmission-tower-import'
 
-      - name: "Daily Energy Feed-In"
+      - name: "Apport quotidien d’énergie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -185,7 +185,7 @@ parameters:
         registers: [ 3116 ]
         icon: 'mdi:transmission-tower-export'
 
-      - name: "Monthly Energy Feed-In"
+      - name: "Injection mensuelle d’énergie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -194,7 +194,7 @@ parameters:
         registers: [ 3118, 3117 ]
         icon: 'mdi:transmission-tower-export'
 
-      - name: "Yearly Energy Feed-In"
+      - name: "Apport annuel d’énergie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -203,7 +203,7 @@ parameters:
         registers: [ 3120, 3119 ]
         icon: 'mdi:transmission-tower-export'
 
-      - name: "Cumulative Grid Feed-In"
+      - name: "Injection cumulative du réseau"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -215,7 +215,7 @@ parameters:
   - group: Electricity Consumption
     items:
       # Should this be the sum of the 3 phases "Load Power"?
-      - name: "Total Consumption Power"
+      - name: "Puissance de consommation totale"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -224,7 +224,7 @@ parameters:
         registers: [ 3144 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Daily Consumption"
+      - name: "Consommation quotidienne"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -233,7 +233,7 @@ parameters:
         registers: [ 3147 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Monthly Consumption"
+      - name: "Consommation mensuelle"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -242,7 +242,7 @@ parameters:
         registers: [ 3149, 3148 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Yearly Consumption"
+      - name: "Consommation annuelle"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -251,7 +251,7 @@ parameters:
         registers: [ 3151, 3150 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Cumulative Consumption"
+      - name: "Consommation cumulée"
         class: "energy"
         state_class: "total"
         uom: "kWh"
@@ -262,7 +262,7 @@ parameters:
 
   - group: Battery
     items:
-      - name: "Battery Type"
+      - name: "Type de batterie"
         class: "battery"
         state_class: "measurement"
         uom: ''
@@ -272,11 +272,11 @@ parameters:
         icon: 'mdi:battery'
         lookup:
         - key: 1
-          value: "Lead-Acid"
+          value: "Plomb-acide"
         - key: 6
           value: "LFP"
 
-      - name: "Battery Voltage"
+      - name: "Tension de la batterie"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -285,7 +285,7 @@ parameters:
         registers: [ 3063 ]
         icon: 'mdi:battery-charging'
 
-      - name: "Battery Current"
+      - name: "Courant de la batterie"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -294,7 +294,7 @@ parameters:
         registers: [ 3064 ]
         icon: 'mdi:battery-charging-10'
 
-      - name: "Battery Power"
+      - name: "Alimentation par batterie"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -303,7 +303,7 @@ parameters:
         registers: [ 3065 ]
         icon: 'mdi:battery-charging-high'
 
-      - name: "Battery SoC"
+      - name: "SoC de batterie"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -312,7 +312,7 @@ parameters:
         registers: [ 3066 ]
         icon: 'mdi:battery'
 
-      - name: "Battery Temperature"
+      - name: "Température de la batterie"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -321,7 +321,7 @@ parameters:
         registers: [ 3067 ]
         icon: 'mdi:battery-heart-outline'
 
-      - name: "Battery Discharge Capacity Depth"
+      - name: "Profondeur de capacité de décharge de la batterie"
         class: "battery"
         state_class: "measurement"
         uom: "%"
@@ -333,7 +333,7 @@ parameters:
           min: 10
           max: 95
 
-      - name: "Battery Radiator Temperature"
+      - name: "Température du radiateur de la batterie"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -342,7 +342,7 @@ parameters:
         registers: [ 3056 ]
         icon: 'mdi:battery-heart-outline'
 
-      - name: "Battery Total Discharge"
+      - name: "Décharge totale de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -351,7 +351,7 @@ parameters:
         registers: [ 3293, 3292 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Daily Discharge"
+      - name: "Décharge quotidienne de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -360,7 +360,7 @@ parameters:
         registers: [ 3294 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Total Charge"
+      - name: "Charge totale de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -369,7 +369,7 @@ parameters:
         registers: [ 3300, 3299 ]
         icon: 'mdi:battery-minus-variant'
 
-      - name: "Battery Daily Charge"
+      - name: "Charge quotidienne de la batterie"
         class: "energy"
         state_class: "total_increasing"
         uom: "kWh"
@@ -380,7 +380,7 @@ parameters:
 
   - group: Inverter Information
     items:
-      - name: "Inverter Working Mode"
+      - name: "Mode de fonctionnement de l’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -389,14 +389,14 @@ parameters:
         registers: [3044]
         lookup:
         - key: 0
-          value: "Self Consumption"
+          value: "Autoconsommation"
         - key: 1
-          value: "Peak Shift"
+          value: "Décalage de pointe"
         - key: 2
-          value: "Battery Priority"
+          value: "Priorité à la batterie"
         icon: 'mdi:wrench'
 
-      - name: "Inverter Model"
+      - name: "Modèle d’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -446,7 +446,7 @@ parameters:
           value: "E12KT"
         icon: 'mdi:wrench'
 
-      - name: "System status"
+      - name: "État du système"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -455,36 +455,36 @@ parameters:
         registers: [3046]
         lookup:
         - key: 0
-          value: "Initialize"
+          value: "Initialiser"
         - key: 1
-          value: "Stand-by"
+          value: "Veille"
         - key: 2
-          value: "Hybrid Grid"
+          value: "Réseau hybride"
         - key: 3
-          value: "Off-Network"
+          value: "Hors réseau"
         - key: 4
-          value: "Mains Charging"
+          value: "Charge secteur"
         - key: 5
-          value: "PV Charging"
+          value: "Recharge PV"
         - key: 6
-          value: "Mains Bypass"
+          value: "Dérivation du secteur"
         - key: 7
-          value: "Fault"
+          value: "Erreur"
         - key: 8
           value: "Debug"
         - key: 9
-          value: "Forced Charge"
+          value: "Charge forcée"
         - key: 10
-          value: "Power on the device separately from the"
+          value: "Mettez l’appareil sous tension séparément du"
         - key: 11
-          value: "DSP Burn"
+          value: "DSP Brûler"
         - key: 12
-          value: "MCU Burn"
+          value: "MCU Brûler"
         - key: 13
-          value: "Permanent Error"
+          value: "Erreur permanente"
         icon: 'mdi:wrench'
 
-      - name: "Inverter status"
+      - name: "État de l’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -493,18 +493,18 @@ parameters:
         registers: [3047]
         lookup:
         - key: 0
-          value: "Stand-by"
+          value: "Veille"
         - key: 1
-          value: "Off-Grid"
+          value: "Hors réseau"
         - key: 2
-          value: "On-Grid"
+          value: "Sur réseau"
         - key: 3
-          value: "Off-Grid to On-Grid"
+          value: "Du hors réseau à sur réseau"
         - key: 4
-          value: "On-Grid to Off-Grid"
+          value: "Du réseau au hors réseau"
         icon: 'mdi:wrench'
 
-      - name: "DCDC status"
+      - name: "Statut du DCDC"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -513,16 +513,16 @@ parameters:
         registers: [3048]
         lookup:
         - key: 0
-          value: "Stand-by"
+          value: "Veille"
         - key: 1
-          value: "Soft Boot"
+          value: "Botte souple"
         - key: 2
-          value: "Charging Mode"
+          value: "Mode de charge"
         - key: 3
-          value: "Discharging Mode"
+          value: "Mode de décharge"
         icon: 'mdi:wrench'
 
-      - name: "DSP Alarm Code"
+      - name: "Code d’alarme DSP"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -531,7 +531,7 @@ parameters:
         registers: [3050, 3049]
         icon: 'mdi:wrench'
 
-      - name: "DSP Error Code"
+      - name: "Code d’erreur DSP"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -540,7 +540,7 @@ parameters:
         registers: [3052, 3051]
         icon: 'mdi:wrench'
 
-      - name: "Grid Standard"
+      - name: "Norme de grille"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -549,52 +549,52 @@ parameters:
         registers: [3193]
         lookup:
         - key: 0
-          value: "China"
+          value: "Chine"
         - key: 1
-          value: "Germany"
+          value: "Allemagne"
         - key: 2
-          value: "Australia"
+          value: "Australie"
         - key: 3
-          value: "Italy"
+          value: "Italie"
         - key: 4
-          value: "Spain"
+          value: "Espagne"
         - key: 5
-          value: "UK"
+          value: "ROYAUME-UNI"
         - key: 6
-          value: "Hungary"
+          value: "Hongrie"
         - key: 7
-          value: "Belgium"
+          value: "Belgique"
         - key: 8
-          value: "West Australia"
+          value: "Australie-Occidentale"
         - key: 9
-          value: "Greece"
+          value: "Grèce"
         - key: 10
           value: "France"
         - key: 11
           value: "Bangkok"
         - key: 12
-          value: "Thailand"
+          value: "Thaïlande"
         - key: 13
-          value: "South Africa"
+          value: "Afrique du Sud"
         - key: 14
           value: "EN50549"
         - key: 15
-          value: "Brazil"
+          value: "Brésil"
         - key: 16
           value: "VDE0126"
         - key: 17
-          value: "Ireland"
+          value: "Irlande"
         - key: 18
-          value: "Israel"
+          value: "Israël"
         - key: 19
-          value: "Poland"
+          value: "PolognePologne"
         - key: 20
-          value: "Chile"
+          value: "Chili"
         - key: 21
           value: "Local"
         icon: 'mdi:wrench'
 
-      - name: "Inverter Model Name"
+      - name: "Nom du modèle de l’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -603,7 +603,7 @@ parameters:
         registers: [3200, 3201, 3202, 3203, 3204, 3205, 3206, 3207]
         icon: 'mdi:wrench'
 
-      - name: "Inverter Battery Name"
+      - name: "Nom de la batterie de l’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -615,7 +615,7 @@ parameters:
       # ARM AND DSP version numbers ("VX.Y.Z") are set in the two bytes on each register. The first byte contains the
       # X.Y part (scale 0.1), and the second by contains the Z part. How should we transform these values from a number
       # to a parsed string?
-      - name: "ARM Version Number"
+      - name: "Numéro de version d’ARM"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -624,7 +624,7 @@ parameters:
         registers: [3216]
         icon: 'mdi:wrench'
 
-      - name: "DSP Version Number"
+      - name: "Numéro de version DSP"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -633,7 +633,7 @@ parameters:
         registers: [3217]
         icon: 'mdi:wrench'
 
-      - name: "Inverter SN Number"
+      - name: "Numéro de série de l’onduleur"
         class: ""
         state_class: "measurement"
         uom: ""
@@ -644,7 +644,7 @@ parameters:
 
   - group: Inverter
     items:
-      - name: "Inverter Bus Voltage"
+      - name: "Tension du bus inverseur"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -653,7 +653,7 @@ parameters:
         registers: [ 3053 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Inverter DC Bus Voltage"
+      - name: "Tension du bus CC de l’onduleur"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -662,7 +662,7 @@ parameters:
         registers: [ 3054 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "Inverter Radiator Temperature"
+      - name: "Température du radiateur Inverter"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -671,7 +671,7 @@ parameters:
         registers: [ 3055 ]
         icon: 'mdi:thermometer'
 
-      - name: "Chassis Internal Temperature"
+      - name: "Température interne du châssis"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
@@ -686,7 +686,7 @@ parameters:
   # - T: Tertiary
   - group: R Phase
     items:
-      - name: "R-phase Grid Voltage"
+      - name: "Tension du réseau de phase R"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -695,7 +695,7 @@ parameters:
         registers: [ 3097 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Grid Frequency"
+      - name: "Fréquence de grille de phase R"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -704,7 +704,7 @@ parameters:
         registers: [ 3098 ]
         icon: 'mdi:sine-wave'
 
-      - name: "R-phase Meter Current"
+      - name: "Courant de compteur en phase R"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -713,7 +713,7 @@ parameters:
         registers: [ 3099 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Grid Power"
+      - name: "Alimentation du réseau en phase R"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -722,7 +722,7 @@ parameters:
         registers: [ 3100 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Inverter Voltage"
+      - name: "Tension de l’onduleur de phase R"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -731,7 +731,7 @@ parameters:
         registers: [ 3123 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Inverter Current"
+      - name: "Courant de l’onduleur en phase R"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -740,7 +740,7 @@ parameters:
         registers: [ 3124 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Inverter Frequency"
+      - name: "Fréquence de l’onduleur de phase R"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -749,7 +749,7 @@ parameters:
         registers: [ 3125 ]
         icon: 'mdi:sine-wave'
 
-      - name: "R-phase Inverter Power"
+      - name: "Puissance de l’onduleur en phase R"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -758,7 +758,7 @@ parameters:
         registers: [ 3126 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Backup Voltage"
+      - name: "Tension de secours de phase R"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -767,7 +767,7 @@ parameters:
         registers: [ 3135 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Backup Current"
+      - name: "Courant de secours de phase R"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -776,7 +776,7 @@ parameters:
         registers: [ 3136 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Backup Power"
+      - name: "Alimentation de secours en phase R"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -785,7 +785,7 @@ parameters:
         registers: [ 3137 ]
         icon: 'mdi:home-lightning-bolt'
 
-      - name: "R-phase Load Power"
+      - name: "Puissance de charge de la phase R"
         class: "power"
         state_class: "measurement"
         uom: "W"

@@ -6,7 +6,7 @@ requests:
 parameters:
   - group: solar
     items:
-      - name: "PV1 Voltage"
+      - name: "Tension du PV1"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -15,7 +15,7 @@ parameters:
         registers: [0x0007]
         icon: "mdi:solar-power"
 
-      - name: "PV2 Voltage"
+      - name: "Tension du PV2"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -24,7 +24,7 @@ parameters:
         registers: [0x0009]
         icon: "mdi:solar-power"
 
-      - name: "PV1 Current"
+      - name: "Courant du PV1"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -33,7 +33,7 @@ parameters:
         registers: [0x0008]
         icon: "mdi:solar-power"
 
-      - name: "PV2 Current"
+      - name: "Courant du PV2"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -42,7 +42,7 @@ parameters:
         registers: [0x000A]
         icon: "mdi:solar-power"
 
-      - name: "Daily Production Wh"
+      - name: "Production quotidienne en Wh"
         class: "energy"
         state_class: "total"
         uom: "Wh"
@@ -51,7 +51,7 @@ parameters:
         registers: [0x000F]
         icon: "mdi:solar-power"
 
-      - name: "Total Production Wh"
+      - name: "Production totale en Wh"
         class: "energy"
         state_class: "total_increasing"
         uom: "Wh"
@@ -60,7 +60,7 @@ parameters:
         registers: [0x0015, 0x0014]
         icon: "mdi:solar-power"
 
-      - name: "Today generation time "
+      - name: "Durée de production aujourd'hui"
         class: ""
         state_class: "measurement"
         uom: "s"
@@ -71,7 +71,7 @@ parameters:
 
   - group: Output
     items:
-      - name: "Output active power"
+      - name: "Puissance active de sortie"
         class: "power"
         state_class: "measurement"
         uom: "W"
@@ -80,7 +80,7 @@ parameters:
         registers: [0x0011]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "Grid frequency"
+      - name: "Fréquence du réseau"
         class: "frequency"
         state_class: "measurement"
         uom: "Hz"
@@ -89,7 +89,7 @@ parameters:
         registers: [0x000B]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L1 Voltage"
+      - name: "Tension L1"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -98,7 +98,7 @@ parameters:
         registers: [0x0001]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L1 Current"
+      - name: "Courant L1"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -107,7 +107,7 @@ parameters:
         registers: [0x0004]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L2 Voltage"
+      - name: "Tension L2"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -116,7 +116,7 @@ parameters:
         registers: [0x0002]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L2 Current"
+      - name: "Courant L2"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -125,7 +125,7 @@ parameters:
         registers: [0x0005]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L3 Voltage"
+      - name: "Tension L3"
         class: "voltage"
         state_class: "measurement"
         uom: "V"
@@ -134,7 +134,7 @@ parameters:
         registers: [0x0003]
         icon: "mdi:home-lightning-bolt"
 
-      - name: "L3 Current"
+      - name: "Courant L3"
         class: "current"
         state_class: "measurement"
         uom: "A"
@@ -145,7 +145,7 @@ parameters:
 
   - group: Inverter
     items:
-      - name: "Inverter module temperature"
+      - name: "Température du module onduleur"
         class: "temperature"
         uom: "°C"
         scale: 0.1
@@ -153,7 +153,7 @@ parameters:
         registers: [0x000C]
         icon: "mdi:thermometer"
 
-      - name: "Inverter inner temperature"
+      - name: "Température intérieure de l’onduleure"
         class: "temperature"
         state_class: "measurement"
         uom: "°C"
