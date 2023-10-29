@@ -314,9 +314,9 @@ class solarman extends eqLogic {
       $cmd         .= ' --configonduleur ' . $eqLogic->getConfiguration('configInverter');
       $cmd         .= ' --idonduleur ' . $eqLogic->getId();
       $cmd         .= ' --ipclewifi ' . $eqLogic->getConfiguration('ipCleWifi');
-      $cmd         .= ' --portclewifi ' . $eqLogic->getConfiguration('portCleWifi');
+      $cmd         .= ' --portclewifi ' . $eqLogic->getConfiguration('portCleWifi', '8899');
       $cmd         .= ' --serialclewifi ' . $eqLogic->getConfiguration('serialCleWifi');
-      $cmd         .= ' --mbslaveid ' . $eqLogic->getConfiguration('mbSlaveId');
+      $cmd         .= ' --mbslaveid ' . $eqLogic->getConfiguration('mbSlaveId', '1');
 
       log::add('solarman', 'debug', ' Exécution du service : ' . $cmd);
       $result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('solarman_python_' . $nameOnduleur) . ' 2>&1 &');

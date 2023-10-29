@@ -4,6 +4,10 @@
 >
 >S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.
 
+# 1.0.4 (29/10/2023) => béta + stable
+   
+   - correction de bugs
+
 # 1.0.3 (29/10/2023) => béta + stable
    
    - ajout de dépendances pour prise en compte de yampl pour php sur certaines configurations (merci @Loïc)

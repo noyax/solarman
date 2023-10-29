@@ -46,6 +46,7 @@ def lire():
 		parameter_definition = yaml.full_load(f)
 	
 	result = 1
+	erreur = 0
 	noLogger = 0
 	params = ParameterParser(parameter_definition)
 	requests = parameter_definition['requests']
@@ -74,8 +75,9 @@ def lire():
 						response  = modbus.read_input_registers(register_addr=start, quantity=length)
 					params.parse(response, start, length)        
 					result = 1
+					erreur = 1
 				except Exception as e:
-					result = 0
+					erreur = 0
 					logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK avec l'exception [{type(e).__name__}: {e}]")
 				if 'modbus' in locals():
 					try:
@@ -85,7 +87,7 @@ def lire():
 						modbus = None
 				else:
 					noLogger += 1
-				if result == 0:
+				if erreur == 0:
 					logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK, il reste [{attempts_left} essai]")
 				else:
 					logging.debug(f"Interrogation des registres [{hex(start)} - {hex(end)}] succes")
@@ -94,7 +96,7 @@ def lire():
 				logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK, abandon.")
 		if result == 1:
 			logging.debug(f"Interrogations OK, mise a jour des donnees.")
-			current_val = sorted(params.get_result())
+			current_val = params.get_result()
 			logging.debug('Resultat : ')
 			logging.debug(current_val)
 			try:
