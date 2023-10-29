@@ -45,7 +45,7 @@ if (isset($result['device'])) {
             $flattenResults = array_flatten($data);
             foreach ($flattenResults as $key2 => $value) {
                 log::add('solarman','debug','Registre décodé en hexa : ' . $key2 . ' en décimal : ' . intval($key2,0) . ' valeur = ' . strval($value));
-                $cmd = $eqlogic->getCmd('info',intval($key,0));
+                $cmd = $eqlogic->getCmd('info',intval($key2,0));
                 if (is_object($cmd)){
                     $cmd->event($value);
                 }
