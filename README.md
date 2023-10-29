@@ -18,6 +18,6 @@ Lien vers le forum [ici](https://community.jeedom.com/tag/plugin-solarman)
 
 ## Documentation (à venir)
 
-Version stable: [Cliquer ici](https://.../)
+Version stable: [Cliquer ici](https://github.com/noyax/solarman/blob/master/docs/fr_FR/index.md)
 
-Version bêta: [Cliquer ici](https://.../)
+Version bêta: [Cliquer ici](https://github.com/noyax/solarman/blob/develop/docs/fr_FR/index.md)

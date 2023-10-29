@@ -39,12 +39,12 @@ $var_to_log = '';
 
 if (isset($result['device'])) {
     foreach ($result['device'] as $key => $data) {
-        log::add('solarman','debug',"This is a message from solarman program. Id de l'équipement : " . $key);
+        log::add('solarman','debug',"Message du programme solarman. Id de l'équipement : " . $key);
         $eqlogic = eqLogic::byId(intval($key), 'solarman');
         //if (is_object($eqlogic)) {
             $flattenResults = array_flatten($data);
-            foreach ($flattenResults as $key => $value) {
-                log::add('solarman','debug','Clé décodée en hexa : ' . $key . ' en décimal : ' . intval($key,0) . ' = ' . $value);
+            foreach ($flattenResults as $key2 => $value) {
+                log::add('solarman','debug','Registre décodé en hexa : ' . $key2 . ' en décimal : ' . intval($key2,0) . ' valeur = ' . strval($value));
                 $cmd = $eqlogic->getCmd('info',intval($key,0));
                 if (is_object($cmd)){
                     $cmd->event($value);
@@ -60,7 +60,6 @@ function array_flatten($array) {
     $return = array();
     foreach ($array as $key => $value) {
         $var_to_log = $var_to_log . $key . '=' . $value . '|';
-        
         if (is_array($value))
             $return = array_merge($return, array_flatten($value));
         else
