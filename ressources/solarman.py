@@ -46,9 +46,11 @@ def lire():
 		parameter_definition = yaml.full_load(f)
 	
 	result = 1
+	noLogger = 0
 	params = ParameterParser(parameter_definition)
 	requests = parameter_definition['requests']
-	logging.debug(f"Starting to query for [{len(requests)}] ranges...")
+	logging.debug(f"Interrogation pour [{len(requests)}] intervalles...")
+	intervalles = len(requests)
 
 	try:
 
@@ -56,13 +58,13 @@ def lire():
 			start = request['start']
 			end = request['end']
 			mb_fc = request['mb_functioncode']
-			logging.debug(f"Querying [{start} - {end}]...")
+			logging.debug(f"Interrogation de [{hex(start)} - {hex(end)}]...")
 			_SendData = {}
 			attempts_left = QUERY_RETRY_ATTEMPTS
 			while attempts_left > 0:
 				attempts_left -= 1
 				try:
-					logging.info(f"Connecting to solarman data logger {globals.inverter_host}:{globals.inverter_port}")
+					logging.info(f"Connexion au data logger {globals.inverter_host}:{globals.inverter_port}")
 					modbus = PySolarmanV5(globals.inverter_host, globals.inverter_sn, port=globals.inverter_port, mb_slave_id=globals.inverter_mb_slaveid, logger=logging, auto_reconnect=True, socket_timeout=15)
 					length = end - start + 1
 					if mb_fc==3:
@@ -74,41 +76,42 @@ def lire():
 					result = 1
 				except Exception as e:
 					result = 0
-					logging.warning(f"Querying [{start} - {end}] failed with exception [{type(e).__name__}: {e}]")
-					logging.info(f"Disconnecting from solarman data logger {globals.inverter_host}:{globals.inverter_port}")
-					modbus.disconnect()
-				if result == 0:
-					logging.warning(f"Querying [{start} - {end}] failed, [{attempts_left}] retry attempts left")
+					logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK avec l'exception [{type(e).__name__}: {e}]")
+				if 'modbus' in locals():
+					try:
+						logging.info(f"Deconnexion du logger {globals.inverter_host}:{globals.inverter_port}")
+						modbus.disconnect()
+					finally:
+						modbus = None
 				else:
-					logging.debug(f"Querying [{start} - {end}] succeeded")
+					noLogger += 1
+				if result == 0:
+					logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK, il reste [{attempts_left} essai]")
+				else:
+					logging.debug(f"Interrogation des registres [{hex(start)} - {hex(end)}] succes")
 					break
 			if result == 0:
-				logging.warning(f"Querying registers [{start} - {end}] failed, aborting.")
-				sys.exit()
+				logging.warning(f"Interrogation des registres [{hex(start)} - {hex(end)}] NOK, abandon.")
 		if result == 1:
-			logging.debug(f"All queries succeeded, exposing updated values.")
-			current_val = params.get_result()
-			logging.debug('Resultat')
+			logging.debug(f"Interrogations OK, mise a jour des donnees.")
+			current_val = sorted(params.get_result())
+			logging.debug('Resultat : ')
 			logging.debug(current_val)
 			try:
 				_SendData = current_val
 				logging.debug(_SendData)
 				globals.JEEDOM_COM.add_changes('device::' + globals.ideqpmnt, _SendData)
 			except Exception:
-				error_com = "Connection error"
+				error_com = "Connexion error"
 				logging.error(error_com)
-				sys.exit()
-			sys.exit()
 		else:
 			current_val = {}
-			logging.info(f"Disconnecting from solarman data logger {globals.inverter_host}:{globals.inverter_port}")
-			modbus.disconnect()
-			sys.exit()
+			if noLogger == intervalles * QUERY_RETRY_ATTEMPTS:
+				logging.error("Attention le plugin ne trouve pas votre logger, il est peut etre eteint sinon verifiez que son adresse IP n'a pas change")
+		sys.exit()
 	except Exception as e:
-		logging.warning(f"Querying inverter {globals.inverter_sn} at {globals.inverter_host}:{globals.inverter_port} failed on connection start with exception [{type(e).__name__}: {e}]")
+		logging.warning(f"Interrogation de l'onduleur {globals.inverter_sn} a {globals.inverter_host}:{globals.inverter_port} non aboutie avec l'exception [{type(e).__name__}: {e}]")
 		current_val = {}
-		logging.info(f"Disconnecting from solarman data logger {globals.inverter_host}:{globals.inverter_port}")
-		modbus.disconnect()
 		sys.exit()
 
     

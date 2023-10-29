@@ -32,6 +32,7 @@ function addCmdToTable(_cmd) {
   if (!isset(_cmd.configuration)) {
     _cmd.configuration = {}
   }
+  var logicaltohex = '0x' + (parseInt(_cmd.logicalId).toString(16).padStart(4, '0'))
   var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">'
   tr += '<td class="hidden-xs">'
   tr += '<span class="cmdAttr" data-l1key="id"></span>'
@@ -49,6 +50,12 @@ function addCmdToTable(_cmd) {
   tr += '<td>'
   tr += '<span class="type" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType() + '</span>'
   tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span>'
+  tr += '</td>'
+  tr += '<td class="hidden-xs">'
+  tr += '<span class="cmdAttr" data-l1key="logicalId"></span>'
+  tr += '</td>'
+  tr += '<td class="hidden-xs">'
+  tr += logicaltohex
   tr += '</td>'
   tr += '<td>'
   tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="isVisible" checked/>{{Afficher}}</label> '
@@ -121,16 +128,7 @@ $('.eqLogicAction[data-action=addSolarmanEq]').off('click').on('click', function
 		}}
 	});
 
-  /*
-  opts = '<option value="">{{Aucun}}</option>';
-  var inverters = ["Afore_BNTxxxKTL-2mppt", "deye_2mppt", "deye_4mppt", "deye_hybrid", "deye_sg04lp3", "deye_string", "hyd-zss-hp-3k-6k", "kstar_hybrid", "sofar_g3hyd", "sofar_hyd3k-6k-es", "sofar_lsw3", "sofar_wifikit", "solis_1p8k-5g", "solis_3p-4g", "solis_hybrid", "solis_s6-gr1p", "zcs_azzurro-ktl-v3"];
-  for (var i in inverters) {
-    opts += '<option value="' + inverters[i] + '.yaml">' + inverters[i] + '</option>';
-  }
-  $('#addSolarmanInverterSelector').html(opts);
-*/
 
-  // à mettre au point
   $.ajax({// fonction permettant de faire de l'ajax
 //    type: "POST", // methode de transmission des données au fichier php
     url: "plugins/solarman/core/ajax/solarman.ajax.php", // url du fichier php

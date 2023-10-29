@@ -230,14 +230,14 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 								<div class="col-sm-8">
 									<a class="btn btn-warning raz_configInverter" data-choix="raz_configInverter"><i class="fas fa-cogs"></i> {{Rechargement des paramètres de l'onduleur (modification config, suppression par erreur de commande, ...)}}</a>
 								</div>
-								</div>
+							</div>
 							<br><br>
 							<div class="form-group">
 								<div class="col-sm-2">
 									<span> </span>
 								</div>
 								<div class="col-sm-8">
-									<a class="btn btn-success maj_commandes" data-choix="maj_commandes"><i class="fas fa-cogs"></i> {{Mise à jour de la valeur des commandes de l'onduleur}}</a>
+									<a class="btn btn-success maj_commandes" data-choix="maj_commandes"><i class="fas fa-cogs"></i> {{Mise à jour manuellement de la valeur des commandes de l'onduleur}}</a>
 								</div>
 							</div>
 						</div>
@@ -268,6 +268,8 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
 								<th class="hidden-xs" style="min-width:50px;width:70px;">ID</th>
 								<th style="min-width:200px;width:350px;">{{Nom}}</th>
 								<th>{{Type}}</th>
+								<th>{{Registre (en décimal)}}</th>
+								<th>{{Registre (en héxadécimal)}}</th>
 								<th style="min-width:260px;">{{Options}}</th>
 								<th>{{Etat}}</th>
 								<th style="min-width:80px;width:200px;">{{Actions}}</th>
@@ -302,6 +304,7 @@ function displayActionCard($action_name, $fa_icon, $action = '', $class = '') {
                 }
             	});
 	        });
+
 
 	        $('.maj_commandes').on('click', function () {
 				$.ajax({// fonction permettant de faire de l'ajax
