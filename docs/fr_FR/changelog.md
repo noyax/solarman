@@ -1,9 +1,18 @@
-# Changelog plugin template
+# Changelog plugin Solarman
 
 >**IMPORTANT**
 >
 >S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.
 
+# 1.0.3 (29/10/2023) => béta + stable
+   
+   - ajout de dépendances pour prise en compte de yampl pour php sur certaines configurations (merci @Loïc)
+   - correction d'une mauvaise saisie dans les crons + ajout de la possibilité de saisir directement le temps(1 ou 5 ou ...)
+   - possibilité de mettre des espaces dans les noms des équipement, par contre les fichiers de logs contiendront des "_" à la place des espaces
+   - ajout d'un nouveau fichier pour onduleur sofar solar XX TL G3, testé sur SOFAR SOLAR 3000 TL G3 (merci @Morzini et @Bernard26300)
+   - modification de l'affichage des commandes d'un équipement avec l'ajout des registres en décimal et en héxadécimal
+   - amélioration + correction de bugs dans l'interrogation de l'onduleur
+   
 # 1.0.2 (19/10/2023) => béta
    
    - correction bug

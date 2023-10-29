@@ -44,7 +44,7 @@ class solarman extends eqLogic {
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
-        if ($autorefresh=='* * * *'){
+        if ($autorefresh=='* * * *' or $autorefresh=='* * * * *' or $autorefresh==1){
           if ($i==0){
             system::kill('solarman.py');
             $i += 1;
@@ -65,7 +65,7 @@ class solarman extends eqLogic {
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
-        if ($autorefresh=='*/5 * * *'){
+        if ($autorefresh=='*/5 * * *' or $autorefresh=='*/5 * * * *' or $autorefresh==5){
           if ($i==0){
             system::kill('solarman.py');
             $i += 1;
@@ -87,7 +87,7 @@ class solarman extends eqLogic {
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
-        if ($autorefresh=='*/10 * * *'){
+        if ($autorefresh=='*/10 * * *' or $autorefresh=='*/10 * * * *' or $autorefresh==10){
           if ($i==0){
             system::kill('solarman.py');
             $i += 1;
@@ -108,7 +108,7 @@ class solarman extends eqLogic {
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
-        if ($autorefresh=='*/15 * * *'){
+        if ($autorefresh=='*/15 * * *' or $autorefresh=='*/15 * * * *' or $autorefresh==15){
           if ($i==0){
             system::kill('solarman.py');
             $i += 1;
@@ -129,7 +129,7 @@ class solarman extends eqLogic {
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
-        if ($autorefresh=='*/30 * * *'){
+        if ($autorefresh=='*/30 * * *' or $autorefresh=='*/30 * * * *' or $autorefresh==30){
           if ($i==0){
             system::kill('solarman.py');
             $i += 1;
@@ -301,6 +301,7 @@ class solarman extends eqLogic {
     log::add('solarman', 'info', '---------------------------------------------------------------');
     log::add('solarman', 'info', ' Démarrage Interrogation Onduleur ' . strval($eqLogic->getName()));
     $idOnduleur = $eqLogic->getId();
+    $nameOnduleur = str_replace(' ', '_', strval($eqLogic->getName()));
 
     if ($idOnduleur!='Aucun' && $idOnduleur!=''){
       $cmd          = 'nice -n 19 /usr/bin/python3 ' . $solarmanPath . '/solarman.py';
@@ -309,7 +310,7 @@ class solarman extends eqLogic {
       $cmd         .= ' --callback ' . network::getNetworkAccess('internal', 'proto:127.0.0.1:port:comp') . '/plugins/solarman/core/php/jeeSolarman.php';
       $cmd         .= ' --cyclesommeil ' . config::byKey('cycle_sommeil', 'solarman', '0.5');
       $cmd         .= ' --cycle ' . config::byKey('cycle', 'solarman','0.3');
-      $cmd         .= ' --nameonduleur ' . strval($eqLogic->getName());
+      $cmd         .= ' --nameonduleur ' . $nameOnduleur;
       $cmd         .= ' --configonduleur ' . $eqLogic->getConfiguration('configInverter');
       $cmd         .= ' --idonduleur ' . $eqLogic->getId();
       $cmd         .= ' --ipclewifi ' . $eqLogic->getConfiguration('ipCleWifi');
@@ -318,7 +319,7 @@ class solarman extends eqLogic {
       $cmd         .= ' --mbslaveid ' . $eqLogic->getConfiguration('mbSlaveId');
 
       log::add('solarman', 'debug', ' Exécution du service : ' . $cmd);
-      $result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('solarman_python_' . strval($eqLogic->getName())) . ' 2>&1 &');
+      $result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('solarman_python_' . $nameOnduleur) . ' 2>&1 &');
       if (strpos(strtolower($result), 'error') !== false || strpos(strtolower($result), 'traceback') !== false) {
           log::add('solarman', 'error', '[SOLARMAN]-----' . $result);
           return false;
