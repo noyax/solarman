@@ -1,0 +1,2862 @@
+<div class="cmd #history# cmd-widget" data-type="info" data-subtype="string" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-eqLogic_id="#eqLogic_id#" style="width: 100%;">
+<!-- ################ Distribution onduleur ################ 
+  Widget name : cmd.info.string.distribution_onduleur
+  Author : Phpvarious
+  Inspiration : https://github.com/slipx06/sunsynk-power-flow-card/tree/master
+  Last Uptade : 2023/09/21 23h00 - Phpvarious
+
+  ###### TODO ######
+-->
+  <div class="widget#id#" id="widget#id#"></div>
+  <style>
+    :root {
+      --solar_colour#id# : orange;
+      --battery_colour#id# : pink;
+      --aux_colour#id# : #a43df5;
+      --grid_colour#id# : #5490c2;
+      --load_colour#id# : #5fb6ad;
+      --inverter_colour#id# : grey;
+      --inverter_secondary_colour#id# : black;
+      --inverterStateColour#id#: transparent;
+      --background#id#: transparent;
+      --no_grid_colour#id#: #db041c;
+    }
+    .widget#id#{width: 100%;}
+    .container#id# {
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+    .card#id# {background: var(--background#id#, transparent);}
+    .left-align#id# {text-anchor: start;}
+    .right-align#id# {text-anchor: end;}
+    .center-align#id# {text-anchor: middle;}
+    .ft8-#id#{font-size:8px;}
+    .ft9-#id#{font-size:9px;}
+    .ft12-#id#{font-size:12px;}
+    .ft14-#id#{font-size:14px;}
+    .ft16-#id#{font-size:16px;}
+    .ft18-#id#{font-size:18px;}
+    .ft22-#id#{font-size:22px;}
+    .ftw-#id#{font-weight:500}
+    .hidden-#id#{display:none;}
+  </style>
+  <script>
+    var debug#id# = ('#debug#' == 1) ? true : false;
+    debug#id# = true;
+    var fullJs#id# = false
+    var jeedomVersion#id# = 4.4
+    var versionWidget#id# = '21/09/2023 23h00'
+    
+    if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] Compatibilité V4.3 V4.4 [' + versionWidget#id# + '] ───────────────')
+    /* Compatibilité V4.2 V4.3 V4.4 */
+    /**/ if(typeof jeeFrontEnd === 'undefined') {
+    /**/   if (debug#id#) console.log('| jeeFrontEnd no exist -> version <= 4.2')
+    /**/   jeedomVersion#id# = 4.2
+    /**/ }
+    /**/ else
+    /**/ {
+    /**/   jeedomVersion#id# = jeeFrontEnd.jeedomVersion.substr(0, 3)
+    /**/   if (debug#id#) console.log('| jeeFrontEnd -> version == ' + jeedomVersion#id#)
+    /**/ }
+    /**/ if (jeedomVersion#id# >= 4.4) {
+    /**/   fullJs#id# = true
+    /**/   if (debug#id#) console.log('| Full Js')
+    /**/ }
+    /**/ if (typeof jeedom.cmd.addUpdateFunction !== 'function') { // a partir de la 4.3
+    /**/   if (debug#id#) console.log('| jeedom.cmd.addUpdateFunction no exist')
+    /**/   jeedom.cmd.addUpdateFunction = function(id,func) { jeedom.cmd.update[id]=func; }
+    /**/ }
+    /* ------------------------------------------ */
+    
+    ////////////////////////// FUNCTION /////////////////////////
+    var unite_conversion#id# = {
+      'W' : [1000, 'W', 'kW', 'MW'],
+      'Wh' : [1000, 'Wh', 'kWh', 'MWh'],
+      'l' : [1000, 'l', 'm<sup>3</sup>'],
+    }
+    
+    function trunc#id#(value = 0, trunc = 1, forceDec = false) {
+      trunc = (trunc == 0) ? 1 : (trunc == 1) ? 10 : (trunc == 2) ? 100 : (trunc == 3) ? 1000 : 10
+      var result = 0
+      if (value === null || value == '' || (isNaN(value) == true)) {
+        value = 0
+      }
+      result = Math.trunc(value * trunc) / trunc
+      result = (forceDec && forceDec >= 1 && Number.isInteger(result)) ? result.toFixed(forceDec) : result
+      if (debug#id#) console.log('|┌─────────────── trunc()')
+      if (debug#id#) console.log('|| value brute = ' +  value)
+      if (debug#id#) console.log('|| value = ' +  result)
+      if (debug#id#) console.log('|└────────────────────────────────────')
+      return result
+    }
+    
+    function autoValueArray#id#(value, unit = '', trunc = 1) {
+      var result = { }
+      result.unit = unit.replace("\"", "").replace("\'", "")
+      if (value === null || value == '') {
+        result.value = 0
+        return result
+      }
+      if(isNaN(value) == true){
+        result.value = value
+        return result
+      }
+      if (isset(unite_conversion#id#[unit])) {
+        let mod = unite_conversion#id#[unit][0]
+        let prefix = unite_conversion#id#[unit].slice(1)
+        let myval = autoValueFormat#id#(value, mod, prefix.length - 1)
+        result.value = myval[0]
+        result.unit = prefix[myval[1]]
+        //console.log('autoValueArray() -> value = ' + result.value + ' ' + result.unit + ' ' + prefix[myval[1]] + ' ' + myval[1])
+     } else result.value = value //Math.trunc(value * trunc) / trunc
+      return result
+    }
+    
+    function autoValueFormat#id#(value, mod = 1000, maxdiv = 10) {
+      let val = 0
+      if (value < 0) {
+        val = parseFloat(-value)
+      } else {
+        val = parseFloat(value)
+      }
+      for (div = 0; div < maxdiv && val >= mod; div++) {
+        val = parseFloat(val / mod)
+      }
+      if (value < 0) {
+        val = -val;
+      }
+      return Array(val, div)
+    }
+    
+    function getBatteryIcon#id#(value=false, full_capacity=80, empty_capacity=30) {
+        if (debug#id#) console.log('| getBatteryIcon() -> ' + value + ' | ' + full_capacity + ' | ' + empty_capacity)
+      if (value < full_capacity && value >= 50) {// 50 a 99
+          return '<path fill="var(--battery_colour#id#)" d="M 12 20 H 4 V 6 h 8 L 12 20 m 0.67 -16 H 11 V 2 H 5 v 2 H 3.33 C 2.6 4 2 4.6 2 5.33 v 15.34 C 2 21.4 2.6 22 3.33 22 h 9.34 c 0.74 0 1.33 -0.59 1.33 -1.33 V 5.33 C 14 4.6 13.4 4 12.67 4 M 11 16 H 5 v 3 h 6 v -3 m 0 -4.5 H 5 v 3 h 6 v -3 h -3 h 3"/>'; 
+        } else if (value < 50 && value > empty_capacity) { // 1 a 49
+          return '<path fill="var(--battery_colour#id#)" d="M 12 20 H 4 V 6 h 8 L 12 6 L 12 20 m 0.67 -15.999 H 11 V 2 H 5 v 2 H 3.33 C 2.6 4 2 4.6 2 5.33 v 15.34 C 2 21.4 2.6 22 3.33 22 h 9.34 c 0.74 0 1.33 -0.59 1.33 -1.33 V 5.33 C 14 4.6 13.4 4 12.67 4 M 11 16 H 5 v 3 h 6 v -3"/>';
+        } else if (value <= empty_capacity) { // empty
+          return '<path fill="var(--battery_colour#id#)" d="M 12 6 L 12 20 M 12 20 H 4 l 0.05 -14 h 7.95 m 0.67 -2 h -1.67 V 2 h -6 v 2 H 3.38 a 1.33 1.33 0 0 0 -1.33 1.33 v 15.34 c 0 0.73 0.6 1.33 1.33 1.33 h 9.34 c 0.73 0 1.33 -0.6 1.33 -1.33 V 5.33 A 1.33 1.33 0 0 0 12.72 4 Z"/>';
+        } else { // full
+          return '<path fill="var(--battery_colour#id#)" d="M 12 20 H 4 V 6 h 8 L 12 20 m 0.67 -16 H 11 V 2 H 5 v 2 H 3.33 C 2.6 4 2 4.6 2 5.33 v 15.34 C 2 21.4 2.6 22 3.33 22 h 9.34 c 0.74 0 1.33 -0.59 1.33 -1.33 V 5.33 C 14 4.6 13.4 4 12.67 4 M 11 16 H 5 v 3 h 6 v -3 m 0 -9 H 5 v 3 h 6 V 7 m 0 4.5 H 5 v 3 h 6 v -3 h -3 h 3"/>';
+        }
+    }
+    
+    function getSvgIcon(icone=false, load=1){
+      if (debug#id#)  console.log('|┌─────────────── getSvgIcon()')
+      if (debug#id#) console.log('|| value = ' +  icone)
+      if (debug#id#) console.log('|| load = ' +  load)
+      let svg = ''
+      if(icone === 'oven'){
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" id="iconLoad' + load + '#id#" x="' + ((load === 3 || load === 4) ? '524' : '444') +'" y="' + ((load === 1 || load === 3) ? '160' : '269') +'" width="30" height="30" viewBox="0 0 32 32" opacity="1"><path fill="var(--load_colour#id#)" d="M3 7.5A4.5 4.5 0 0 1 7.5 3h17A4.5 4.5 0 0 1 29 7.5v17a4.5 4.5 0 0 1-4.5 4.5h-17A4.5 4.5 0 0 1 3 24.5v-17Zm24 0A2.5 2.5 0 0 0 24.5 5h-17A2.5 2.5 0 0 0 5 7.5V11h22V7.5Zm0 17V13H5v11.5A2.5 2.5 0 0 0 7.5 27h17a2.5 2.5 0 0 0 2.5-2.5Zm-17-15a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3Zm6 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3ZM23.5 8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0ZM9 23v-6h14v6H9Zm-.5-8A1.5 1.5 0 0 0 7 16.5v7A1.5 1.5 0 0 0 8.5 25h15a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5h-15Z"/></svg>' // 113 // 287
+      }
+      else if(icone === 'pump'){
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" id="iconLoad' + load + '#id#" x="' + ((load === 3 || load === 4) ? '524' : '444') +'" y="' + ((load === 1 || load === 3) ? '160' : '269') +'" width="30" height="30" viewBox="0 0 24 24" opacity="1"><path fill="var(--load_colour#id#)" d="M3 17h4.1q-.425-.425-.787-.925T5.675 15H3v2Zm9 0q2.075 0 3.538-1.463T17 12q0-2.075-1.463-3.538T12 7Q9.925 7 8.462 8.463T7 12q0 2.075 1.463 3.538T12 17Zm6.325-8H21V7h-4.1q.425.425.788.925T18.325 9ZM1 20v-8h2v1h2.075q-.05-.25-.063-.488T5 12q0-2.925 2.038-4.963T12 5h9V4h2v8h-2v-1h-2.075q.05.25.063.488T19 12q0 2.925-2.038 4.963T12 19H3v1H1Zm2-3v-2v2Zm18-8V7v2Zm-9 3Zm0 3q-.825 0-1.413-.588T10 13q0-.575.238-1.137t.912-1.613L12 9l.85 1.25q.675 1.05.913 1.613T14 13q0 .825-.588 1.413T12 15Z"/></svg>'
+      }
+      else if(icone === 'aircon'){
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" id="iconLoad' + load + '#id#" x="' + ((load === 3 || load === 4) ? '524' : '444') +'" y="' + ((load === 1 || load === 3) ? '162' : '269') +'" width="25" height="25" viewBox="0 0 24 24" opacity="1"><path fill="var(--load_colour#id#)" d="M6.59.66c2.34-1.81 4.88.4 5.45 3.84c.43 0 .85.12 1.23.34c.52-.6.98-1.42.8-2.34c-.42-2.15 1.99-3.89 4.28-.92c1.81 2.34-.4 4.88-3.85 5.45c0 .43-.11.86-.34 1.24c.6.51 1.42.97 2.34.79c2.13-.42 3.88 1.98.91 4.28c-2.34 1.81-4.88-.4-5.45-3.84c-.43 0-.85-.13-1.22-.35c-.52.6-.99 1.43-.81 2.35c.42 2.14-1.99 3.89-4.28.92c-1.82-2.35.4-4.89 3.85-5.45c0-.43.13-.85.35-1.23c-.6-.51-1.42-.98-2.35-.8c-2.13.42-3.88-1.98-.91-4.28M5 16h2a2 2 0 0 1 2 2v6H7v-2H5v2H3v-6a2 2 0 0 1 2-2m0 2v2h2v-2H5m7.93-2H15l-2.93 8H10l2.93-8M18 16h3v2h-3v4h3v2h-3a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2Z"/></svg>'
+      }
+      else if(icone === 'boiler'){
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" id="iconLoad' + load + '#id#" x="' + ((load === 3 || load === 4) ? '524' : '444') +'" y="' + ((load === 1 || load === 3) ? '160' : '269') +'" width="30" height="30" viewBox="0 0 24 24" opacity="1"><path fill="var(--load_colour#id#)" d="M9.3 10.775q0 .475.163.925t.462.825q.05-.3.2-.588t.375-.487L12 10l1.475 1.475q.225.2.375.475t.2.575q.275-.375.487-.8t.213-.9q0-.475-.15-.913t-.45-.812q-.275.125-.563.2T13 9.375q-.75 0-1.375-.425t-.95-1.125q-.3.3-.55.637t-.438.713Q9.5 9.55 9.4 9.95t-.1.825ZM12 12.1l-.425.425q-.1.1-.138.2t-.037.225q0 .25.175.4t.425.15q.25 0 .425-.15t.175-.4q0-.125-.037-.225t-.138-.2L12 12.1ZM12 5v1.9q0 .425.3.713t.725.287q.275 0 .5-.162t.4-.388l.175-.25q1.025.575 1.588 1.563t.562 2.162q0 1.75-1.25 2.963T12 15q-1.75 0-2.975-1.225T7.8 10.8q0-1.925 1.225-3.425T12 5ZM6 22q-.825 0-1.413-.588T4 20V6q0-1.65 1.175-2.825T8 2h8q1.65 0 2.825 1.175T20 6v14q0 .825-.588 1.413T18 22H6Zm0-4v2h12v-2q-.75 0-1.2.5T15 19q-1.35 0-1.763-.5T12 18q-.825 0-1.238.5T9 19q-1.35 0-1.763-.5T6 18Zm3-1q.825 0 1.238-.5T12 16q1.35 0 1.8.5t1.2.5q.75 0 1.2-.5T18 16V6q0-.825-.588-1.413T16 4H8q-.825 0-1.413.588T6 6v10q1.35 0 1.763.5T9 17Z"/></svg>'
+      }
+      else if(icone === 'charging'){
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" id="iconLoad' + load + '#id#" x="' + ((load === 3 || load === 4) ? '529' : '449') +'" y="' + ((load === 1 || load === 3) ? '162' : '271') +'" width="25" height="25" viewBox="0 0 24 24" opacity="1"><path fill="var(--load_colour#id#)" d="M22,2V4H20V2H18V6a2,2,0,0,0,2,2V18a1,1,0,0,1-1,1H16V11H13V9h3V3a3,3,0,0,0-3-3H3A3,3,0,0,0,0,3V9H3v2H0V24H16V21h3a3,3,0,0,0,3-3V8a2,2,0,0,0,2-2V2ZM10.772,11.426,9.008,14.959l-1.789-.893L8.75,11H6.615A1.614,1.614,0,0,1,5.07,8.917L7.293,4.756l1.76.949L7.275,9H9.4a1.6,1.6,0,0,1,1.376,2.426Z"/></svg>'
+      }
+      if (debug#id#) console.log('|└────────────────────────────────────')
+      return svg
+    }
+    
+    ////////////////////////// Config /////////////////////////
+    var config#id# = {
+      panel_mode: true, // rester a true pour que l'user puisse choisir la taille
+      large_font: false,// Todo -> param optionnel
+      show_solar: false,
+      card_height: '396px',
+      timer: {
+        usetimer: false, /* Displays "Use timer" status as an icon next to the inverter. Set to `no` to hide */
+        state: 'no', // [on, off] Shows if energy pattern is set to priority load or priority battery as an icon next to the inverter.
+        text_on: 'Timer on',
+        text_off: 'Timer off'
+      },
+      priority: {
+        usepriority: false, //--------------- Todo
+        state: 'off', // on, off 
+        text_on: 'Priority Load',
+        text_off: 'Priority Batt'
+      },
+      inverter: {
+        autarky: 'no', // no, energy, power
+        autarky_state: 10, // affiché si autarky = energy
+        autarkyp_state: 20, // affiché si autarky = power
+        ratio_state: 30, // affiché si autarky = energy
+        ratiop_state: 40, // affiché si autarky = power
+        autarky_text: 'Autarky', // affiché si autarky != no
+        ratio_text:'Ratio', // affiché si autarky != no
+        model: 'sunsynk',
+        voltage_state: false,
+        voltage_unit: 'V',
+        frequency_state: false,
+        frequency_unit: 'Hz',
+        current_state: false,
+        current_unit: 'A',
+        temp:{
+          ac_state: false,
+          ac_unit: '',
+          dc_state: false,
+          dc_unit: ''
+        },
+        prog: { //--------------- Todo
+          show: false,
+          charge: 'none', // 'none'
+          grid: '', //none
+          capacity: 100
+        }
+      },
+      battery: {
+        animation_speed: 5,
+        has_battery: false,
+        energy: false, 
+        voltage_state: false,
+        voltage_unit: 'V',
+        current_state: false,
+        current_unit: 'A',
+        power_state: 0,
+        power_unit: 'W',
+        daily: {
+          show_charge: false,
+          show_discharge: false,
+          charge_state: 0,
+          discharge_state: 0,
+          charge_unit: '',
+          discharge_unit: '',
+          text_charge: 'CHARGE JOUR',
+          text_discharge: 'DECHARGE JOUR',
+        },
+        mppt : {
+          has_mppt: false,
+          name: '',
+          power: 0,
+          power_unit: 'W',
+          energy: false,
+          energy_unit: 'Wh',
+          voltage: false,
+          voltage_unit: 'V',
+          current: false,
+          current_unit: 'A'
+        },
+        full_capacity: 100, // Todo -> param optionnel
+        empty_capacity: 0, // Todo -> param optionnel
+        soc: {
+          show: false,
+          state: 100,
+          shutdown: 0
+        },
+        temp: {
+          show: false,
+          state: 0,
+          unit: '°'
+        }
+      },
+      solar: {
+        animation_speed: 5,
+        max_power: false,
+        daily: {
+          show: false,
+          state: 0,
+          unit: 'Wh',
+          text: 'PROD JOUR',
+          text_left: 'DAILY SOLAR / LEFT TODAY',
+          remaining_show: false,
+          remaining_state: 0,
+          remaining_unit: 'T'
+        },
+        mppts: 0,
+        pv1: {
+          name: '',
+          power: 0,
+		  power_unit: 'W',
+          energy: false,
+          energy_unit: '',
+          voltage: false,
+          voltage_unit: 'A',
+          current: false,
+          current_unit: 0
+        },
+        pv2: {
+          name: '',
+          power: 0,
+		  power_unit: 'W',
+          energy: false,
+          energy_unit: '',
+          voltage: false,
+          voltage_unit: 'A',
+          current: false,
+          current_unit: 0
+        },
+        pv3: {
+          name: '',
+          power: 0,
+		  power_unit: 'W',
+          energy: false,
+          energy_unit: '',
+          voltage: false,
+          voltage_unit: 'A',
+          current: false,
+          current_unit: 0
+        },
+        pv4: {
+          name: '',
+          power: 0,
+		  power_unit: 'W',
+          energy: false,
+          energy_unit: '',
+          voltage: false,
+          voltage_unit: 'A',
+          current: false,
+          current_unit: 0
+        },
+        unit: 'W',
+        sell: false, // on, off, 1, 0, undefined // Todo        
+      },
+      load: {
+        animation_speed: 5,
+        max_power: false,
+        power: 0,
+        unit: 'W',
+        daily:{
+          show: false,
+          text: 'CONSO JOUR',
+          state: 0,
+          unit: 'Wh',
+        },
+        additional_loads: 0,
+        aux: {
+          //show_aux: true,
+          //show_daily_aux: false,
+          //invert_aux: false,
+          //aux_name: 'Aux load 1',
+          //aux_type: 'default',
+          //aux_loads: 0,
+          //aux_load1_name: '',
+          //aux_load2_name: '',
+        },
+        load1: {
+          power: 0,
+          power_unit: 'W',
+          icon: false, //oven, pump, aircon, boiler, charging
+          name: false,
+          energy: false,
+        },
+        load2: {
+          power: 0,
+          power_unit: 'W',
+          icon: false, //oven, pump, aircon, boiler, charging
+          name: false,
+          energy: false,
+          energy_unit: '',
+        },
+        load3: {
+          power: 0,
+          power_unit: 'W',
+          icon: false, //oven, pump, aircon, boiler, charging
+          name: false,
+          energy: false,
+          energy_unit: '',
+        },
+        load4: {
+          power: 0,
+          power_unit: 'W',
+          icon: false, //oven, pump, aircon, boiler, charging
+          name: false,
+          energy: false,
+          energy_unit: '',
+        },
+        has_load_power: false,
+        animate_load_enable: true,
+        //load_state: 0,
+        //load_unite: 'W'
+      },
+      grid: {
+        animation_speed: 5,
+        max_power: false,
+        daily: {
+          show_sell: false,
+          show_buy: false,
+          buy_state: 0,
+          buy_unit: '',
+          sell_state: 0,
+          sell_unit: '',
+          text_sell: 'VENTE JOUR',
+          text_buy: 'ACHAT JOUR'
+        },
+        energy_cost: false,
+        power_state: 0,
+        power_unit:'W',
+        status: 1, // on, off, '0', 0, '1', 1
+        noness: {
+          //show_nonessential: true,
+          //nonessential_icon: 'default',
+          //nonessential_name: 'nonessential_name',
+          //additional_loads: 2,
+          //load1_name: 'common.load1', //
+          //load2_name: 'common.load2', //
+          //load1_icon: 'default',
+          //load2_icon: 'default',
+        },
+        //invert_grid: false,           
+      },
+      aux: {
+        type: 'gen',
+        status: 'on',
+        power: 10,
+        power_unit: 'W',
+        has_aux_power: false,
+        animation_speed: 5,
+        energy: false,
+        daily:{
+          show: false,
+          text: 'PRODUCTION JOUR',
+          state: 0,
+          unit: '',
+        },
+      }
+    }
+    
+    ////////////////////////// Général /////////////////////////
+    if ('#Background#' != '#'+'Background#') document.documentElement.style.setProperty('--background#id#', '#Background#')
+    ////////////////////////// Solar /////////////////////////
+    if ("#pv1Name#" != '#'+'pv1Name#') config#id#.solar.pv1.name = "#pv1Name#"
+    if ("#pv2Name#" != '#'+'pv2Name#') config#id#.solar.pv2.name = "#pv2Name#"
+    if ("#pv3Name#" != '#'+'pv3Name#') config#id#.solar.pv3.name = "#pv3Name#"
+    if ("#pv4Name#" != '#'+'pv4Name#') config#id#.solar.pv4.name = "#pv4Name#"
+    if (is_numeric('#pvMaxPower#')) config#id#.solar.max_power = '#pvMaxPower#'
+    if ("#dailySolarText#" != '#'+'dailySolarText#') config#id#.solar.daily.text = "#dailySolarText#"
+    if ("#solarColor#" != '#'+'solarColor#') document.documentElement.style.setProperty('--solar_colour#id#', '#solarColor#')
+    ////////////////////////// Load /////////////////////////
+    if ("#load1Name#" != '#'+'load1Name#') config#id#.load.load1.name = "#load1Name#"
+    if ("#load1Icon#" != '#'+'load1Icon#') config#id#.load.load1.icon = "#load1Icon#"
+    if ("#load2Name#" != '#'+'load2Name#') config#id#.load.load2.name = "#load2Name#"
+    if ("#load2Icon#" != '#'+'load2Icon#') config#id#.load.load2.icon = "#load2Icon#"
+    if ("#load3Name#" != '#'+'load3Name#') config#id#.load.load3.name = "#load3Name#"
+    if ("#load3Icon#" != '#'+'load3Icon#') config#id#.load.load3.icon = "#load3Icon#"
+    if ("#load4Name#" != '#'+'load4Name#') config#id#.load.load4.name = "#load4Name#"
+    if ("#load4Icon#" != '#'+'load4Icon#') config#id#.load.load4.icon = "#load4Icon#"
+    if ("#loadAnimate#" != '#'+'loadAnimate#' && "#loadAnimate#" == '0') config#id#.load.animate_load_enable = 0
+    if ("#dailyLoadText#" != '#'+'dailyLoadText#') config#id#.load.daily.text = "#dailyLoadText#"
+    if (is_numeric('#loadMaxPower#')) config#id#.load.max_power = '#loadMaxPower#'
+    if ("#loadColor#" != '#'+'loadColor#') document.documentElement.style.setProperty('--load_colour#id#', '#loadColor#')
+    ////////////////////////// grid /////////////////////////
+    if ("#dailyGridSellText#" != '#'+'dailyGridSellText#') config#id#.grid.daily.text_sell = "#dailyGridSellText#"
+    if ("#dailyGridBuyText#" != '#'+'dailyGridBuyText#') config#id#.grid.daily.text_buy = "#dailyGridBuyText#"
+    if (is_numeric('#gridMaxPower#')) config#id#.grid.max_power = '#gridMaxPower#'
+    if ("#gridColor#" != '#'+'gridColor#') document.documentElement.style.setProperty('--grid_colour#id#', '#gridColor#')
+    if ("#noGridColor#" != '#'+'noGridColor#') document.documentElement.style.setProperty('--no_grid_colour#id#', '#noGridColor#')
+    ////////////////////////// Battery /////////////////////////
+    if ("#dailyBatteryChargeText#" != '#'+'dailyBatteryChargeText#') config#id#.battery.daily.text_charge = "#dailyBatteryChargeText#"
+    if ("#dailyBatteryDischargeText#" != '#'+'dailyBatteryDischargeText#') config#id#.battery.daily.text_discharge = "#dailyBatteryDischargeText#"
+    if (is_numeric('#batteryMaxPower#')) config#id#.battery.energy = '#batteryMaxPower#'
+    if (is_numeric('#batterySocShutdown#')) config#id#.battery.soc.shutdown = '#batterySocShutdown#'
+    if ("#mpptName#" != '#'+'mpptName#') config#id#.battery.mppt.name = "#mpptName#"
+    if ("#batteryColor#" != '#'+'batteryColor#') document.documentElement.style.setProperty('--battery_colour#id#', '#batteryColor#')
+    ////////////////////////// Battery /////////////////////////
+    if ("#inverterColor#" != '#'+'inverterColor#') document.documentElement.style.setProperty('--inverter_colour#id#', '#inverterColor#')
+    if ("#inverterModel#" != '#'+'inverterModel#') config#id#.inverter.model = '#inverterModel#'
+    ////////////////////////// Aux /////////////////////////
+    if ("#auxColor#" != '#'+'auxColor#') document.documentElement.style.setProperty('--aux_colour#id#', '#auxColor#')
+    if (is_numeric('#auxMaxPower#')) config#id#.aux.energy = '#auxMaxPower#'
+   
+    
+    ////////////////// VAR ////////////////////
+    var float = false
+    var timer_in#id# = false
+    ///////////////////////////////////////////
+    
+    
+    jeedom.eqLogic.getCmd({
+      id: '#eqLogic_id#',
+      async: false,
+      success: function (cmds) {
+        config#id#.solar.mppts = 0
+		for (j in cmds) {
+          if(typeof cmds[j].configuration['widget'] !== 'undefined'){ 
+			  if (debug#id# == 1) console.log('Présence configuration widget : ' + cmds[j].configuration['widget']);
+			  cmds[j].configuration['widget'] = cmds[j].configuration['widget'].toLowerCase();
+			  cmds[j].configuration['widget'] = cmds[j].configuration['widget'].replace(/é/g, 'e');
+			  cmds[j].configuration['widget'] = cmds[j].configuration['widget'].replace(/_/g, ' ');
+			  let id_eql = cmds[j].id;
+			  let name = cmds[j].configuration['widget']
+			  if (debug#id# == 1) console.log('widget après adapt : ' + name);
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////////  pv1 power ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  if (cmds[j].configuration['widget'] == 'pv1 power'){
+				if (debug#id# == 1) console.log('| pv1_power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv1Value) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv1Value)
+					config#id#.show_solar = true
+					config#id#.solar.mppts += 1
+					if (typeof pv1Value === "number") {
+					  config#id#.solar.pv1.power = parseFloat(pv1Value)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					//_options.value = '0.745'
+					if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					config#id#.solar.pv1.power = parseFloat(_options.value)
+					config#id#.solar.pv1.power_unit = _options.unit
+					let pvPower = autoValueArray#id#(parseFloat(_options.value),config#id#.solar.unit)
+					if (debug#id# == 1) console.log('| autoValueArray ' + pvPower.value)
+					document.getElementById("pv1_power_state#id#").innerHTML = trunc#id#(pvPower.value, 3, 0) + ' ' + pvPower.unit
+					calculatePv#id#('pv1_power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////////  pv2 power ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv2 power'){
+				if (debug#id# == 1) console.log('| pv2_power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv2Value) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv2Value)
+					config#id#.solar.mppts += 1
+					if (typeof pv2Value === "number") {
+					  config#id#.solar.pv2.power = parseFloat(pv2Value)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('| event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					//_options.value = '1.45'
+					if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					config#id#.solar.pv2.power = _options.value
+					config#id#.solar.pv2.power_unit = _options.unit
+					let pvPower = autoValueArray#id#(parseFloat(_options.value),config#id#.solar.unit)
+					if (debug#id# == 1) console.log('| autoValueArray ' + pvPower.value)
+					document.getElementById("pv2_power_state#id#").innerHTML = trunc#id#(pvPower.value, 3, 0) + ' ' + pvPower.unit
+					calculatePv#id#('pv2_power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////////  pv3 power ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv3 power'){
+				if (debug#id# == 1) console.log('| pv3_power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv3Value) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv3Value)
+					config#id#.solar.mppts += 1
+					if (typeof pv3Value === "number") {
+					  config#id#.solar.pv3.power = parseFloat(pv3Value)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					//_options.value = '1.345'
+					if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					config#id#.solar.pv3.power = _options.value
+					config#id#.solar.pv3.power_unit = _options.unit
+					let pvPower = autoValueArray#id#(parseFloat(_options.value),config#id#.solar.unit)
+					if (debug#id# == 1) console.log(' autoValueArray ' + pvPower.value)
+					document.getElementById("pv3_power_state#id#").innerHTML = trunc#id#(pvPower.value, 3, 0) + ' ' + pvPower.unit
+					calculatePv#id#('pv3_power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////////  pv4 power ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv4 power'){
+				if (debug#id# == 1) console.log('| pv4_power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv4Value) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv4Value)
+					config#id#.solar.mppts += 1
+					if (typeof pv4Value === "number") {
+					  config#id#.solar.pv4.power = parseFloat(pv4Value)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					//_options.value = '1.345'
+					if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					config#id#.solar.pv4.power = _options.value
+					config#id#.solar.pv4.power_unit = _options.unit
+					let pvPower = autoValueArray#id#(parseFloat(_options.value),config#id#.solar.unit)
+					if (debug#id# == 1) console.log(' autoValueArray ' + pvPower.value)
+					document.getElementById("pv4_power_state#id#").innerHTML = trunc#id#(pvPower.value, 3, 0) + ' ' + pvPower.unit
+					calculatePv#id#('pv4_power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv1 Voltage //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv1 voltage'){
+				if (debug#id# == 1) console.log('| pv1 voltage')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv1Voltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv1Voltage)
+					config#id#.solar.pv1.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv1.voltage_unit)
+					if (typeof pv1Voltage === "number") {
+					  config#id#.solar.pv1.voltage = trunc#id#(parseFloat(pv1Voltage), 1)
+					} else config#id#.solar.pv1.voltage = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv1_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv1.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv2 Voltage //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv2 voltage'){
+				if (debug#id# == 1) console.log('| pv2 voltage')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv2Voltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv2Voltage)
+					config#id#.solar.pv2.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv2.voltage_unit)
+					if (typeof pv2Voltage === "number") {
+					  config#id#.solar.pv2.voltage = trunc#id#(parseFloat(pv2Voltage), 1)
+					} else config#id#.solar.pv2.voltage = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv2_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv2.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv3 Voltage //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv3 voltage'){
+				if (debug#id# == 1) console.log('| pv3 voltage')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv3Voltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv3Voltage)
+					config#id#.solar.pv3.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv3.voltage_unit)
+					if (typeof pv3Voltage === "number") {
+					  config#id#.solar.pv3.voltage = trunc#id#(parseFloat(pv3Voltage), 1)
+					} else config#id#.solar.pv3.voltage = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv3_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv3.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv4 Voltage //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv4 voltage'){
+				if (debug#id# == 1) console.log('| pv4 voltage')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv4Voltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv4Voltage)
+					config#id#.solar.pv4.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv4.voltage_unit)
+					if (typeof pv4Voltage === "number") {
+					  config#id#.solar.pv4.voltage = trunc#id#(parseFloat(pv4Voltage), 1)
+					} else config#id#.solar.pv4.voltage = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv4_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv4.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv1 Current //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv1 current'){
+				if (debug#id# == 1) console.log('| pv1 current')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv1Current) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv1Current)
+					config#id#.solar.pv1.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv1.current_unit)
+					if (typeof pv1Current === "number") {
+					  config#id#.solar.pv1.current = trunc#id#(parseFloat(pv1Current), 1)
+					} else config#id#.solar.pv1.current = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv1_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv1.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv2 Current //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv2 current'){
+				if (debug#id# == 1) console.log('| pv2 current')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv2Current) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv2Current)
+					config#id#.solar.pv2.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv2.current_unit)
+					if (typeof pv2Current === "number") {
+					  config#id#.solar.pv2.current = trunc#id#(parseFloat(pv2Current), 1)
+					} else config#id#.solar.pv2.current = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv2_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv2.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv3 Current //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv3 current'){
+				if (debug#id# == 1) console.log('| pv3 current')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv3Current) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv3Current)
+					config#id#.solar.pv3.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv3.current_unit)
+					if (typeof pv3Current === "number") {
+					  config#id#.solar.pv3.current = trunc#id#(parseFloat(pv3Current), 1)
+					} else config#id#.solar.pv3.current = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv3_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv3.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv4 Current //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv4 current'){
+				if (debug#id# == 1) console.log('| pv4 current')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv4Current) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv4Current)
+					config#id#.solar.pv4.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv4.current_unit)
+					if (typeof pv4Current === "number") {
+					  config#id#.solar.pv4.current = trunc#id#(parseFloat(pv4Current), 1)
+					} else config#id#.solar.pv4.current = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("pv4_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.solar.pv4.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv1 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv1 energy'){
+				//config#id#.solar.daily.show = true
+				if (debug#id# == 1) console.log('| pv1 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv1Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv1Energy)
+					config#id#.solar.pv1.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv1.energy_unit)
+					if (typeof pv1Energy === "number") {
+					  config#id#.solar.pv1.energy = parseFloat(pv1Energy)
+					}
+					else config#id#.solar.pv1.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let pv1Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("pv1_energy#id#").innerHTML = trunc#id#(pv1Energy.value, 3, 0) + ' ' + pv1Energy.unit
+				  }
+				})
+			  }
+              ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv2 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv2 energy'){
+				//config#id#.solar.daily.show = true
+				if (debug#id# == 1) console.log('| pv2 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv2Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv2Energy)
+					config#id#.solar.pv2.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv2.energy_unit)
+					if (typeof pv2Energy === "number") {
+					  config#id#.solar.pv2.energy = parseFloat(pv2Energy)
+					}
+					else config#id#.solar.pv2.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let pv2Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("pv2_energy#id#").innerHTML = trunc#id#(pv2Energy.value, 3, 0) + ' ' + pv2Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv3 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv3 energy'){
+				//config#id#.solar.daily.show = true
+				if (debug#id# == 1) console.log('| pv3 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv3Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv3Energy)
+					config#id#.solar.pv3.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv3.energy_unit)
+					if (typeof pv3Energy === "number") {
+					  config#id#.solar.pv3.energy = parseFloat(pv3Energy)
+					}
+					else config#id#.solar.pv3.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let pv3Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("pv3_energy#id#").innerHTML = trunc#id#(pv3Energy.value, 3, 0) + ' ' + pv3Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  pv4 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'pv4 energy'){
+				//config#id#.solar.daily.show = true
+				if (debug#id# == 1) console.log('| pv4 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(pv4Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + pv4Energy)
+					config#id#.solar.pv4.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.pv4.energy_unit)
+					if (typeof pv4Energy === "number") {
+					  config#id#.solar.pv4.energy = parseFloat(pv4Energy)
+					}
+					else config#id#.solar.pv4.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let pv4Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("pv4_energy#id#").innerHTML = trunc#id#(pv4Energy.value, 3, 0) + ' ' + pv4Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////////  Daily Solar ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily solar'){
+				config#id#.solar.daily.show = true
+				if (debug#id# == 1) console.log('| daily solar')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailySolarValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailySolarValue)
+					config#id#.solar.daily.unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.solar.daily.unit)
+					if (typeof dailySolarValue === "number") {
+					  config#id#.solar.daily.state = parseFloat(dailySolarValue)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailySolar = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("daily_solar_value#id#").innerHTML = trunc#id#(dailySolar.value, 3, 0) + ' ' + dailySolar.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////  Battery State ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery state'){
+				if (debug#id# == 1) console.log('| battery state')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryStateValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryStateValue)
+					config#id#.battery.soc.show = true
+					if (typeof batteryStateValue === "number") {
+					  config#id#.battery.soc.state = parseFloat(batteryStateValue)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					config#id#.battery.soc.state = parseFloat(_options.value)
+					calculateBattery#id#('battery state')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////  Battery Temp ////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery temp'){
+				if (debug#id# == 1) console.log('| battery temp')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryTempValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryTempValue)
+					if (cmds[j].unite != '') config#id#.battery.temp.unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.temp.unit)
+					if (typeof batteryTempValue === "number") {
+					  config#id#.battery.temp.show = true
+					  config#id#.battery.temp.state = trunc#id#(parseFloat(batteryTempValue),1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					document.getElementById("battery_temp#id#").innerHTML = trunc#id#(parseFloat(_options.value),1) + '' + config#id#.battery.temp.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////  Daily Battery Charge ///////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			 else if (cmds[j].configuration['widget'] == 'daily battery charge'){
+				config#id#.battery.daily.show_charge = true
+				if (debug#id# == 1) console.log('| daily battery charge')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyBatteryChargeValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyBatteryChargeValue)
+					config#id#.battery.daily.charge_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.daily.charge_unit)
+					if (typeof dailyBatteryChargeValue === "number") {
+					  config#id#.battery.daily.charge_state = parseFloat(dailyBatteryChargeValue)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailyBatteryCharge = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("daily_bat_charge_value#id#").innerHTML = trunc#id#(dailyBatteryCharge.value, 3, 0) + ' ' + dailyBatteryCharge.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////  Daily Battery Discharge //////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily battery discharge'){
+				config#id#.battery.daily.show_discharge = true
+				if (debug#id# == 1) console.log('| daily battery discharge')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyBatteryDischargeValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyBatteryDischargeValue)
+					config#id#.battery.daily.discharge_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.daily.discharge_unit)
+					if (typeof dailyBatteryDischargeValue === "number") {
+					  config#id#.battery.daily.discharge_state = parseFloat(dailyBatteryDischargeValue)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailyBatteryDischarge = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("daily_bat_discharge_value#id#").innerHTML = trunc#id#(dailyBatteryDischarge.value, 3, 0) + ' ' + dailyBatteryDischarge.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Battery Voltage //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery voltage'){
+				if (debug#id# == 1) console.log('| battery voltage')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryVoltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryVoltage)
+					config#id#.battery.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.voltage_unit)
+					if (typeof batteryVoltage === "number") {
+					  config#id#.battery.voltage_state = trunc#id#(parseFloat(batteryVoltage), 1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("battery_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.battery.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Battery Current //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery current'){
+				if (debug#id# == 1) console.log('| battery current')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryCurrent) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryCurrent)
+					config#id#.battery.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.current_unit)
+					if (typeof batteryCurrent === "number") {
+					  config#id#.battery.current_state = trunc#id#(parseFloat(batteryCurrent), 1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) document.getElementById("battery_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.battery.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////  Battery Power //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery power'){
+				if (debug#id# == 1) console.log('| battery power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryPower) {
+					config#id#.battery.has_battery = true
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryPower)
+					config#id#.battery.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.power_unit)
+					if (typeof batteryPower === "number") {
+					  config#id#.battery.power_state = trunc#id#(parseFloat(batteryPower), 1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					let dailyBatteryPower = autoValueArray#id#(parseFloat(_options.value),'W')
+					let batteryPower = (dailyBatteryPower.value > 0) ? dailyBatteryPower.value : (dailyBatteryPower.value < 0) ? (dailyBatteryPower.value * -1) : dailyBatteryPower.value
+					document.getElementById("battery_power#id#").innerHTML = trunc#id#(parseFloat(batteryPower), 1) + ' ' + dailyBatteryPower.unit
+					if(trunc#id#(parseFloat(dailyBatteryPower.value), 1) < 0) {
+					  document.getElementById("power-dot-charge#id#").setAttribute("fill", "var(--battery_colour#id#)");
+					  document.getElementById("power-dot-discharge#id#").setAttribute("fill", "transparent");
+					}
+					else if(trunc#id#(parseFloat(dailyBatteryPower.value), 1) > 0) {
+					  document.getElementById("power-dot-charge#id#").setAttribute("fill", "transparent");
+					  document.getElementById("power-dot-discharge#id#").setAttribute("fill", "var(--battery_colour#id#)");
+					}
+					else {
+					  document.getElementById("power-dot-charge#id#").setAttribute("fill", "transparent");
+					  document.getElementById("power-dot-discharge#id#").setAttribute("fill", "transparent");
+					}
+					config#id#.battery.power_state = trunc#id#(parseFloat(dailyBatteryPower.value), 1)
+					calculateBattery#id#('battery power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////  Battery Mppt Power /////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery mppt power'){
+				if (debug#id# == 1) console.log('| battery mppt power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryMpptPower) {
+					config#id#.battery.mppt.has_mppt = true
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryMpptPower)
+					config#id#.battery.mppt.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.mppt.power_unit)
+					if (typeof batteryMpptPower === "number") {
+					  config#id#.battery.mppt.power = trunc#id#(parseFloat(batteryMpptPower), 1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					let batteryMpptPower = trunc#id#(parseFloat(_options.value), 1)
+					document.getElementById("battery_mppt_power-#id#").innerHTML = batteryMpptPower + ' ' + config#id#.battery.mppt.power_unit
+					if(batteryMpptPower > 0) {
+					  document.getElementById("dot-battery-mppt-#id#").setAttribute("fill", "var(--solar_colour#id#)");
+					}
+					else {
+					  document.getElementById("dot-battery-mppt-#id#").setAttribute("fill", "transparent");
+					}
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////  battery mppt energy ////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'battery mppt energy'){
+				if (debug#id# == 1) console.log('| battery mppt energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(batteryMpptEnergy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + batteryMpptEnergy)
+					config#id#.battery.mppt.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.battery.mppt.energy_unit)
+					if (typeof batteryMpptEnergy === "number") {
+					  config#id#.battery.mppt.energy = parseFloat(batteryMpptEnergy)
+					}
+					else config#id#.battery.mppt.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let batteryMpptEnergy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("battery-mppt-energy-#id#").innerHTML = trunc#id#(batteryMpptEnergy.value, 3, 1) + ' ' + batteryMpptEnergy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////  Daily Grid Buy //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily grid buy'){
+				config#id#.grid.daily.show_buy = true
+				if (debug#id# == 1) console.log('| daily grid buy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyGridBuy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyGridBuy)
+					config#id#.grid.daily.buy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.grid.daily.buy_unit)
+					if (typeof dailyGridBuy === "number") {
+					  config#id#.grid.daily.buy_state = parseFloat(dailyGridBuy)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailyGridBuy = autoValueArray#id#(_options.value,'Wh')
+					document.getElementById("daily_grid_buy_value#id#").innerHTML = trunc#id#(dailyGridBuy.value, 3, 1) + ' ' + dailyGridBuy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Daily Grid Sell //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily grid sell'){
+				config#id#.grid.daily.show_sell = true
+				if (debug#id# == 1) console.log('| daily grid sell')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyGridSell) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyGridSell)
+					config#id#.grid.daily.sell_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.grid.daily.sell_unit)
+					if (typeof dailyGridSell === "number") {
+					  config#id#.grid.daily.sell_state = parseFloat(dailyGridSell)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailySellBuy = autoValueArray#id#(_options.value,'Wh')
+					document.getElementById("daily_grid_sell_value#id#").innerHTML = trunc#id#(dailySellBuy.value, 3, 1) + ' ' + dailySellBuy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ////////////////////////////  Grid Power //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'grid power'){
+				if (debug#id# == 1) console.log('| grid power')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(gridPowerValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + gridPowerValue)
+					config#id#.grid.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.grid.power_unit)
+					if (typeof gridPowerValue === "number") {
+					  config#id#.grid.power_state = trunc#id#(parseFloat(gridPowerValue) ,1)
+					}
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					config#id#.grid.power_state = _options.value
+					config#id#.grid.unit = _options.unit
+					
+                    let gridPowerAuto = autoValueArray#id#(_options.value,'W')
+					let gridPowerTrunc = gridPowerAuto.value
+					let gridPower = (gridPowerTrunc > 0) ? gridPowerTrunc : (gridPowerTrunc < 0) ? (gridPowerTrunc * -1) : gridPowerTrunc
+					document.getElementById("grid_power#id#").innerHTML = trunc#id#(gridPower,3,0) + ' ' + gridPowerAuto.unit
+					if(gridPowerTrunc > 0) {
+					  document.getElementById("grid-dot-buy#id#").setAttribute("fill", "var(--grid_colour#id#)");
+					  document.getElementById("grid-dot1-buy#id#").setAttribute("fill", "var(--grid_colour#id#)");
+					  document.getElementById("grid-dot-sell#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot1-sell#id#").setAttribute("fill", "transparent");
+					}
+					else if(gridPowerTrunc < 0) {
+					  document.getElementById("grid-dot-buy#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot1-buy#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot-sell#id#").setAttribute("fill", "var(--grid_colour#id#)");
+					  document.getElementById("grid-dot1-sell#id#").setAttribute("fill", "var(--grid_colour#id#)");
+					}
+					else {
+					  document.getElementById("grid-dot-buy#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot1-buy#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot-sell#id#").setAttribute("fill", "transparent");
+					  document.getElementById("grid-dot1-sell#id#").setAttribute("fill", "transparent");
+					}
+					calculateGrid#id#('grid power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Energy cost //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'energy cost'){
+				if (debug#id# == 1) console.log('| energy cost')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(energyCost) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + energyCost)
+					if (typeof energyCost === "number") {
+					  config#id#.grid.energy_cost = trunc#id#(parseFloat(energyCost), 2)
+					}
+					else config#id#.grid.energy_cost = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+					document.getElementById("energy_cost#id#").innerHTML = trunc#id#(parseFloat(_options.value), 2) + '€'
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Grid Status //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'grid status'){
+				if (debug#id# == 1) console.log('| grid status')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(gridStatus) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + gridStatus)
+					if (gridStatus === 0 || gridStatus === '0' || gridStatus === 'off' || gridStatus === 'EPS') config#id#.grid.status = 0
+					else config#id#.grid.status = 1
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value === 0 || _options.value === '0' || _options.value === 'off') {
+					document.getElementById("transmission_on#id#").querySelector('path').classList.add("hidden-#id#");
+					document.getElementById("transmission_off#id#").querySelector('path').classList.remove("hidden-#id#");
+				  }
+				  else {
+					document.getElementById("transmission_on#id#").querySelector('path').classList.remove("hidden-#id#");
+					document.getElementById("transmission_off#id#").querySelector('path').classList.add("hidden-#id#");
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////////  AC Temp ///////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'ac temp'){
+				if (debug#id# == 1) console.log('| ac temp')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(acTemp) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + acTemp)
+					config#id#.inverter.temp.ac_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.inverter.temp.ac_unit)
+					if (typeof acTemp === "number") {
+					  config#id#.inverter.temp.ac_state = trunc#id#(parseFloat(acTemp), 1)
+					}
+					else config#id#.inverter.temp.ac_state = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  document.getElementById("ac_temp#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.inverter.temp.ac_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////////  DC Temp ///////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'dc temp'){
+				if (debug#id# == 1) console.log('| dc temp')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dcTemp) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dcTemp)
+					config#id#.inverter.temp.dc_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.inverter.temp.dc_unit)
+					if (typeof dcTemp === "number") {
+					  config#id#.inverter.temp.dc_state = trunc#id#(parseFloat(dcTemp), 1)
+					}
+					else config#id#.inverter.temp.dc_state = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  document.getElementById("dc_temp#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.inverter.temp.dc_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////  Voltage state /////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'voltage state'){
+				if (debug#id# == 1) console.log('| voltage state')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(voltage) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + voltage)
+					if (cmds[j].unite != '') config#id#.inverter.voltage_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.inverter.voltage_unit)
+					if (typeof voltage === "number") {
+					  config#id#.inverter.voltage_state = trunc#id#(parseFloat(voltage), 1)
+					}
+					else config#id#.inverter.voltage_state = '0.0'
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  document.getElementById("inverter_voltage#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.inverter.voltage_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////  Frequency State /////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'frequency state'){
+				if (debug#id# == 1) console.log('| frequency state')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(frequency) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + frequency)
+					if (cmds[j].unite != '') config#id#.inverter.frequency_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.inverter.frequency_unit)
+					if (typeof frequency === "number") {
+					  config#id#.inverter.frequency_state = trunc#id#(parseFloat(frequency), 1)
+					}
+					else config#id#.inverter.frequency_state = '0.0'
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  document.getElementById("inverter_frequency#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.inverter.frequency_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////  Current State //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'current state'){
+				if (debug#id# == 1) console.log('| current state')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(current) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + current)
+					if (cmds[j].unite != '') config#id#.inverter.current_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.inverter.current_unit)
+					if (typeof current === "number") {
+					  config#id#.inverter.current_state = trunc#id#(parseFloat(current), 1)
+					}
+					else config#id#.inverter.current_state = '0.0'
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  document.getElementById("inverter_current#id#").innerHTML = trunc#id#(parseFloat(_options.value), 1) + ' ' + config#id#.inverter.current_unit
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////  Load State ///////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load state'){
+				if (debug#id# == 1) console.log('| load state')
+				config#id#.load.has_load_power = true
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(loadState) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + loadState)
+					if (cmds[j].unite != '') config#id#.load.unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.unit)
+					if (typeof loadState === "number") {
+					  config#id#.load.power = trunc#id#(parseFloat(loadState), 1)
+					}
+					else config#id#.load.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  config#id#.load.power = _options.value
+                  config#id#.load.unit = _options.unit
+				  if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+				  let loadStateCalc = autoValueArray#id#(_options.value,'W')
+				  document.getElementById("ess_power#id#").innerHTML = trunc#id#(loadStateCalc.value, 3, 0) + ' ' + loadStateCalc.unit
+				  calculateLoad#id#('load state')
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////  Load 1 State //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load1 state'){
+				if (debug#id# == 1) console.log('| load1 state')
+				config#id#.load.additional_loads++
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load1State) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load1State)
+					if (cmds[j].unite != '') config#id#.load.load1.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load1.power_unit)
+					if (typeof load1State === "number") {
+					  config#id#.load.load1.power = parseFloat(load1State)
+					}
+					else config#id#.load.load1.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+                  config#id#.load.load1.power_unit = _options.unit
+				  config#id#.load.load1.power = _options.value
+				  if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+				  let load1Power = autoValueArray#id#(_options.value,'W')
+				  document.getElementById("ess_load1#id#").innerHTML = trunc#id#(load1Power.value, 3, 0) + ' ' + load1Power.unit
+				  if (config#id#.load.has_load_power === false) calculateLoad#id#('load1 state')
+				  
+				  if (config#id#.load.load1.power > 0) {
+					document.getElementById("es-dot1-#id#").setAttribute("fill", "var(--load_colour#id#)");
+				  }
+				  else {
+					document.getElementById("es-dot1-#id#").setAttribute("fill", "transparent");
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////  Load 2 State //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load2 state'){
+				if (debug#id# == 1) console.log('| load2 state')
+				config#id#.load.additional_loads++
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load2State) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load2State)
+					if (cmds[j].unite != '') config#id#.load.load2.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load2.power_unit)
+					if (typeof load2State === "number") {
+					  config#id#.load.load2.power = trunc#id#(parseFloat(load2State), 1)
+					}
+					else config#id#.load.load2.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+					//_options.value = 3.5
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  config#id#.load.load2.power = _options.value
+				  config#id#.load.load2.power_unit = _options.unit
+				  if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+				  let load2Power = autoValueArray#id#(_options.value,'W')
+				  document.getElementById("ess_load2#id#").innerHTML = trunc#id#(load2Power.value, 3, 0) + ' ' + load2Power.unit
+				  if (config#id#.load.has_load_power === false) calculateLoad#id#('load2 state')
+				  
+				  if (config#id#.load.load2.power > 0) {
+					document.getElementById("es-dot2-#id#").setAttribute("fill", "var(--load_colour#id#)");
+				  }
+				  else {
+					document.getElementById("es-dot2-#id#").setAttribute("fill", "transparent");
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////  Load 3 State //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load3 state'){
+				if (debug#id# == 1) console.log('| load3 state')
+				config#id#.load.additional_loads++
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load3State) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load3State)
+					if (cmds[j].unite != '') config#id#.load.load3.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load3.power_unit)
+					if (typeof load3State === "number") {
+					  config#id#.load.load3.power = trunc#id#(parseFloat(load3State), 1)
+					}
+					else config#id#.load.load3.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  config#id#.load.load3.power = _options.value
+				  config#id#.load.load3.power_unit = _options.unit
+				  if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+				  let load3Power = autoValueArray#id#(_options.value,'W')
+				  document.getElementById("ess_load3#id#").innerHTML = trunc#id#(load3Power.value, 3, 0) + ' ' + load3Power.unit
+				  if (config#id#.load.has_load_power === false) calculateLoad#id#('load3 state')
+				  
+				  if (config#id#.load.load3.power > 0) {
+					document.getElementById("es-dot3-#id#").setAttribute("fill", "var(--load_colour#id#)");
+				  }
+				  else {
+					document.getElementById("es-dot3-#id#").setAttribute("fill", "transparent");
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////  Load 4 State //////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load4 state'){
+				if (debug#id# == 1) console.log('| load4 state')
+				config#id#.load.additional_loads++
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load4State) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load4State)
+					if (cmds[j].unite != '') config#id#.load.load4.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load4.power_unit)
+					if (typeof load4State === "number") {
+					  config#id#.load.load4.power = trunc#id#(parseFloat(load4State), 1)
+					}
+					else config#id#.load.load4.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  config#id#.load.load4.power = _options.value
+				  config#id#.load.load4.power_unit = _options.unit
+				  if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+				  let load4Power = autoValueArray#id#(_options.value,'W')
+				  document.getElementById("ess_load4#id#").innerHTML = trunc#id#(load4Power.value, 3, 0) + ' ' + load4Power.unit
+				  if (config#id#.load.has_load_power === false) calculateLoad#id#('load4 state')
+				  
+				  if (config#id#.load.load4.power > 0) {
+					document.getElementById("es-dot4-#id#").setAttribute("fill", "var(--load_colour#id#)");
+				  }
+				  else {
+					document.getElementById("es-dot4-#id#").setAttribute("fill", "transparent");
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////  load 1 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load1 energy'){
+				if (debug#id# == 1) console.log('| load1 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load1Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load1Energy)
+					config#id#.load.load1.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load1.energy_unit)
+					if (typeof load1Energy === "number") {
+					  config#id#.load.load1.energy = parseFloat(load1Energy)
+					}
+					else config#id#.load.load1.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let load1Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("load1_energy#id#").innerHTML = trunc#id#(load1Energy.value, 3, 0) + ' ' + load1Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////  load 2 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load2 energy'){
+				if (debug#id# == 1) console.log('| load2 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load2Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load2Energy)
+					config#id#.load.load2.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load2.energy_unit)
+					if (typeof load2Energy === "number") {
+					  config#id#.load.load2.energy = parseFloat(load2Energy)
+					}
+					else config#id#.load.load2.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let load2Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("load2_energy#id#").innerHTML = trunc#id#(load2Energy.value, 3, 0) + ' ' + load2Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////  load 3 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load3 energy'){
+				if (debug#id# == 1) console.log('| load3 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load3Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load3Energy)
+					config#id#.load.load3.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load3.energy_unit)
+					if (typeof load3Energy === "number") {
+					  config#id#.load.load3.energy = parseFloat(load3Energy)
+					}
+					else config#id#.load.load3.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let load3Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("load3_energy#id#").innerHTML = trunc#id#(load3Energy.value, 3, 0) + ' ' + load3Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////  load 4 Energy ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'load4 energy'){
+				if (debug#id# == 1) console.log('| load4 energy')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(load4Energy) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + load4Energy)
+					config#id#.load.load4.energy_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.load4.energy_unit)
+					if (typeof load4Energy === "number") {
+					  config#id#.load.load4.energy = parseFloat(load4Energy)
+					}
+					else config#id#.load.load4.energy = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let load4Energy = autoValueArray#id#(parseFloat(_options.value),'Wh')
+					document.getElementById("load4_energy#id#").innerHTML = trunc#id#(load4Energy.value, 3, 0) + ' ' + load4Energy.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  //////////////////////////////  Daily Load ///////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily load'){
+				config#id#.load.daily.show = true
+				if (debug#id# == 1) console.log('| daily load')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyloadValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyloadValue)
+					config#id#.load.daily.unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.load.daily.unit)
+					if (typeof dailyloadValue === "number") {
+					  config#id#.load.daily.state = dailyloadValue
+					}
+					else config#id#.load.daily.state = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailyload = autoValueArray#id#(_options.value,'Wh')
+					document.getElementById("daily_load_value#id#").innerHTML = trunc#id#(dailyload.value, 3, 0) + ' ' + dailyload.unit
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  /////////////////////////////////  Aux Power //////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'aux power'){
+				if (debug#id# == 1) console.log('| aux power')
+				config#id#.aux.has_aux_power = true
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(auxPower) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + auxPower)
+					config#id#.aux.power_unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.aux.power_unit)
+					if (typeof auxPower === "number") {
+					  config#id#.aux.power = trunc#id#(parseFloat(auxPower), 1)
+					}
+					else config#id#.aux.power = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1)  console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kw') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'W'
+					}
+					document.getElementById("aux_power-#id#").innerHTML = _options.value + ' ' + config#id#.aux.power_unit
+					if (_options.value > 0) {
+					  document.getElementById("aux-dot-#id#").setAttribute("fill", "var(--aux_colour#id#)")
+					}
+					else {
+					  document.getElementById("aux-dot-#id#").setAttribute("fill", "transparent")
+					}
+					config#id#.aux.power = _options.value
+					calculateAux#id#('aux power')
+				  }
+				})
+			  }
+			  ///////////////////////////////////////////////////////////////////////
+			  ///////////////////////////////  Daily Aux ////////////////////////////
+			  ///////////////////////////////////////////////////////////////////////
+			  else if (cmds[j].configuration['widget'] == 'daily aux'){
+				config#id#.aux.daily.show = true
+				if (debug#id# == 1) console.log('| daily aux')
+				jeedom.cmd.execute({
+				  id: id_eql,
+				  async: false,
+				  success:  function(dailyAuxValue) {
+					if (debug#id# == 1) console.log('|    └> cmd.execute : ' + dailyAuxValue)
+					config#id#.aux.daily.unit = cmds[j].unite
+					if (debug#id# == 1) console.log('|    └> unite : '  + config#id#.aux.daily.unit)
+					if (typeof dailyAuxValue === "number") {
+					  config#id#.aux.daily.state = dailyAuxValue
+					}
+					else config#id#.aux.daily.state = 0
+				  }
+				})
+				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
+				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  if (_options.value != undefined) 
+				  {
+            		if (_options.unit.toLowerCase() == 'kwh') {
+					  _options.value = parseFloat(_options.value) * 1000
+					  _options.unit = 'Wh'
+					}
+					let dailyAux = autoValueArray#id#(_options.value,'Wh')
+					document.getElementById("daily_aux_value#id#").innerHTML = trunc#id#(dailyAux.value, 3, 0) + ' ' + dailyAux.unit
+				  }
+				})
+			  }
+			  else {
+				if (debug#id# == 1) {
+				  if (name != 'rafraichir' && name != 'widget') console.log('| ----------------> /!\\ le nom de la commande ' + name + '[' + id_eql + '] est inconnu')
+				}
+			  }
+			}
+        }
+      }
+    })
+    if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+    
+    init#id#(true)
+    
+    function init#id#(init=true,el='') {
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [init()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist ?",ElDomExist);
+      if (ElDomExist) {
+        //if (debug#id#) console.log('| ┌──────────────────────── VALUES ──────────────────────')
+        if (el != '' && debug#id#) console.log('| | launched by ' + el)
+        
+        if (init) {
+          var html = '<div class="container#id# card#id#">';
+          html += '<svg viewBox="-0.5 ' + ((config#id#.show_solar === false) ? ((config#id#.load.additional_loads >= 1) ? '110' : '145') : ((config#id#.solar.mppts == 1) ? '65' : '-0.5'))
+          
+          if (config#id#.load.additional_loads == 1 || config#id#.load.additional_loads == 2) html += ' 500'
+          else if (config#id#.load.additional_loads >= 3) html += ' 560'
+          else html += ' 500'
+          
+          html += ((config#id#.show_solar === false) ? ((config#id#.load.additional_loads >= 1) ? ' 292' : ' 270') : ((config#id#.solar.mppts == 1) ? ' 340' : ' 406'))
+          html += '" preserveAspectRatio="xMidYMid meet" height="'
+          
+          // height="${panel === false ? `${config#id#.show_solar === false ? '246px' : `${height}`}` : `${config#id#.show_solar === false ? '75%' : '100%'}`}"
+          if (config#id#.panel_mode === false) {
+            if (config#id#.show_solar === false) html += '246px'
+            else html += config#id#.card_height
+          } else if (config#id#.show_solar === false) html += '75%'
+          else html += '100%'
+          html += '" width="100%"  xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">'
+          ///////////////////////////////////////////////////////
+          /////////////////////// PV ////////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- PV -->'
+          html += '<rect x="205" y="128.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts == 1) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text id="pvtotal_power#id#" x="238.8" y="148" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.mppts == 1) ? 'none' : '') + '" fill="var(--solar_colour#id#)"></text>'
+          // LINE
+          html += '<path id="so-line#id#" d="M 239 196 L 239 158" class="' + ((config#id#.show_solar === false) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="so-dot#id#" cx="0" cy="0" r="3" class="' + ((config#id#.show_solar === false) ? 'hidden-#id#' : '') + '" fill="transparent">'
+          html += '<animateMotion id="anim_pv#id#" dur="' + config#id#.solar.animation_speed + 's" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#so-line#id#"/></animateMotion></circle>'
+          // ICON
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="icon_sun#id#" x="' + ((config#id#.solar.daily.show === false) ? '220' : '180') + '" y="' + ((config#id#.solar.mppts == 1) ? '70' : '10') + '" width="40" height="40" viewBox="0 0 24 24"><path class="' + ((config#id#.show_solar === false) ? 'hidden-#id#' : '') + '" fill="var(--solar_colour#id#)" d="M11.45 2v3.55L15 3.77L11.45 2m-1 6L8 10.46l3.75 1.25L10.45 8M2 11.45L3.77 15l1.78-3.55H2M10 2H2v8c.57.17 1.17.25 1.77.25c3.58.01 6.49-2.9 6.5-6.5c-.01-.59-.1-1.18-.27-1.75m7 20v-6h-3l5-9v6h3l-5 9Z"/></svg>'
+          // entities.day_pv_energy_108
+          let dailySolar = autoValueArray#id#(config#id#.solar.daily.state,config#id#.solar.daily.unit)
+          html += '<text id="daily_solar_value#id#" x="226" y="' + ((config#id#.solar.mppts == 1) ? '85' : '26') + '" class="ft16-#id# left-align#id#" display="'
+          html += (config#id#.solar.daily.show !== true || config#id#.show_solar === false || config#id#.solar.daily.remaining_show != false) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(dailySolar.value, 3, 1) + ' ' + dailySolar.unit
+          html += '</text>'
+          
+          html += '<text id="daily_solar#id#" x="226" y="' + ((config#id#.solar.mppts == 1) ? '100' : '40') + '" class="ft9-#id# left-align#id#" fill="' + ((config#id#.solar.daily.show !== true || config#id#.show_solar === false || config#id#.solar.daily.remaining_show != false) ? 'transparent' : 'var(--solar_colour#id#)') + '">' + config#id#.solar.daily.text + '</text>'
+          /*
+          //html += '<text id="remaining_solar#id#" x="226" y="40" class="ft9-#id#" fill="' + ((config#id#.solar.daily.show !== true || config#id#.show_solar === false || config#id#.solar.daily.remaining_show === false) ? 'transparent' : 'var(--solar_colour#id#)') + '" >' + config#id#.solar.daily.text_left + '</text>'
+          // ICON SOLAR SELL
+          // entities.solar_sell_247
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="solar_sell_on#id#" x="245" y="150" width="18" height="18" viewBox="0 0 30 30"><path display="'
+          html += (config#id#.solar.sell === 'off' || config#id#.solar.sell === '0' || config#id#.solar.sell === false || config#id#.show_solar === false) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)" d="m5.18 5.45l-1.78-.9L4.66 2h8.47l1.27 2.55l-1.78.89L11.9 4h-6l-.72 1.45M15.5 8H11l-.8-3H7.6l-.79 3H2.28L1 10.55l1.79.89L3.5 10h10.78l.72 1.45l1.79-.89L15.5 8m-.83 14H12.6l-.24-.9l-3.46-5.2l-3.47 5.2l-.23.9H3.13L6 11h2.09l-.36 1.35L8.9 14.1l1.16-1.75L9.71 11h2.07l2.89 11M8.3 15l-.9-1.35l-1.18 4.48L8.3 15m3.28 3.12l-1.18-4.48L9.5 15l2.08 3.12M23 16l-4-4v3h-4v2h4v3l4-4Z"/></svg>'
+          
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="solar_sell_off#id#" x="243" y="150" width="18" height="18" viewBox="0 0 30 30"><path display="'
+          html += (config#id#.solar.sell === 'on' || config#id#.solar.sell === '1' || config#id#.solar.sell === false || config#id#.show_solar === false) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)" d="M 26 16 L 22 12 L 22 15 L 18 15 L 18 17 L 22 17 L 22 20 L 26 16 Z M 22.1 21.5 L 2.4 1.7 L 1.1 3 L 6.1 8 L 5.4 8 L 4.1 10.5 L 5.9 11.4 L 6.6 10 L 8.1 10 L 9.1 11 L 6.2 22 L 8.3 22 L 8.5 21.1 L 12 15.9 L 15.5 21.1 L 15.7 22 L 17.8 22 L 17 18.8 L 20.9 22.7 L 22.1 21.5 M 9.3 18.1 L 10.5 13.6 L 11.4 14.9 L 9.3 18.1 M 14.7 18.1 L 12.6 15 L 12.8 14.7 L 14.1 16 L 14.7 18.1 M 14.2 11 L 14.9 11 L 15.1 11.9 L 14.2 11 M 14.1 8 L 18.6 8 L 19.9 10.6 L 18.1 11.5 L 17.4 10 L 13.2 10 L 10.2 7 L 10.7 5 L 13.3 5 L 14.1 8 M 8.4 5.2 L 6.9 3.7 L 7.8 2 L 16.3 2 L 17.6 4.5 L 15.8 5.4 L 15 4 L 9 4 L 8.4 5.2 Z"/></svg>'
+          */
+          ///////////////////////////////////////////////////////
+          ////////////////////// PV1 ////////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- PV1 -->'
+          html += '<text x="' + ((config#id#.solar.mppts == 1) ? '240' : '187') + '" y="' + ((config#id#.solar.mppts == 1) ? '122' : '60') + '" class="ft9-#id# ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false) ? 'none' : '') + '" fill="var(--solar_colour#id#)">' + config#id#.solar.pv1.name + '</text>'
+          
+          html += '<rect id="pv1-rect-#id#" x="' + ((config#id#.solar.mppts == 1) ? '205' : '154') + '" y="' + ((config#id#.solar.mppts == 1) ? '128.5' : '64.5') + '" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.show_solar === false) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text id="pv1_power_state#id#" x="' + ((config#id#.solar.mppts == 1) ? '238.8' : '188.1')
+          html += '" y="' + ((config#id#.solar.pv1.energy === false) ? ((config#id#.solar.mppts == 1) ? '148' : '84') : ((config#id#.solar.mppts == 1) ? '143' : '79')) + '" class="'
+          html += (config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#'
+          html += ' ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false) ? 'none' : '') + '" fill="var(--solar_colour#id#)">' + trunc#id#(config#id#.solar.pv1.power, 1) + ' ' + config#id#.solar.unit + '</text>'
+          
+          let pv1_energy = autoValueArray#id#((config#id#.solar.pv1.energy || 0),config#id#.solar.pv1.energy_unit)
+          html += '<text id="pv1_energy#id#" x="' + ((config#id#.solar.mppts == 1) ? '238.8' : '188.1') + '" y="' + (config#id#.solar.mppts == 1 ? '154' : '90') + '" class="ft8-#id# center-align#id#" display="'
+          html += (config#id#.show_solar === false || config#id#.solar.pv1.energy === false || config#id#.solar.mppts === 0) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(pv1_energy.value, 3, 1) + ' ' + pv1_energy.unit
+          html += '</text>'
+          
+          // entities.pv1_voltage_109
+          html += '<text id="pv1_voltage#id#" x="' + ((config#id#.solar.mppts == 1) ? '235' : '181') + '" y="'+ ((config#id#.solar.pv1.current === false) ? ((config#id#.solar.mppts == 1) ? '172' : '106') : ((config#id#.solar.mppts == 1) ? '184' : '118'))
+          html += '" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv1.voltage === false) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv1.voltage + ' ' + config#id#.solar.pv1.voltage_unit + '</text>'
+    
+          // entities.pv1_current_110
+          html += '<text id="pv1_current#id#" x="' + ((config#id#.solar.mppts == 1) ? '235' : '181') + '" y="' + ((config#id#.solar.mppts == 1) ? '172' : '106') + '" class="ft9-#id# right-align#id#" display="'
+          html += (config#id#.show_solar === false || config#id#.solar.pv1.current === false) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv1.current + ' ' + config#id#.solar.pv1.current_unit + '</text>'
+          
+          html += '<path id="pv1-line#id#" d="M 187 95 L 187 132 Q 187 144 195 144 L 205 144" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="pv1-dot#id#" cx="0" cy="0" r="3" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'hidden-#id#' : '') + '" fill="transparent">'
+          html += '<animateMotion id="anim_pv1#id#" dur="' + config#id#.solar.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#pv1-line#id#"/></animateMotion></circle>'
+
+          
+          ///////////////////////////////////////////////////////
+          ////////////////////// PV2 ////////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- PV2 -->'
+          html += '<rect id="pv2-rect-#id#" x="254" y="64.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text x="288" y="60" class="ft9-#id# ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'none' : '') + '" fill="var(--solar_colour#id#)">' + config#id#.solar.pv2.name + '</text>'
+          
+          html += '<text id="pv2_power_state#id#" x="289.5" y="' + ((config#id#.solar.pv2.energy === false) ? '84' : '79') + '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" display="'
+          html += (config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)">' + trunc#id#(config#id#.solar.pv2.power, 1) + ' ' + config#id#.solar.unit + '</text>'
+          
+          let pv2_energy = autoValueArray#id#((config#id#.solar.pv2.energy || 0),config#id#.solar.pv2.energy_unit)
+          html += '<text id="pv2_energy#id#" x="289.5" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv2.energy === false || config#id#.solar.mppts < 2) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(pv2_energy.value, 3, 1) + ' ' + pv2_energy.unit
+          html += '</text>'
+          
+          // entities.pv2_voltage_111
+          html += '<text id="pv2_voltage#id#" x="284" y="' + ((config#id#.solar.pv2.current === false) ? '106' : '118') + '" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv2.voltage === false || config#id#.solar.mppts === 1) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv2.voltage + ' ' + config#id#.solar.pv2.voltage_unit + '</text>'
+    
+          // entities.pv2_current_112
+          html += '<text id="pv2_current#id#" x="284" y="106" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv2.current === false || config#id#.solar.mppts === 1) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv2.current + ' ' + config#id#.solar.pv2.current_unit + '</text>'
+          
+          html += '<path id="pv2-line#id#" d="M 289 95 L 289 135 Q 289 144 282 144 L 275 144" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="pv2-dot#id#" cx="0" cy="0" r="3" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1) ? 'hidden-#id#' : '') + '" fill="transparent">'
+          html += '<animateMotion id="anim_pv2#id#" dur="' + config#id#.solar.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#pv2-line#id#"/></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          ////////////////////// PV3 ////////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- PV3 -->'
+          html += '<rect id="pv3-rect-#id#" x="78" y="64.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text x="112" y="60" class="ft9-#id# ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'none' : '') + '" fill="var(--solar_colour#id#)">' + config#id#.solar.pv3.name + '</text>'
+          
+          html += '<text id="pv3_power_state#id#" x="113" y="' + ((config#id#.solar.pv3.energy === false) ? '84' : '79') + '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" display="'
+          html += (config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)">' + trunc#id#(config#id#.solar.pv3.power, 1) + ' ' + config#id#.solar.unit + '</text>'
+          
+          let pv3_energy = autoValueArray#id#((config#id#.solar.pv3.energy || 0),config#id#.solar.pv3.energy_unit)
+          html += '<text id="pv3_energy#id#" x="113" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv3.energy === false || config#id#.solar.mppts < 3) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(pv3_energy.value, 3, 1) + ' ' + pv3_energy.unit
+          html += '</text>'
+          
+          // entities.pv3_voltage_113
+          html += '<text id="pv3_voltage#id#" x="107" y="' + ((config#id#.solar.pv3.current === false) ? '106' : '118') + '" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv3.voltage === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv3.voltage + ' ' + config#id#.solar.pv3.voltage_unit + '</text>'
+    
+          // entities.pv3_current_114
+          html += '<text id="pv3_current#id#" x="107" y="106" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv3.current === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv3.current + ' ' + config#id#.solar.pv3.current_unit + '</text>'
+          
+          html += '<path id="pv3-line#id#" d="M 113 95 L 113 135 Q 113 144 120 144 L 205 144" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="pv3-dot#id#" cx="0" cy="0" r="3" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2) ? 'hidden-#id#' : '') + '" fill="' + ((parseInt(config#id#.solar.pv3.power) <= 0) ? 'transparent' : 'var(--solar_colour#id#)') + '">'
+          html += '<animateMotion id="anim_pv3#id#" dur="' + config#id#.solar.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#pv3-line#id#"/></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          ////////////////////// PV4 ////////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- PV4 -->'
+          html += '<rect id="pv4-rect-#id#" x="330" y="64.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text x="364" y="60" class="ft9-#id# ftw-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'none' : '') + '" fill="var(--solar_colour#id#)">' + config#id#.solar.pv4.name + '</text>'
+          
+          html += '<text id="pv4_power_state#id#" x="366" y="' + ((config#id#.solar.pv4.energy === false) ? '84' : '79') + '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" display="'
+          html += (config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'none' : ''
+          html += '" fill="var(--solar_colour#id#)">' + trunc#id#(config#id#.solar.pv4.power, 1) + ' ' + config#id#.solar.unit + '</text>'
+          
+          let pv4_energy = autoValueArray#id#((config#id#.solar.pv4.energy || 0),config#id#.solar.pv4.energy_unit)
+          html += '<text id="pv4_energy#id#" x="366" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv4.energy === false  || config#id#.solar.mppts < 4) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(pv4_energy.value, 3, 1) + ' ' + pv4_energy.unit
+          html += '</text>'
+          
+          // entities.pv4_voltage_115
+          html += '<text id="pv4_voltage#id#" x="360" y="' + ((config#id#.solar.pv4.current === false) ? '106' : '118') + '" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv4.voltage === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv4.voltage + ' ' + config#id#.solar.pv4.voltage_unit + '</text>'
+    
+          // entities.pv4_current_116
+          html += '<text id="pv4_current#id#" x="360" y="106" class="ft9-#id# right-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv4.current === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'none' : '') + '" fill="var(--solar_colour#id#)" >' + config#id#.solar.pv4.current + ' ' + config#id#.solar.pv4.current_unit + '</text>'
+          
+          html += '<path id="pv4-line#id#" d="M 365 95 L 365 135 Q 365 144 358 144 L 275 144" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="pv4-dot#id#" cx="0" cy="0" r="3" class="' + ((config#id#.show_solar === false || config#id#.solar.mppts === 1 || config#id#.solar.mppts === 2 || config#id#.solar.mppts === 3) ? 'hidden-#id#' : '') + '" fill="' + ((parseInt(config#id#.solar.pv4.power) <= 0) ? 'transparent' : 'var(--solar_colour#id#)') + '">'
+    html += '<animateMotion id="anim_pv4#id#" dur="' + config#id#.solar.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#pv4-line#id#"/></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          ////////////////////// Load ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Load -->'
+          html += '<rect x="304" y="213.5" width="70" height="30" rx="4.5" ry="4.5" class="' + ((config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" pointer-events="all"/>'
+          
+          html += '<text id="ess_power#id#" x="338.1" y="232.2" display="' + ((config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '' : 'none') + '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" fill="var(--load_colour#id#)"></text>'
+          // LINE LOAD
+          html += '<path id="es-line#id#" class="' + ((config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '' : 'hidden-#id#') + '" d="M 304 228 L 264.7 228" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="es-dot1#id#" cx="0" cy="0" r="3" fill="transparent">'
+          html += '<animateMotion id="anim_load1#id#" dur="' + config#id#.load.animation_speed + 's" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#es-line#id#"/></animateMotion></circle>'
+          html += '<path id="es-line1#id#" class="' + ((config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '' : 'hidden-#id#') + '" d="M 374 228 L 402.38 228" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="es-dot#id#" cx="0" cy="0" r="3" fill="transparent"><animateMotion id="anim_load#id#" dur="' + config#id#.load.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#es-line1#id#"/></animateMotion></circle>'
+          
+          // ICON LOAD ESS
+          //html += '<svg xmlns="http://www.w3.org/2000/svg" id="icon_load#id#" x="402" y="177.5" width="79" height="79" viewBox="0 0 24 24"><path fill="var(--load_colour#id#)" d="M15 9h1V7.5h4V9h1c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1h-6c-.55 0-1-.45-1-1V10c0-.55.45-1 1-1m1 2v3h4v-3h-4m-4-5.31l-5 4.5V18h5v2H5v-8H2l10-9l2.78 2.5H14v1.67l-.24.1L12 5.69Z"/></svg>'
+          // ICON LOAD NONESS
+          html += '<svg xmlns="http://www.w3.org/2000/svg" class="' + ((config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '' : 'hidden-#id#') + '" id="icon_load#id#" x="400" y="190.5" width="79" height="79" viewBox="0 0 24 24"><path fill="var(--load_colour#id#)" d="m15 13l-4 4v-3H2v-2h9V9l4 4M5 20v-4h2v2h10v-7.81l-5-4.5L7.21 10H4.22L12 3l10 9h-3v8H5Z"></path></svg>'
+          
+          // entities.day_load_energy_84
+          let dailyLoad = autoValueArray#id#(config#id#.load.daily.state,config#id#.load.daily.unit)
+          html += '<text id="daily_load_value#id#" x="' + ((config#id#.load.additional_loads == 1) ? '400.4' : '335') + '" y="' + ((config#id#.load.additional_loads == 1) ? '277.9' : '178') + '" class="ft16-#id# left-align#id# ' + (((config#id#.load.daily.show === true) && (config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power)) ? '' : 'hidden-#id#') + '" fill="var(--load_colour#id#)">' + trunc#id#(dailyLoad.value, 3, 1) + ' ' + dailyLoad.unit + '</text>'
+          
+          html += '<text id="daily_load#id#" x="' + ((config#id#.load.additional_loads == 1) ? '400.4' : '335') + '" y="' + ((config#id#.load.additional_loads == 1) ? '292.1' : '192.2') + '" class="ft9-#id# left-align#id# ' + (((config#id#.load.daily.show === true) && (config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power)) ? '' : 'hidden-#id#') + '" fill="var(--load_colour#id#)" >' + config#id#.load.daily.text + '</text>'
+          ///////////////////////////////////////////////////////
+          //////////////////// Load 1 ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Load 1 -->'
+          html += '<rect id="load1-rect-#id#" x="406" y="128.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--load_colour#id#)" pointer-events="all" display="' + ((config#id#.load.additional_loads >= 1) ? '' : 'none') + '"/>'
+          
+          html += '<text id="ess_load1#id#" x="440" y="' + ((config#id#.load.load1.energy === false) ? '148' : '143') + '" display="' + ((config#id#.load.additional_loads >= 1) ? '' : 'none') + '" class="'
+          html += (config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#'
+          html += ' ftw-#id# center-align#id#" fill="var(--load_colour#id#)">' + config#id#.load.load1.power + ' ' + config#id#.load.load1.power_unit + '</text>'
+          
+          let load1_energy = autoValueArray#id#((config#id#.load.load1.energy || 0),config#id#.load.load1.energy_unit)
+          html += '<text id="load1_energy#id#" x="440" y="154" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load1.energy === false || config#id#.load.additional_loads <= 0) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
+          html += trunc#id#(load1_energy.value, 3, 1) + ' ' + load1_energy.unit
+          html += '</text>'
+          
+          html += '<text id="es-load1-name#id#" x="440" y="122" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 1) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load1.name) ? config#id#.load.load1.name : '') + '</text>'
+          // ICON
+          if (config#id#.load.additional_loads >= 1 && config#id#.load.load1.icon !== false) html += getSvgIcon(config#id#.load.load1.icon, 1)
+          // LINE
+          html += '<path id="es-load1path#id#" d="M 441 190 L 441 158" class="' + ((config#id#.load.additional_loads >= 1) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="es-dot1-#id#" cx="0" cy="0" r="3"  class="' + ((config#id#.load.additional_loads >= 1 && config#id#.load.animate_load_enable === true) ? '' : 'hidden-#id#') + '" fill="' + ((config#id#.load.load1.power == 0) ? 'transparent' : 'var(--load_colour#id#)') + '"><animateMotion id="anim_load1-#id#" dur="3" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#es-load1path#id#"></mpath></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          //////////////////// Load 2 ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Load 2 -->'
+          html += '<rect id="load2-rect-#id#" x="406" y="300" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--load_colour#id#)" pointer-events="all" display="' + ((config#id#.load.additional_loads >= 2) ? '' : 'none') + '"/>'
+          
+          html += '<text id="ess_load2#id#" x="440" y="' + ((config#id#.load.load2.energy === false) ? '319.5' : '314.5') + '" display="' + ((config#id#.load.additional_loads >= 2) ? '' : 'none') + '" class="'
+          html += (config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#'
+          html += ' ftw-#id# center-align#id#" fill="var(--load_colour#id#)">' + config#id#.load.load2.power + ' ' + config#id#.load.load2.power_unit + '</text>'
+          
+          let load2_energy = autoValueArray#id#((config#id#.load.load2.energy || 0),config#id#.load.load2.energy_unit)
+          html += '<text id="load2_energy#id#" x="440" y="325.5" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load2.energy === false || config#id#.load.additional_loads <= 1) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
+          html += trunc#id#(load2_energy.value, 3, 1) + ' ' + load2_energy.unit
+          html += '</text>'
+          
+          html += '<text id="es-load2-name#id#" x="440" y="343" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 2) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load2.name) ? config#id#.load.load2.name : '') + '</text>'
+          // ICON
+          if (config#id#.load.additional_loads >= 2 && config#id#.load.load2.icon !== false) html += getSvgIcon(config#id#.load.load2.icon, 2)
+          // LINE
+          html += '<path id="es-load2path#id#" d="M 441 300 L 441 267" class="' + ((config#id#.load.additional_loads >= 2) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="es-dot2-#id#" cx="0" cy="0" r="3"  class="' + ((config#id#.load.additional_loads >= 2 && config#id#.load.animate_load_enable === true) ? '' : 'hidden-#id#') + '" fill="' + ((config#id#.load.load2.power == 0) ? 'transparent' : 'var(--load_colour#id#)') + '"><animateMotion id="anim_load2-#id#" dur="3" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#es-load2path#id#"></mpath></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          //////////////////// Load 3 ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Load 3 -->'
+          html += '<rect id="load3-rect-#id#" x="485" y="128.5" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--load_colour#id#)" pointer-events="all" display="' + ((config#id#.load.additional_loads >= 3) ? '' : 'none') + '"/>'
+          
+          html += '<text id="ess_load3#id#" x="520" y="' + ((config#id#.load.load3.energy === false) ? '148' : '143') + '" display="' + ((config#id#.load.additional_loads >= 3) ? '' : 'none') + '" class="'
+          html += (config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#'
+          html += ' ftw-#id# center-align#id#" fill="var(--load_colour#id#)">' + config#id#.load.load3.power + ' ' + config#id#.load.load3.power_unit + '</text>'
+          
+          let load3_energy = autoValueArray#id#((config#id#.load.load3.energy || 0),config#id#.load.load3.energy_unit)
+          html += '<text id="load3_energy#id#" x="520" y="154" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load3.energy === false || config#id#.load.additional_loads <= 2) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
+          html += trunc#id#(load3_energy.value, 3, 1) + ' ' + load3_energy.unit
+          html += '</text>'
+          
+          html += '<text id="es-load3-name#id#" x="520" y="122" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 3) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load3.name) ? config#id#.load.load3.name : '') + '</text>'
+          // ICON
+          if (config#id#.load.additional_loads >= 3 && config#id#.load.load3.icon !== false) html += getSvgIcon(config#id#.load.load3.icon, 3)
+          // LINE
+          html += '<path id="es-load3path#id#" d="M 520 158 L 520 205 Q 520 214 512 214 L 475 214" class="' + ((config#id#.load.additional_loads >= 3) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="es-dot3-#id#" cx="0" cy="0" r="3"  class="' + ((config#id#.load.additional_loads >= 3 && config#id#.load.animate_load_enable === true) ? '' : 'hidden-#id#') + '" fill="' + ((config#id#.load.load3.power == 0) ? 'transparent' : 'var(--load_colour#id#)') + '"><animateMotion id="anim_load3-#id#" dur="3" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#es-load3path#id#"></mpath></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          //////////////////// Load 4 ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Load 4 -->'
+          html += '<rect id="load4-rect-#id#" x="485" y="300" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--load_colour#id#)" pointer-events="all" display="' + ((config#id#.load.additional_loads >= 4) ? '' : 'none') + '"/>'
+          
+          html += '<text id="ess_load4#id#" x="520" y="' + ((config#id#.load.load4.energy === false) ? '319.5' : '314.5') + '" display="' + ((config#id#.load.additional_loads >= 4) ? '' : 'none') + '" class="'
+          html += (config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#'
+          html += ' ftw-#id# center-align#id#" fill="var(--load_colour#id#)">' + config#id#.load.load4.power + ' ' + config#id#.load.load4.power_unit + '</text>'
+          
+          let load4_energy = autoValueArray#id#((config#id#.load.load4.energy || 0),config#id#.load.load4.energy_unit)
+          html += '<text id="load4_energy#id#" x="520" y="325.5" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load4.energy === false || config#id#.load.additional_loads <= 3) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
+          html += trunc#id#(load4_energy.value, 3, 1) + ' ' + load4_energy.unit
+          html += '</text>'
+          
+          html += '<text id="es-load4-name#id#" x="520" y="343" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 4) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load4.name) ? config#id#.load.load4.name : '') + '</text>'
+          // ICON
+          if (config#id#.load.additional_loads >= 4 && config#id#.load.load4.icon !== false) html += getSvgIcon(config#id#.load.load4.icon, 4)
+          // LINE
+          html += '<path id="es-load4path#id#" d="M 520 300 L 520 252 Q 520 242 512 242 L 475 242" class="' + ((config#id#.load.additional_loads >= 4) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10" pointer-events="stroke"></path>'
+          html += '<circle id="es-dot4-#id#" cx="0" cy="0" r="3"  class="' + ((config#id#.load.additional_loads >= 4 && config#id#.load.animate_load_enable === true) ? '' : 'hidden-#id#') + '" fill="' + ((config#id#.load.load4.power == 0) ? 'transparent' : 'var(--load_colour#id#)') + '"><animateMotion id="anim_load4-#id#" dur="3" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#es-load4path#id#"></mpath></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          /////////////////////  Grid ///////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Grid -->'
+          // entities.grid_ct_power_172
+          html += '<rect x="103" y="213.5" width="70" height="29.5" rx="4.42" ry="4.42" fill="none" stroke="var(--grid_colour#id#)" pointer-events="all"/>'
+          
+          html += '<text id="grid_power#id#" x="138.1" y="232.2" display="'
+          html += '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" fill="var(--grid_colour#id#)">'
+          html += (config#id#.grid.power_state < 0) ? config#id#.grid.power_state * -1 : config#id#.grid.power_state
+          html += ' ' + config#id#.battery.power_unit + '</text>'
+          // LINE GRID
+          html += '<path id="grid-line#id#" d="M 173 228 L 214 228" fill="none" stroke="var(--grid_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="grid-dot-buy#id#" cx="0" cy="0" r="3" fill="' + ((config#id#.grid.power_state < 0 || config#id#.grid.power_state === 0) ? 'transparent' : 'var(--grid_colour#id#)') + '">'
+          html += '<animateMotion id="anim_grid_buy#id#" dur="' + config#id#.grid.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#grid-line#id#"/></animateMotion></circle>'
+          html += '<circle id="grid-dot-sell#id#" cx="0" cy="0" r="3" fill="' + ((config#id#.grid.power_state > 0 || config#id#.grid.power_state === 0) ? 'transparent' : 'var(--grid_colour#id#)') + '">'
+          html += '<animateMotion id="anim_grid_sell#id#" dur="' + config#id#.grid.animation_speed + 's" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#grid-line#id#"/></animateMotion></circle>'
+    
+          html += '<path id="grid-line1#id#" d="M 103 228 L 64.5 228" fill="none" stroke="var(--grid_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="grid-dot1-buy#id#" cx="0" cy="0" r="3" fill="' + ((config#id#.grid.power_state < 0 || config#id#.grid.power_state === 0) ? 'transparent' : 'var(--grid_colour#id#)') + '">'
+          html += '<animateMotion id="anim_grid_buy1#id#" dur="' + config#id#.grid.animation_speed + 's" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#grid-line1#id#"/></animateMotion></circle>'
+          html += '<circle id="grid-dot1-sell#id#" cx="0" cy="0" r="3" fill="' + ((config#id#.grid.power_state > 0 || config#id#.grid.power_state === 0) ? 'transparent' : 'var(--grid_colour#id#)') + '">'
+          html += '<animateMotion id="anim_grid_sell1#id#" dur="' + config#id#.grid.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#grid-line1#id#"/></animateMotion></circle>'
+          // ICON
+          // grid_connected_status_194
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="transmission_on#id#" x="-0.5" y="197.5" width="64.5" height="64.5" viewBox="0 0 24 24"><path class="'
+          html += (config#id#.grid.status === 'off' || config#id#.grid.status === '0' || config#id#.grid.status === 0) ? 'hidden-#id#' : ''
+          html += '" fill="var(--grid_colour#id#)" d="m8.28 5.45l-1.78-.9L7.76 2h8.47l1.27 2.55l-1.78.89L15 4H9l-.72 1.45M18.62 8h-4.53l-.79-3h-2.6l-.79 3H5.38L4.1 10.55l1.79.89l.73-1.44h10.76l.72 1.45l1.79-.89L18.62 8m-.85 14H15.7l-.24-.9L12 15.9l-3.47 5.2l-.23.9H6.23l2.89-11h2.07l-.36 1.35L12 14.1l1.16-1.75l-.35-1.35h2.07l2.89 11m-6.37-7l-.9-1.35l-1.18 4.48L11.4 15m3.28 3.12l-1.18-4.48l-.9 1.36l2.08 3.12Z"/></svg>'
+    
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="transmission_off#id#" x="-0.5" y="197.5" width="64.5" height="64.5" viewBox="0 0 24 24"><path class="'
+          html += (config#id#.grid.status === 'on' || config#id#.grid.status === '1' || config#id#.grid.status === 1) ? 'hidden-#id#' : ''
+          html += '" fill="var(--no_grid_colour#id#)" d="M22.1 21.5L2.4 1.7L1.1 3l5 5h-.7l-1.3 2.5l1.8.9l.7-1.4h1.5l1 1l-2.9 11h2.1l.2-.9l3.5-5.2l3.5 5.2l.2.9h2.1l-.8-3.2l3.9 3.9l1.2-1.2M9.3 18.1l1.2-4.5l.9 1.3l-2.1 3.2m5.4 0L12.6 15l.2-.3l1.3 1.3l.6 2.1m-.5-7.1h.7l.2.9l-.9-.9m-.1-3h4.5l1.3 2.6l-1.8.9l-.7-1.5h-4.2l-3-3l.5-2h2.6l.8 3M8.4 5.2L6.9 3.7L7.8 2h8.5l1.3 2.5l-1.8.9L15 4H9l-.6 1.2Z"/></svg>'
+          
+          html += '<text id="daily_grid_buy#id#" x="5" y="292.1" class="ft9-#id# left-align#id#" fill="' + ((config#id#.grid.daily.show_buy !== true) ? 'transparent' : 'var(--grid_colour#id#)') + '" >' + config#id#.grid.daily.text_buy + '</text>'
+          html += '<text id="daily_grid_sell#id#" x="5" y="189" class="ft9-#id# left-align#id#" fill="' + ((config#id#.grid.daily.show_sell !== true) ? 'transparent' : 'var(--grid_colour#id#)') + '" >' + config#id#.grid.daily.text_sell + '</text>'
+          // entities.day_grid_import_76
+          let dailyGridBuy = autoValueArray#id#(config#id#.grid.daily.buy_state,config#id#.grid.daily.buy_unit)
+          html += '<text id="daily_grid_buy_value#id#" x="5" y="277.9" class="ft16-#id# left-align#id#" display="' + ((config#id#.grid.daily.show_buy !== true) ? 'none' : '')
+          html += '" fill="var(--grid_colour#id#)">' + trunc#id#(dailyGridBuy.value, 3, 1) + ' ' + dailyGridBuy.unit + '</text>'
+          // entities.day_grid_export_77
+          let dailyGridSell = autoValueArray#id#(config#id#.grid.daily.sell_state,config#id#.grid.daily.sell_unit)
+          html += '<text id="daily_grid_sell_value#id#" x="5" y="175" class="ft16-#id# left-align#id#" display="' + ((config#id#.grid.daily.show_sell !== true) ? 'none' : '')
+          html += '" fill="var(--grid_colour#id#)" >' + trunc#id#(dailyGridSell.value,3 , 1) + ' ' + dailyGridSell.unit + '</text>'
+          
+          ///////////////////////////////////////////////////////
+          ////////////////////// Battery ////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Battery -->'
+          html += '<rect x="' + ((config#id#.aux.has_aux_power) ? '104' : '204') + '" y="300" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--battery_colour#id#)" pointer-events="all" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '"></rect>'
+          
+          // entities.battery_power_190
+          html += '<text id="battery_power#id#" x="' + ((config#id#.aux.has_aux_power) ? '140' : '239') + '" y="320" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '" fill=var(--battery_colour#id#) class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#">'
+          html += (config#id#.battery.power_state < 0) ? config#id#.battery.power_state * -1 : config#id#.battery.power_state
+          html += ' ' + config#id#.battery.power_unit + '</text>'
+    
+          //entities.battery_current_191
+          html += '<text id="battery_current#id#" x="' + ((config#id#.aux.has_aux_power) ? '133' : '232') + '" y="295" display="' + ((config#id#.battery.has_battery === false || !config#id#.battery.current_state) ? 'none' : '') + '" fill=var(--battery_colour#id#) class="ft9-#id# right-align#id#">' + config#id#.battery.current_state + ' ' + config#id#.battery.current_unit + '</text>'
+          
+          // entities.battery_voltage_183
+          html += '<text id="battery_voltage#id#" x="' + ((config#id#.aux.has_aux_power) ? '133' : '232') + '" y="' + ((!config#id#.battery.current_state) ? '295' : '285') + '" display="' // 193 346
+          html += (config#id#.battery.has_battery === false || !config#id#.battery.voltage_state) ? 'none' : ''
+          html += '" fill=var(--battery_colour#id#) class="ft9-#id# right-align#id#" >' + config#id#.battery.voltage_state + ' ' + config#id#.battery.voltage_unit + '</text>'
+          
+          // entities.battery_temp_182
+          html += '<text id="battery_temp#id#" x="' + ((config#id#.aux.has_aux_power) ? '146' : '245') + '" y="295" class="ft9-#id# left-align#id#" fill="var(--battery_colour#id#)" display="'
+          html += (config#id#.battery.has_battery === false || config#id#.battery.temp.show === false) ? 'none' : ''
+          html += '" >' + config#id#.battery.temp.state + '' + config#id#.battery.temp.unit + '</text>'
+          
+          // entities.day_battery_charge_70
+          html += '<text id="daily_bat_charge_value#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="343" class= "ft16-#id# left-align#id#" display="' + ((config#id#.battery.has_battery === false || config#id#.battery.daily.show_charge !== true) ? 'none' : '') + '" fill="var(--battery_colour#id#)">'
+          let dailyBatteryCharge = autoValueArray#id#(config#id#.battery.daily.charge_state,config#id#.battery.daily.charge_unit)
+          html += trunc#id#(dailyBatteryCharge.value, 3, 1) + ' ' + dailyBatteryCharge.unit
+          html += '</text>'
+          
+          // entities.day_battery_discharge_71
+          let dailyBatteryDischarge = autoValueArray#id#(config#id#.battery.daily.discharge_state,config#id#.battery.daily.discharge_unit)
+          html += '<text id="daily_bat_discharge_value#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="380.1" class="ft16-#id# left-align#id#" display="' + ((config#id#.battery.has_battery === false || config#id#.battery.daily.show_discharge !== true) ? 'none' : '')
+          html += '" fill="var(--battery_colour#id#)" >' + trunc#id#(dailyBatteryDischarge.value, 3, 1) + ' ' + dailyBatteryDischarge.unit + '</text>'
+          
+          html += '<text id="duration#id#" x="' + ((config#id#.aux.has_aux_power) ? '171' : '270') + '" y="377.5" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' left-align#id#" fill="'
+          html += (config#id#.battery.energy == 0 || !config#id#.battery.energy) ? 'transparent' : 'var(--battery_colour#id#)'
+          html += '" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '"></text>'
+          
+          html += '<text id="duration_text_etat#id#" x="' + ((config#id#.aux.has_aux_power) ? '171' : '270') + '" y="393.7" class="ft9-#id# left-align#id#" fill="'
+          html += (config#id#.battery.energy == 0 || !config#id#.battery.energy || config#id#.battery.power_state === 0 || float === true) ? 'transparent' : 'var(--battery_colour#id#)'
+          html += '" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '"></text>'
+    
+          html += '<text id="daily_bat_charge#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="357.2" class="ft9-#id# left-align#id#"  fill="' + ((config#id#.battery.daily.show_charge !== true) ? 'transparent' : 'var(--battery_colour#id#)') + '" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '" >' + config#id#.battery.daily.text_charge + '</text>'
+          html += '<text id="daily_bat_discharge#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="393.7" class="ft9-#id# left-align#id#"  fill="' + ((config#id#.battery.daily.show_discharge !== true) ? 'transparent' : 'var(--battery_colour#id#)') + '" display="' + ((config#id#.battery.has_battery === false) ? 'none' : '') + '" >' + config#id#.battery.daily.text_discharge + '</text>'
+          
+          //  entities.battery_soc_184
+          html += '<text id="battery_soc#id#" x="' + ((config#id#.aux.has_aux_power) ? '171' : '270') + '" y="360" display="' + ((config#id#.battery.has_battery === false || config#id#.battery.soc.show === false) ? 'none' : '') + '" fill=var(--battery_colour#id#) class="ft18-#id# ftw-#id# left-align#id#"></text>'
+          // ICON BATTERY
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="icon_bat#id#" class="' + ((config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" x="' + ((config#id#.aux.has_aux_power) ? '114' : '213') + '" y="325.5" width="78.75" height="78.75" preserveAspectRatio="none" opacity="1" viewBox="0 0 24 24">'
+          html += getBatteryIcon#id#(config#id#.battery.soc.state, config#id#.battery.full_capacity, config#id#.battery.empty_capacity)
+          html += '</svg>'
+          // LINE BATTERY
+          html += '<path id="bat-line#id#" class="' + ((config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" d="' + ((config#id#.aux.has_aux_power) ? 'M 214 250 L 147 250 Q 139 250 139 258 L 139 300' : 'M 239.23 260 L 239.23 300') + '" fill="none" stroke="var(--battery_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          
+          html += '<circle id="power-dot-charge#id#" class="' + ((config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" cx="0" cy="0" r="3" fill="' + ((config#id#.battery.power_state < 0 || config#id#.battery.power_state == 0 || !config#id#.battery.power_state) ? 'transparent' : 'var(--battery_colour#id#)') + '">'
+          html += '<animateMotion id="anim_battery-charge#id#" dur="' + config#id#.battery.animation_speed + 's" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#bat-line#id#"/></animateMotion></circle>'
+          
+          html += '<circle id="power-dot-discharge#id#" class="' + ((config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" cx="0" cy="0" r="3" fill="' + ((config#id#.battery.power_state > 0 || config#id#.battery.power_state == 0 || !config#id#.battery.power_state) ? 'transparent' : 'var(--battery_colour#id#)') + '">'
+          html += '<animateMotion id="anim_battery-discharge#id#"  dur="' + config#id#.battery.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#bat-line#id#"/></animateMotion></circle>'
+          //////////////////////////////////////////////////
+          html += '<!-- battery mppt -->'
+          html += '<rect x="' + ((config#id#.aux.has_aux_power) ? '204' : '303') + '" y="300" width="70" height="30" rx="4.42" ry="4.42" fill="none" stroke="var(--solar_colour#id#)" pointer-events="all" class="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '"/>'
+          
+          html += '<text x="' + ((config#id#.aux.has_aux_power) ? '239' : '338') + '" y="295" class="ft9-#id# ftw-#id# center-align#id#" display="' + ((config#id#.battery.mppt.has_mppt === true && config#id#.battery.has_battery === true) ? '' : 'none') + '" fill="var(--solar_colour#id#)">' + config#id#.battery.mppt.name + '</text>'
+          
+          
+          html += '<text id="battery_mppt_power-#id#" x="' + ((config#id#.aux.has_aux_power) ? '240' : '337') + '" y="' + ((config#id#.battery.mppt.energy === false) ? '319' : '314') + '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" display="' + ((config#id#.battery.mppt.has_mppt === true && config#id#.battery.has_battery === true) ? '' : 'none')
+          html += '" fill="var(--solar_colour#id#)">' + trunc#id#(config#id#.battery.mppt.power, 1) + ' ' + config#id#.battery.mppt.power_unit + '</text>'
+          
+          let mppt_energy = autoValueArray#id#((config#id#.battery.mppt.energy || 0),config#id#.battery.mppt.energy_unit)
+          html += '<text id="battery-mppt-energy-#id#" x="' + ((config#id#.aux.has_aux_power) ? '240' : '337') + '" y="325" class="ft8-#id# center-align#id#" display="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.mppt.energy === false || config#id#.battery.has_battery === false) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
+          html += trunc#id#(mppt_energy.value, 3, 1) + ' ' + mppt_energy.unit
+          html += '</text>'
+          
+          html += '<path id="battery-mppt-line-#id#" d="' + ((config#id#.aux.has_aux_power) ? 'M 175 315 L 204 315' : 'M 274 315 L 303 315') + '" class="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
+          html += '<circle id="dot-battery-mppt-#id#" cx="0" cy="0" r="3" class="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" fill="' + ((parseInt(config#id#.battery.mppt.power) <= 0) ? 'transparent' : 'var(--solar_colour#id#)') + '">'
+          html += '<animateMotion id="battery-mppt-animate-#id#" dur="5s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#battery-mppt-line-#id#"/></animateMotion></circle>'
+          ///////////////////////////////////////////////////////
+          ////////////////////// Aux ////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Aux -->'
+          html += '<rect x="' + ((config#id#.battery.has_battery) ? '304' : '204') + '" y="300" width="70" height="30" rx="4.5" ry="4.5" display="'+ ((config#id#.aux.has_aux_power === false) ? 'none' : '') +'" fill="none" stroke="var(--aux_colour#id#)" pointer-events="all"></rect>'
+          html += '<path id="aux-line#id#" d="' + ((config#id#.battery.has_battery) ? 'M 339 300 L 339 258 Q 339 250 331 250 L 264 250' : 'M 239.23 300 L 239.23 260') + '" class="' + ((config#id#.aux.has_aux_power === false) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--aux_colour#id#)" stroke-width="1" stroke-miterlimit="10" pointer-events="stroke"></path>'
+          html += '<circle id="aux-dot-#id#" cx="0" cy="0" r="3" class="' + ((config#id#.aux.has_aux_power === false) ? 'hidden-#id#' : '') + '" fill="' + ((config#id#.aux.power == 0) ? 'transparent' : 'var(--aux_colour#id#)') + '">'
+          html += '<animateMotion id="anim_aux#id#" dur="' + config#id#.aux.animation_speed + 's" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">'
+          html += '<mpath xlink:href="#aux-line#id#"/></animateMotion></circle>'
+          
+          html += '<text id="aux_power-#id#" x="' + ((config#id#.battery.has_battery) ? '339' : '239') + '" y="320" display="' + ((config#id#.aux.has_aux_power === false) ? 'none' : '')
+          html += '" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' ftw-#id# center-align#id#" fill="var(--aux_colour#id#)">'
+          html += config#id#.aux.power + ' ' + config#id#.aux.power_unit + '</text>'
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="aux_generator" x="' + ((config#id#.battery.has_battery) ? '304' : '203') + '" y="325" width="74" height="74" viewBox="0 0 24 24">'
+          
+          html += '<path class="' + ((config#id#.aux.has_aux_power === false) ? 'hidden-#id#' : '') + '" display="" fill="' + ((config#id#.aux.status === 'on' || config#id#.aux.status === '1') ? 'var(--aux_colour#id#)' : 'var(--aux_off_colour#id#)') + '" d="M6 3a2 2 0 0 0-2 2v11h2v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h6v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h2V5a2 2 0 0 0-2-2H6m6 4V5h6v2h-6m0 2h6v2h-6V9M8 5v4h2l-3 6v-4H5l3-6m14 15v2H2v-2h20Z"/></svg>'
+          
+          let dailyAux = autoValueArray#id#(config#id#.aux.daily.state,config#id#.aux.daily.unit)
+          html += '<text id="daily_aux_value#id#" x="' + ((config#id#.battery.has_battery) ? '385' : '115') + '" y="' + ((config#id#.battery.has_battery) ? '380' : '343') + '" class="ft16-#id# left-align#id#" display="' //77.2
+          html += (config#id#.aux.has_aux_power !== true) ? 'none' : ''
+          html += '" fill="var(--aux_colour#id#)" >' + trunc#id#(dailyAux.value, 3, 1) + ' ' + dailyAux.unit + '</text>'
+            
+          html += '<text id="daily_aux_text#id#" x="' + ((config#id#.battery.has_battery) ? '385' : '115') + '" y="' + ((config#id#.battery.has_battery) ? '393.7' : '357.2') + '" class="ft9-#id# left-align#id#" display="' 
+          html += (config#id#.aux.has_aux_power !== true) ? 'none' : ''
+          html += '" fill="var(--aux_colour#id#)">' + config#id#.aux.daily.text + '</text>'
+          ///////////////////////////////////////////////////////
+          ///////////////////// Inverter ////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Inverter -->'
+          
+          // ICON INVERTER
+          if (config#id#.inverter.model == 'sunsynk') {
+            html += '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" x="213.5" y="189" width="54" height="79" viewBox="0 0 74 91"  preserveAspectRatio="xMidYMid meet"> '
+            //html += '<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)" fill="var(--inverter_colour#id#)" stroke="none"> <path d="M35 887 l-27 -23 0 -404 0 -404 27 -23 c26 -23 28 -23 329 -23 284 0 305 1 327 19 l24 19 0 412 0 412 -24 19 c-22 18 -43 19 -327 19 -301 0 -303 0 -329 -23z m585 -157 l0 -80 -255 0 -255 0 0 80 0 80 255 0 255 0 0 -80z m-242 -229 c44 -34 40 -46 -14 -46 -60 0 -97 -38 -93 -94 5 -64 -23 -80 -35 -20 -9 44 24 113 63 134 35 18 34 15 21 50 -11 29 -14 30 58 -24z m110 -129 c4 -51 -19 -97 -59 -117 -27 -14 -30 -20 -23 -48 l6 -31 -51 43 c-29 24 -49 46 -46 49 3 4 23 5 44 3 58 -4 95 32 97 95 3 60 1 57 17 52 6 -3 13 -23 15 -46z"/> </g> </svg>'
+            html += '<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)" fill="var(--inverter_colour#id#)" stroke="none"> <path d="M35 887 l-27 -23 0 -404 0 -404 27 -23 c26 -23 28 -23 329 -23 284 0 305 1 327 19 l24 19 0 412 0 412 -24 19 c-22 18 -43 19 -327 19 -301 0 -303 0 -329 -23z m585 -157 l0 -80 -255 0 -255 0 0 80 0 80 255 0 255 0 0 -80z m-242 -229"/> </g> </svg>'
+          }
+          else {
+            html += '<rect x="214" y="196" width="50" height="64" rx="4.5" ry="4.5" fill="none" stroke="var(--inverter_colour92426)" pointer-events="all"></rect>'
+          }
+          
+          // entities.inverter_voltage_154
+          html += '<text id="inverter_voltage#id#" x="240" y="230" display="' + ((config#id#.inverter.voltage_state === false) ? 'none' : '') + '" class="ft9-#id# center-align#id#" fill="' +((config#id#.inverter.model == 'sunsynk') ? 'var(--inverter_secondary_colour#id#)' : 'var(--inverter_colour#id#)') + '" >' + config#id#.inverter.voltage_state + ' ' + config#id#.inverter.voltage_unit + '</text>'
+    
+          // entities.load_frequency_192
+          html += '<text id="inverter_frequency#id#" x="240" y="' + ((config#id#.inverter.voltage_state === false) ? '230' : '240') + '" display="' + ((config#id#.inverter.frequency_state === false) ? 'none' : '') + '" class="ft9-#id# center-align#id#" fill="' +((config#id#.inverter.model == 'sunsynk') ? 'var(--inverter_secondary_colour#id#)' : 'var(--inverter_colour#id#)') + '">' + config#id#.inverter.frequency_state + ' ' + config#id#.inverter.frequency_unit + '</text>'
+    
+          // entities.inverter_current_164
+          html += '<text id="inverter_current#id#" x="240" y="' + ((config#id#.inverter.voltage_state === false && config#id#.inverter.frequency_state === false) ? '230' : (config#id#.inverter.voltage_state !== false && config#id#.inverter.frequency_state !== false) ? '250' : '240') + '" display="' + ((config#id#.inverter.current_state === false) ? 'none' : '') + '" class="ft9-#id# center-align#id#" fill="' +((config#id#.inverter.model == 'sunsynk') ? 'var(--inverter_secondary_colour#id#)' : 'var(--inverter_colour#id#)') + '">' + config#id#.inverter.current_state + ' ' + config#id#.inverter.current_unit + '</text>'
+          
+          // entities.radiator_temp_91
+          html += '<text id="ac_temp#id#" x="' + ((config#id#.aux.has_aux_power || config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power) ? '270' : '185') + '" y="242" class="ft9-#id# left-align#id#" fill="var(--inverter_colour#id#)" display="' + ((config#id#.inverter.temp.ac_state !== false) ? '' : 'none') + '" >' + parseFloat(config#id#.inverter.temp.ac_state).toFixed(1) + config#id#.inverter.temp.ac_unit + '</text>'
+    
+          // dc_transformer_temp_90
+          html += '<text id="dc_temp#id#" x="243" y="' + ((config#id#.show_solar || (!config#id#.show_solar && !config#id#.battery.has_battery)) ? '192' : '272') + '" class="ft9-#id# left-align#id#" fill="var(--inverter_colour#id#)" display="' + ((config#id#.inverter.temp.dc_state !== false) ? '' : 'none') + '" >' + parseFloat(config#id#.inverter.temp.dc_state).toFixed(1) + config#id#.inverter.temp.dc_unit + '</text>'
+          /*
+          // entities.energy_cost
+          html += '<text id="energy_cost#id#" x="105" y="195" class="ft9-#id# left-align#id#" fill="var(--grid_colour#id#)"'
+          html += (config#id#.grid.energy_cost === false) ? ' display="none"' : ''
+          html += ' >' + config#id#.grid.energy_cost + '€</text>'
+          
+          html += '<text id="autarkye_value#id#" x="130" y="260" display="' + ((config#id#.inverter.autarky === "no") ? 'none' : '') + '" class="' + ((config#id#.inverter.autarky === 'energy') ? 'ft14-#id# ftw-#id# left-align#id#' : 'hidden-#id#') + '" fill="var(--inverter_colour#id#)" >' + config#id#.inverter.autarky_state + '%</text>'
+          
+          html += '<text id="ratioe_value#id#" x="173" y="260" display="'
+          html += (config#id#.inverter.autarky === "no") ? 'none' : ''
+          html += '" class="'
+          html += (config#id#.inverter.autarky === 'energy') ? 'ft14-#id# ftw-#id# left-align#id#' : 'hidden-#id#'
+          html += '" fill="var(--inverter_colour#id#)" >' + config#id#.inverter.ratio_state + '%</text>'
+    
+          html += '<text id="autarkyp_value#id#" x="130" y="260" display="'
+          html += (config#id#.inverter.autarky === "no") ? 'none' : ''
+          html += '" class="'
+          html += (config#id#.inverter.autarky === 'power') ? 'ft14-#id# ftw-#id# left-align#id#' : 'hidden-#id#'
+          html += '" fill="var(--inverter_colour#id#)" >' + config#id#.inverter.autarkyp_state + '%</text>'
+    
+          html += '<text id="ratiop_value#id#" x="173" y="260" display="'
+          html += (config#id#.inverter.autarky === "no") ? 'none' : ''
+          html += '" class="'
+          html += (config#id#.inverter.autarky === 'power') ? 'ft14-#id# ftw-#id# left-align#id#' : 'hidden-#id#'
+          html += '" fill="var(--inverter_colour#id#)" >'  + config#id#.inverter.ratiop_state + '%</text>'
+    
+          html += '<text id="autarky#id#" x="130" y="273" display="'
+          html += (config#id#.inverter.autarky === "no") ? 'none' : ''
+          html += '" class="ft9-#id# left-align#id#" fill="var(--inverter_colour#id#)" >' + config#id#.inverter.autarky_text + '</text>'
+    
+          html += '<text id="ratio#id#" x="173" y="273" display="'
+          html += (config#id#.inverter.autarky === "no") ? 'none' : ''
+          html += '" class="ft9-#id# left-align#id#" fill="var(--inverter_colour#id#)" >' + config#id#.inverter.ratio_text + '</text>'
+          
+          ////////////////////// PRIORITY /////////////////////
+          // priority_load_243
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="pbat#id#" x="267.7" y="262.5" width="18" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.priority.state === 'off' && config#id#.priority.usepriority !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)" d="M15.95 21.175L13.1 18.35l1.425-1.4l1.425 1.4l3.525-3.525l1.425 1.4l-4.95 4.95ZM8 22q-.425 0-.713-.288T7 21V5q0-.425.288-.713T8 4h2V2h4v2h2q.425 0 .713.288T17 5v7q-.525 0-1.025.088T15 12.35V6H9v14h2.35q.2.575.488 1.075t.687.925H8Zm1-2h2.35H11h.35H9Z"/></svg>'
+          html += '<text id="priority_text_batt#id#" x="287" y="273" class="ft9-#id# left-align#id#" display="'
+          html += (config#id#.priority.state === 'off' && config#id#.priority.usepriority !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)">' + config#id#.priority.text_off + '</text>'
+          
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="pload#id#" x="267.7" y="262.5" width="18" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.priority.state === 'on' && config#id#.priority.usepriority !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)" d="m15 13l-4 4v-3H2v-2h9V9l4 4M5 20v-4h2v2h10v-7.81l-5-4.5L7.21 10H4.22L12 3l10 9h-3v8H5Z"/></svg>'
+          html += '<text id="priority_text_load#id#" x="287" y="273" class="ft9-#id# left-align#id#" display="'
+          html += (config#id#.priority.state === 'on' && config#id#.priority.usepriority !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)">' + config#id#.priority.text_on + '</text>'
+          ////////////////////// TIMER /////////////////////
+          // entities.use_timer_248
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="timer#id#" x="267.7" y="243.3" width="18" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.timer.state == 'on' && config#id#.timer.usetimer !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)" d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0 0 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9a8.994 8.994 0 0 0 7.03-14.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7z"/></svg>'
+          html += '<text id="timer_text_on#id#" x="287" y="254.7" class="ft9-#id# left-align#id#" display="'
+          html += (config#id#.timer.state == 'on' && config#id#.timer.usetimer !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)">' + config#id#.timer.text_off + '</text>'
+          
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="timer_off#id#" x="267.7" y="243.3" width="18" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.timer.state == 'off' && config#id#.timer.usetimer !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)" d="m19.95 17.15l-1.5-1.5q.275-.675.413-1.337T19 13q0-2.9-2.05-4.95T12 6q-.6 0-1.275.125t-1.4.4l-1.5-1.5q.95-.5 2.012-.763T12 4q1.5 0 2.938.5t2.712 1.45l1.4-1.4l1.4 1.4l-1.4 1.4q.95 1.275 1.45 2.713T21 13q0 1.05-.263 2.087t-.787 2.063ZM13 10.2V8h-2v.2l2 2Zm6.8 12.4l-2.4-2.4q-1.2.875-2.588 1.338T12 22q-1.85 0-3.488-.713T5.65 19.35q-1.225-1.225-1.938-2.863T3 13q0-1.5.463-2.888T4.8 7.6L1.4 4.2l1.4-1.4l18.4 18.4l-1.4 1.4ZM12 20q1.05 0 2.05-.325t1.875-.925L6.2 9.025q-.6.875-.9 1.875T5 13q0 2.9 2.05 4.95T12 20ZM9 3V1h6v2H9Zm2.075 10.875Zm2.825-2.8Z"/></svg>'
+          html += '<text id="timer_text_off#id#" x="287" y="254.7" class="ft9-#id# left-align#id#" display="'
+          html += (config#id#.timer.state == 'off' && config#id#.timer.usetimer !== false) ? '' : 'none'
+          html += '" fill="var(--inverter_colour#id#)">' + config#id#.timer.text_off + '</text>'
+          // ICON PRISE ON
+          // inverter_prog.entityID
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="prog_grid_on#id#" x="323" y="243" width="20" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.inverter.prog.show === false || config#id#.inverter.prog.grid === 'none') ? 'none' : ''
+          html += '" class="'
+          html += (config#id#.inverter.prog.charge === 'none') ? 'hidden-#id#' : ''
+          html += '" fill="var(--inverter_colour#id#)" d="M11.5 19h1v-1.85l3.5-3.5V9H8v4.65l3.5 3.5V19Zm-2 2v-3L6 14.5V9q0-.825.588-1.413T8 7h1L8 8V3h2v4h4V3h2v5l-1-1h1q.825 0 1.413.588T18 9v5.5L14.5 18v3h-5Zm2.5-7Z"/></svg>'
+          // ICON PRISE OFF
+          html += '<svg xmlns="http://www.w3.org/2000/svg" id="prog_grid_off#id#" x="323" y="243" width="20" height="18" viewBox="0 0 24 24"><path display="'
+          html += (config#id#.inverter.prog.show === false || config#id#.inverter.prog.grid === 'none') ? 'none' : ''
+          html += '" class="'
+          html += (config#id#.inverter.prog.charge === 'none') ? '' : 'hidden-#id#'
+          html += '" fill="var(--inverter_colour#id#)" d="M10 3H8v1.88l2 2zm6 6v3.88l1.8 1.8l.2-.2V9c0-1.1-.9-2-2-2V3h-2v4h-3.88l2 2H16zM4.12 3.84L2.71 5.25L6 8.54v5.96L9.5 18v3h5v-3l.48-.48l4.47 4.47l1.41-1.41L4.12 3.84zm8.38 13.33V19h-1v-1.83L8 13.65v-3.11l5.57 5.57l-1.07 1.06z"/></svg>'
+          */
+          
+          ///////////////////////////////////////////////////////
+          ///////////////////// Other ////////////////////////
+          ///////////////////////////////////////////////////////
+          html += '<!-- Other -->'
+          // html += '<circle id="standby#id#" cx="220" cy="260" r="3.5" fill="var(--inverterStateColour#id#)"/>' /////////////// Todo
+          
+          //html += '<rect id="es-load5#id#" x="448" y="170" width="70" height="30" rx="4.5" ry="4.5" fill="none" stroke="var(--load_colour#id#)" pointer-events="all" display="'
+          //html += ((config#id#.load.additional_loads >= 5) && config#id#.show_solar !== false) ? '' : 'none'
+          //html += '"/>'
+          
+          //html += '<path id="es-load5path#id#" d="M 483 228.5 L 483 200" class="' + ((config#id#.load.additional_loads >= 5 && config#id#.show_solar !== false) ? '' : 'hidden-#id#') + '" fill="none" stroke="var(--load_colour#id#)" stroke-width="1" stroke-miterlimit="10" pointer-events="stroke"></path>'
+          html += '</svg></div>'
+          
+          document.getElementById('widget#id#').innerHTML = html
+        }
+        
+      } // ElDomExist
+      if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+      calculatePv#id#('init');
+      calculateLoad#id#('init');
+      calculateBattery#id#('init')
+      calculateGrid#id#('init')
+    }
+    
+    function calculatePv#id#(el='') {
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [calculatePv()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist calculatePv?",ElDomExist);
+      if (ElDomExist) {  
+        if (el != '' && debug#id#) console.log('| calculatePv launched by ' + el)
+		let solar1 = config#id#.solar.pv1.power
+		let solar2 = config#id#.solar.pv2.power
+		let solar3 = config#id#.solar.pv3.power
+		let solar4 = config#id#.solar.pv4.power
+		if (config#id#.solar.pv1.power_unit.toLowerCase() == 'kw') solar1 = config#id#.solar.pv1.power * 1000
+		if (config#id#.solar.pv2.power_unit.toLowerCase() == 'kw') solar2 = config#id#.solar.pv2.power * 1000
+		if (config#id#.solar.pv3.power_unit.toLowerCase() == 'kw') solar3 = config#id#.solar.pv3.power * 1000
+		if (config#id#.solar.pv4.power_unit.toLowerCase() == 'kw') solar4 = config#id#.solar.pv4.power * 1000
+		let solarTot = solar1 + solar2 + solar3 + solar4
+        let total_pv = autoValueArray#id#(solarTot, 'W')
+        if (debug#id#) console.log('| total_pv = ' + total_pv.value + ' = ' + solarTot)
+		
+        let solar_animation_speed = config#id#.solar.animation_speed;
+        if (debug#id#) console.log('| animation_speed = ' + config#id#.solar.animation_speed)
+        if (debug#id#) console.log('| max power = ' + config#id#.solar.max_power)
+        let speed = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solarTot / (config#id#.solar.max_power || solarTot)));
+        let speed1 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar1 / (config#id#.solar.max_power || solarTot)));
+        let speed2 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar2 / (config#id#.solar.max_power || solarTot)));
+        let speed3 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar3 / (config#id#.solar.max_power || solarTot)));
+        let speed4 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar4 / (config#id#.solar.max_power || solarTot)));
+        speed = (speed >= 1.5) ? speed : 1.5;
+        speed1 = (speed1 >= 1.5) ? speed1 : 1.5;
+        speed2 = (speed2 >= 1.5) ? speed2 : 1.5;
+        speed3 = (speed3 >= 1.5) ? speed3 : 1.5;
+        speed4 = (speed4 >= 1.5) ? speed4 : 1.5;
+        if (debug#id#) console.log('| animation_speed = ' + speed);
+        if (debug#id#) console.log('| animation_speed1 = ' + speed1);
+        if (debug#id#) console.log('| animation_speed2 = ' + speed2);
+        if (debug#id#) console.log('| animation_speed3 = ' + speed3);
+        if (debug#id#) console.log('| animation_speed4 = ' + speed4);
+        document.getElementById("anim_pv#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_pv1#id#")?.setAttribute("dur",speed1);
+        document.getElementById("anim_pv2#id#")?.setAttribute("dur",speed2);
+        document.getElementById("anim_pv3#id#")?.setAttribute("dur",speed3);
+        document.getElementById("anim_pv4#id#")?.setAttribute("dur",speed4);
+        
+        if (debug#id#) console.log('| pv1_power = ' + parseFloat(config#id#.solar.pv1.power) + ' (' + config#id#.solar.pv1.power + ')');
+        if (debug#id#) console.log('| pv2_power = ' + parseFloat(config#id#.solar.pv2.power) + ' (' + config#id#.solar.pv2.power + ')');
+        if (debug#id#) console.log('| pv3_power = ' + parseFloat(config#id#.solar.pv3.power) + ' (' + config#id#.solar.pv3.power + ')');
+        if (debug#id#) console.log('| pv4_power = ' + parseFloat(config#id#.solar.pv4.power) + ' (' + config#id#.solar.pv4.power + ')');
+        if (debug#id#) console.log('| total_pv_power = ' + total_pv.value);
+        document.getElementById("pvtotal_power#id#").innerHTML = trunc#id#(total_pv.value, 3,0) + ' ' + total_pv.unit
+        
+        if(config#id#.solar.pv1.power > 0) document.getElementById("pv1-dot#id#").setAttribute("fill", "var(--solar_colour#id#)");
+        else document.getElementById("pv1-dot#id#").setAttribute("fill", "transparent");
+        if(config#id#.solar.pv2.power > 0) document.getElementById("pv2-dot#id#").setAttribute("fill", "var(--solar_colour#id#)");
+        else document.getElementById("pv2-dot#id#").setAttribute("fill", "transparent");
+        if(config#id#.solar.pv3.power > 0) document.getElementById("pv3-dot#id#").setAttribute("fill", "var(--solar_colour#id#)");
+        else document.getElementById("pv3-dot#id#").setAttribute("fill", "transparent");
+        if(config#id#.solar.pv4.power > 0) document.getElementById("pv4-dot#id#").setAttribute("fill", "var(--solar_colour#id#)");
+        else document.getElementById("pv4-dot#id#").setAttribute("fill", "transparent");
+        if(total_pv.value > 0) document.getElementById("so-dot#id#").setAttribute("fill", "var(--solar_colour#id#)");
+        else document.getElementById("so-dot#id#").setAttribute("fill", "transparent");
+        
+      }
+      if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+    }
+    
+    
+    function calculateLoad#id#(el='') {
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [calculateLoad()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist ?",ElDomExist);
+      if (ElDomExist) {  
+        
+        if (el != '' && debug#id#) console.log('| launched by ' + el)
+        if (debug#id#) console.log('| has_load_power ?',config#id#.load.has_load_power);
+        
+        if (config#id#.load.has_load_power !== false && el == 'init'){
+          document.getElementById("ess_power#id#").innerHTML = config#id#.load.power + ' ' + config#id#.load.unit
+        }
+        
+        if (config#id#.load.has_load_power === false){
+          if (config#id#.load.unit == '') {
+            if (config#id#.load.load1.power_unit != '') config#id#.load.unit = config#id#.load.load1.power_unit
+          }
+          if (debug#id#) console.log('| load1_state = ' + config#id#.load.load1.power + ' load1_unit = ' + config#id#.load.load1.power_unit);
+          if (debug#id#) console.log('| load2_state = ' + config#id#.load.load2.power + ' load2_unit = ' + config#id#.load.load2.power_unit);
+          if (debug#id#) console.log('| load3_state = ' + config#id#.load.load3.power + ' load3_unit = ' + config#id#.load.load3.power_unit);
+          if (debug#id#) console.log('| load4_state = ' + config#id#.load.load4.power + ' load4_unit = ' + config#id#.load.load4.power_unit);
+          //if (config#id#.load.load1.power_unit != config#id#.load.load2.power_unit || config#id#.load.load1.power_unit != config#id#.load.load3.power_unit || config#id#.load.load1.power_unit != config#id#.load.load4.power_unit) console.log('| /!\\ ------- Attention unité differente entre load1, load2, load3 ou load4 calcul impossible !!!')
+          //else {
+          if (config#id#.load.load1.power_unit.toLowerCase() == 'kw') {
+            config#id#.load.load1.power = config#id#.load.load1.power * 1000
+			config#id#.load.load1.power_unit = 'W'
+          }
+          if (config#id#.load.load2.power_unit.toLowerCase() == 'kw') {
+            config#id#.load.load2.power = config#id#.load.load2.power * 1000 
+			config#id#.load.load2.power_unit = 'W'
+          }
+
+          if (config#id#.load.load3.power_unit.toLowerCase() == 'kw') {
+            config#id#.load.load3.power = config#id#.load.load3.power * 1000 
+			config#id#.load.load3.power_unit = 'W'
+          }
+            
+          if (config#id#.load.load4.power_unit.toLowerCase() == 'kw') {
+            config#id#.load.load4.power = config#id#.load.load4.power * 1000 
+			config#id#.load.load4.power_unit = 'W'
+          }
+
+          if (debug#id#) console.log('| 2-load1_state = ' + config#id#.load.load1.power + ' load1_unit = ' + config#id#.load.load1.power_unit);
+          if (debug#id#) console.log('| 2-load2_state = ' + config#id#.load.load2.power + ' load2_unit = ' + config#id#.load.load2.power_unit);
+          if (debug#id#) console.log('| 2-load3_state = ' + config#id#.load.load3.power + ' load3_unit = ' + config#id#.load.load3.power_unit);
+          if (debug#id#) console.log('| 2-load4_state = ' + config#id#.load.load4.power + ' load4_unit = ' + config#id#.load.load4.power_unit);
+            
+          //autoValueArray#id#(parseFloat(_options.value),config#id#.solar.unit)
+          //if (config#id#.load.load.unit.toLowerCase() = 'kw') config#id#.load.load.power = config#id#.load.load.power * 1000 
+          // if (debug#id#==1) console.log(' load.load1.power_unit = ' + config#id#.load.load1.power_unit)
+          let loadEval = autoValueArray#id#((config#id#.load.load1.power + config#id#.load.load2.power + config#id#.load.load3.power + config#id#.load.load4.power),'W')
+          if (debug#id#) console.log('| loadEval.value = ' + loadEval.value + ' loadEval.unit = ' + loadEval.unit);
+          config#id#.load.power = config#id#.load.load1.power + config#id#.load.load2.power + config#id#.load.load3.power + config#id#.load.load4.power
+          config#id#.load.unit = 'W'
+          document.getElementById("ess_power#id#").innerHTML = trunc#id#(loadEval.value, 3, 0) + ' ' + loadEval.unit
+          //}
+        }
+        
+        if (debug#id#) console.log('| total_load = ' + config#id#.load.power);
+        
+        if(config#id#.load.power > 0) {
+          document.getElementById("es-dot1#id#").setAttribute("fill", "var(--load_colour#id#)");
+          document.getElementById("es-dot#id#").setAttribute("fill", "var(--load_colour#id#)");
+        }
+        else {
+          document.getElementById("es-dot1#id#").setAttribute("fill", "transparent");
+          document.getElementById("es-dot#id#").setAttribute("fill", "transparent");
+        }
+        if (debug#id#) console.log('| animation_speed = ' + config#id#.load.animation_speed)
+        if (debug#id#) console.log('| max_power = ' + config#id#.load.max_power)
+		if (debug#id#) console.log('| load_power = ' + config#id#.load.power)
+		if (debug#id#) console.log('| load1_power = ' + config#id#.load.load1.power)
+		if (debug#id#) console.log('| load2_power = ' + config#id#.load.load2.power)
+		if (debug#id#) console.log('| load3_power = ' + config#id#.load.load3.power)
+		if (debug#id#) console.log('| load4_power = ' + config#id#.load.load4.power)
+        let speed = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (config#id#.load.power / (config#id#.load.max_power || config#id#.load.power)));
+        let speed1 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (config#id#.load.load1.power / (config#id#.load.max_power || config#id#.load.power)));
+        let speed2 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (config#id#.load.load2.power / (config#id#.load.max_power || config#id#.load.power)));
+        let speed3 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (config#id#.load.load3.power / (config#id#.load.max_power || config#id#.load.power)));
+        let speed4 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (config#id#.load.load4.power / (config#id#.load.max_power || config#id#.load.power)));
+        speed = (speed >= 1.5) ? speed : 1.5;
+        speed1 = (speed1 >= 1.5) ? speed1 : 1.5;
+        speed2 = (speed2 >= 1.5) ? speed2 : 1.5;
+        speed3 = (speed3 >= 1.5) ? speed3 : 1.5;
+        speed4 = (speed4 >= 1.5) ? speed4 : 1.5;
+        if (debug#id#) console.log('| animation_speed = ' + speed);
+        if (debug#id#) console.log('| animation_speed1 = ' + speed1);
+        if (debug#id#) console.log('| animation_speed2 = ' + speed2);
+        if (debug#id#) console.log('| animation_speed3 = ' + speed3);
+        if (debug#id#) console.log('| animation_speed4 = ' + speed4);
+        document.getElementById("anim_load#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_load1#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_load1-#id#")?.setAttribute("dur",speed1);
+        document.getElementById("anim_load2-#id#")?.setAttribute("dur",speed2);
+        document.getElementById("anim_load3-#id#")?.setAttribute("dur",speed3);
+		document.getElementById("anim_load4-#id#")?.setAttribute("dur",speed4);
+
+      }
+      if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+    }
+    
+    function calculateAux#id#(el='') {
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [calculateAux()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist ?",ElDomExist);
+      if (ElDomExist) {
+        if (el != '' && debug#id#) console.log('| launched by ' + el)
+        let speed = config#id#.aux.animation_speed - ((config#id#.aux.animation_speed - 1.5) * ((config#id#.aux.power) / (config#id#.aux.energy || config#id#.aux.power)));
+        speed = (speed >= 1.5) ? speed : 1.5
+        document.getElementById("anim_aux#id#")?.setAttribute("dur",speed);
+        if (debug#id#) console.log('| animation_speed = ' + config#id#.aux.animation_speed)
+        if (debug#id#) console.log('| new animation_speed = ' + speed)
+      } // ElDomExist
+    }
+    
+    
+    function calculateBattery#id#(el='') {
+      
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [calculateBattery()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist ?",ElDomExist);
+      if (ElDomExist) {
+        if (el != '' && debug#id#) console.log('| launched by ' + el)
+        
+        // get Icon of battery
+        if (el == 'init' || el == 'battery state'){
+          document.getElementById("icon_bat#id#").innerHTML = getBatteryIcon#id#(config#id#.battery.soc.state, config#id#.battery.full_capacity, config#id#.battery.empty_capacity)
+          document.getElementById("battery_soc#id#").innerHTML = trunc#id#(config#id#.battery.soc.state, 1) + '%'
+        }
+        
+        if (debug#id#) console.log('| animation_speed = ' + config#id#.battery.animation_speed)
+        if (debug#id#) console.log('| energie = ' + config#id#.battery.energy)
+        
+        let speed = config#id#.battery.animation_speed - ((config#id#.battery.animation_speed - 1.5) * ((config#id#.battery.power_state < 0 ? config#id#.battery.power_state * -1 : config#id#.battery.power_state) / (config#id#.battery.energy || (config#id#.battery.power_state < 0 ? config#id#.battery.power_state * -1 : config#id#.battery.power_state))));
+        speed = (speed >= 1.5) ? speed : 1.5
+        document.getElementById("anim_battery-charge#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_battery-discharge#id#")?.setAttribute("dur",speed);
+        if (debug#id#) console.log('| animation_speed = ' + speed);
+        
+        if (debug#id#) console.log('| ----------- battery_capacity & time --------------')
+        
+        //calculate battery capacity
+        let battery_capacity = 0
+        if (config#id#.battery.power_state > 0) {
+          battery_capacity = config#id#.battery.soc.shutdown
+        }
+        else if (config#id#.battery.power_state < 0) {
+          battery_capacity = 100
+        }
+        if (debug#id#) console.log('| battery_capacity = ' + battery_capacity)
+        if (debug#id#) console.log('| config#id#.battery.soc.state = ' + config#id#.battery.soc.state)
+        
+        //calculate remaining battery time to charge or discharge
+        let totalSeconds = 0
+        let formattedResultTime = ""
+        let duration = ""
+        
+        if (config#id#.battery.energy !== false && config#id#.battery.energy > 0) {
+          if (config#id#.battery.power_state == 0) {
+            if (debug#id#) console.log('| power_state == 0')
+            totalSeconds = (((parseInt(config#id#.battery.soc.state) - config#id#.battery.soc.shutdown) / 100) * config#id#.battery.energy) / 1 * 60 * 60;
+          } else if (config#id#.battery.power_state > 0) {
+            if (debug#id#) console.log('| power_state > 0')
+            //totalSeconds = (((parseInt(config#id#.battery.soc.state) - battery_capacity) / 100) * config#id#.battery.energy) / config#id#.battery.power_state * 60 * 60;
+            totalSeconds = (((config#id#.battery.soc.state - battery_capacity) / 100) * config#id#.battery.energy) / config#id#.battery.power_state * 60 * 60;
+            if (debug#id#) console.log('| energie restante = ' + ((config#id#.battery.soc.state - battery_capacity) / 100) * config#id#.battery.energy)
+          } else if (config#id#.battery.power_state < 0) {
+            if (debug#id#) console.log('| power_state < 0')
+            //totalSeconds = ((((battery_capacity - parseInt(config#id#.battery.soc.state)) / 100) * config#id#.battery.energy) / config#id#.battery.power_state) * 60 * 60 * -1;
+            totalSeconds = ((((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy) / config#id#.battery.power_state) * 60 * 60 * -1;
+            if (debug#id#) console.log('| energie restante = ' + ((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy)
+          }
+          if (debug#id#) console.log('| totalSeconds = ' + totalSeconds)
+          
+          const currentTime = new Date(); // Create a new Date object representing the current time
+          const durationMilliseconds = totalSeconds * 1000; // Convert the duration to milliseconds
+          const resultTime = new Date(currentTime.getTime() + durationMilliseconds); // Add the duration in milliseconds
+          const resultHours = resultTime.getHours(); // Get the hours component of the resulting time
+          const resultMinutes = resultTime.getMinutes(); // Get the minutes component of the resulting time
+          const formattedMinutes = resultMinutes.toString().padStart(2, "0");
+          const formattedHours = resultHours.toString().padStart(2, "0");
+          formattedResultTime = formattedHours + 'h' + formattedMinutes
+          if (debug#id#) console.log('| formatted = ' + formattedResultTime)
+          const days = Math.floor(totalSeconds / (60 * 60 * 24));
+          const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+          const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+          if (days > 0) {
+            duration += days
+            duration += (hours <= 1) ? ' jour, ' : ' jours, '
+          }
+          if (hours > 0 || days > 0) {
+            duration += hours
+            duration += (hours <= 1) ? ' hr, ' : ' hrs, '
+          }
+          duration +=  minutes + ' min'
+          if (debug#id#) console.log('| duration= ' + duration)
+          //config#id#.battery.duration = duration
+          
+          if (float !== true && config#id#.battery.energy !== 0 && config#id#.battery.energy !== false) {
+            if (config#id#.battery.power_state == 0 || config#id#.battery.power_state == '0' || duration == '0 min') {
+              document.getElementById("duration#id#").innerHTML = ''
+              document.getElementById("duration_text_etat#id#").innerHTML = ''
+            }
+            else {
+              document.getElementById("duration#id#").innerHTML = duration
+              if (config#id#.battery.power_state <= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'TO ' + battery_capacity + '% CHARGE @ ' + formattedResultTime
+              if (config#id#.battery.power_state >= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'RUNTIME TO ' + battery_capacity+ '% @ ' + formattedResultTime
+            }
+          }
+          if(timer_in#id# === false) {
+            if (debug#id#) console.log('| initialisation de la tempo')
+            timer_in#id# = setInterval(calculateBattery#id#, 60000, 'timer_in')
+          }
+          else {
+            if (debug#id#) console.log('| delete de la tempo & reinitialisation')
+            clearInterval(timer_in#id#)
+            timer_in#id# === false
+            timer_in#id# = setInterval(calculateBattery#id#, 60000, 'timer_in')
+          }
+        }
+      } // ElDomExist
+      if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+    }
+    
+    function calculateGrid#id#(el='') {
+      if (debug#id#) console.log('┌─────────────────── Widget Distribution Onduleur [#id#] en debug [calculateGrid()] ───────────────')
+      var ElDomExist = !!document.getElementById("widget#id#");
+      if (debug#id#) console.log("| ElDomExist ?",ElDomExist);
+      if (ElDomExist) {
+        if (debug#id#) console.log('| animation_speed = ' + config#id#.grid.animation_speed)
+        if (debug#id#) console.log('| max_power = ' + config#id#.grid.max_power)
+        if (debug#id#) console.log('| power_state = ' + config#id#.grid.power_state)
+        
+        let speed = config#id#.grid.animation_speed - ((config#id#.grid.animation_speed - 1.5) * ((config#id#.grid.power_state < 0 ? config#id#.grid.power_state * -1 : config#id#.grid.power_state) / (config#id#.grid.max_power || (config#id#.grid.power_state < 0 ? config#id#.grid.power_state * -1 : config#id#.grid.power_state))));
+        speed = (speed >= 1.5) ? speed : 1.5;
+        document.getElementById("anim_grid_buy#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_grid_sell#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_grid_buy1#id#")?.setAttribute("dur",speed);
+        document.getElementById("anim_grid_sell1#id#")?.setAttribute("dur",speed);
+        if (debug#id#) console.log('| animation_speed = ' + speed);
+      }
+      if (debug#id#) console.log('└──────────────────────────────────────────────────────')
+    }
+      
+  </script>
+  <template>
+    <div> ------------ Général -------------</div>
+    <div>Background : Couleur arrière plan du widget [ Exemple : #fffff, white, linear-gradient... | Défaut : transparent ]</div>
+    <div>inverterColor : Couleur des éléments de catégorie "onduleur" [ Exemple : #fffff, white]</div>
+    <div>noGridColor : Couleur du logo "noGridColor" [ Exemple : #fffff, white]</div>
+    <div> ------------ Solar ------------</div>
+    <div>pv1Name : personnalisation du nom du Pv1. (Ex: Ouest, Nord, PV1 ...)</div>
+    <div>pv2Name : personnalisation du nom du Pv2. (Ex: Ouest, Nord, PV2 ...)</div>
+    <div>pv3Name : personnalisation du nom du Pv3. (Ex: Ouest, Nord, PV3 ...)</div>
+    <div>pv4Name : personnalisation du nom du Pv4. (Ex: Ouest, Nord, PV4 ...)</div>
+    <div>dailySolarText : personnalisation du texte. (défaut : DAILY SOLAR)</div>
+    <div>pvMaxPower : Puissance max des PV. (permet la gestion de vitesse de l'animation)</div>
+    <div>solarColor : Couleur des éléments de catégorie "solaire" [ Exemple : #fffff, white]</div>
+    <div> ------------ Load ------------</div>
+    <div>load1Name : personnalisation du nom du Load1. (Ex: C.E, Clim, ...)</div>
+    <div>load1Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging</div>
+    <div>load2Name : personnalisation du nom du Load2. (Ex: C.E, Clim, ....)</div>
+    <div>load2Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging</div>
+    <div>load3Name : personnalisation du nom du Load3. (Ex: C.E, Clim, ....)</div>
+    <div>load3Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging</div>
+    <div>load4Name : personnalisation du nom du Load4. (Ex: C.E, Clim, ....)</div>
+    <div>load4Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging</div>
+    <div>dailyLoadText : personnalisation du texte. (défaut : DAILY LOAD)</div>
+    <div>loadMaxPower : Puissance max des équipements "Load". (permet la gestion de vitesse de l'animation)</div>
+    <div>loadColor : Couleur des éléments de catégorie "load" [ Exemple : #fffff, white]</div>
+    <div>loadAnimate: Pour désactiver l'animation des Load passer ce paramètre a 0</div>
+    <div> ------------ Grid ------------</div>
+    <div>dailyGridSellText : personnalisation du texte. (défaut : DAILY GRID SELL)</div>
+    <div>dailyGridBuyText : personnalisation du texte. (défaut : DAILY GRID BUYL)</div>
+    <div>gridMaxPower : Puissance max de consommation. (permet la gestion de vitesse de l'animation)</div>
+    <div>gridColor : Couleur des éléments de catégorie "réseau" [ Exemple : #fffff, white]</div>
+    <div> ------------ Battery ------------</div>
+    <div>dailyBatteryChargeText : personnalisation du texte. (défaut : DAILY CHARGE)</div>
+    <div>dailyBatteryDischargeText : personnalisation du texte. (défaut : DAILY DISCHARGE)</div>
+    <div>batteryMaxPower : Puissance max de la batterie. (permet la gestion de vitesse de l'animation)</div>
+    <div>batterySocShutdown : SOC mini. (defaut: 0)</div>
+    <div>mpptName : personnalisation du nom du Chargeur PV.</div>
+    <div>batteryColor : Couleur des éléments de catégorie "batterie" [ Exemple : #fffff, white]</div>
+    <div> ------------ Aux ------------</div>
+    <div>auxColor :  Couleur des éléments de catégorie "aux" [ Exemple : #fffff, white]</div>
+    <div>auxMaxPower : Puissance max des "Aux". (permet la gestion de vitesse de l'animation)</div>
+  </template>
+</div>

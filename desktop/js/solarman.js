@@ -57,6 +57,9 @@ function addCmdToTable(_cmd) {
   tr += '<td class="hidden-xs">'
   tr += logicaltohex
   tr += '</td>'
+  tr += '<td class="hidden-xs">'
+  tr += '<span class="cmdAttr" data-l1key="configuration" data-l2key="widget"></span>'
+  tr += '</td>'
   tr += '<td>'
   tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="isVisible" checked/>{{Afficher}}</label> '
   tr += '<label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" checked/>{{Historiser}}</label> '

@@ -1,7 +1,12 @@
 {
   "pip3" :{
     "pyyaml" : {},
+    "pyudev" : {},
+    "serial" : {},
     "umodbus" : {}
+  },
+  "apt" : {
+    "php-yaml" : {}
   },
   "npm": {
     "js-yaml" : {}

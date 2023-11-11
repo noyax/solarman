@@ -10,26 +10,26 @@ Fichiers de configuration auto pour: Afore_BNTxxxKTL-2mppt, deye_2mppt, deye_4mp
 Liste (non exhaustives) des onduleurs pris en compte à l'heure actuelle et le fichier de configuration associé:  
 <br>
 
-| Fichier de configuration   | Onduleurs supportés                      | Observations                                                     |
-|----------------------------|------------------------------------------|------------------------------------------------------------------|
-| Afore_BNTxxxKTL-2mppt.yaml | ?                                        |                                                                  |
-| deye_2mppt.yaml            | DEYE Microinverter with 2 MPPT Trackers  | e.g. SUN600G3-EU-230 / SUN800G3-EU-230 / SUN1000G3-EU-230        |
-| deye_4mppt.yaml            | DEYE Microinverter with 4 MPPT Trackers  | e.g. SUN1300G3-EU-230 / SUN1600G3-EU-230 / SUN2000G3-EU-230      |
-| deye_hybrid.yaml           | DEYE/Sunsynk/SolArk Hybrid inverters     | used when no lookup specified                                    |
-| deye_sg04lp3.yaml          | DEYE/Sunsynk/SolArk Hybrid 8/12K-SG04LP3 | e.g. 12K-SG04LP3-EU                                              |
-| deye_string.yaml           | DEYE/Sunsynk/SolArk String inverters     | e.g. SUN-4/5/6/7/8/10/12K-G03 Plus                               |
-| hyd-zss-hp-3k-6k.yaml      | ?                                        |                                                                  |
-| kstar_hybrid.yaml          | ?                                        |                                                                  |
-| sofar_g3hyd.yaml           | SOFAR Hybrid Three-Phase inverter        | HYD 6000 or rebranded (three-phase), ex. ZCS Azzurro 3PH HYD-ZSS |
-| sofar_hyd3k-6k.yaml        | SOFAR Hybrid Single-Phase inverter       | HYD 6000 or rebranded (single-phase), ex. ZCS Azzurro HYD-ZSS    |
-| sofar_lsw3.yaml            | SOFAR Inverters                          |                                                                  |
-| sofar_wifikit.yaml         | ?                                        |                                                                  |
-| sofar_XXTL-G3.yaml         | SOFAR xxxx TL G3                         | Testé sur Sofar Solar 3000 TL G3                                 |
-| solid_1p8k-5g.yaml         | SOLIS 1P8K-5G                            |                                                                  |
-| solid_3p-4g.yaml           | SOLIS 3P-4G                              |                                                                  |
-| solis_hybrid.yaml          | SOLIS Hybrid inverter                    |                                                                  |
-| solid_s6-grip.yaml         | SOLIS S6-GRIP                            |                                                                  |
-| zcs_azzurro-ktl-v3.yaml    | ZCS Azzurro KTL-V3 inverters             | ZCS Azzurro 3.3/4.4/5.5/6.6 KTL-V3 (rebranded Sofar KTLX-G3)     |
+| Fichier de configuration   | Onduleurs supportés                      | Observations                                                                                                                  |
+|----------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Afore_BNTxxxKTL-2mppt.yaml | ?                                        |                                                                                                                               |
+| deye_2mppt.yaml            | DEYE Microinverter with 2 MPPT Trackers  | e.g. SUN600G3-EU-230 / SUN800G3-EU-230 / SUN1000G3-EU-230                                                                     |
+| deye_4mppt.yaml            | DEYE Microinverter with 4 MPPT Trackers  | e.g. SUN1300G3-EU-230 / SUN1600G3-EU-230 / SUN2000G3-EU-230                                                                   |
+| deye_hybrid.yaml           | DEYE/Sunsynk/SolArk Hybrid inverters     | used when no lookup specified                                                                                                 |
+| deye_sg04lp3.yaml          | DEYE/Sunsynk/SolArk Hybrid 8/12K-SG04LP3 | e.g. 12K-SG04LP3-EU                                                                                                           |
+| deye_string.yaml           | DEYE/Sunsynk/SolArk String inverters     | e.g. SUN-4/5/6/7/8/10/12K-G03 Plus                                                                                            |
+| hyd-zss-hp-3k-6k.yaml      | ?                                        |                                                                                                                               |
+| kstar_hybrid.yaml          | ?                                        |                                                                                                                               |
+| sofar_g3hyd.yaml           | SOFAR Hybrid Three-Phase inverter        | HYD 6000 or rebranded (three-phase), ex. ZCS Azzurro 3PH HYD-ZSS                                                              |
+| sofar_hyd3k-6k-es.yaml     | SOFAR Hybrid Single-Phase inverter       | Monophasé, fonctionne sur Sofar Solar HYD xxxx ES (testé sur le 6000) ou rebranded, ex. ZCS Azzurro HYD-ZSS                   |
+| sofar_lsw3.yaml            | SOFAR Inverters                          |                                                                                                                               |
+| sofar_wifikit.yaml         | ?                                        |                                                                                                                               |
+| sofar_XXTL-G3.yaml         | SOFAR xxxx TL G3                         | Testé sur Sofar Solar 3000 TL G3                                                                                              |
+| solid_1p8k-5g.yaml         | SOLIS 1P8K-5G                            |                                                                                                                               |
+| solid_3p-4g.yaml           | SOLIS 3P-4G                              |                                                                                                                               |
+| solis_hybrid.yaml          | SOLIS Hybrid inverter                    |                                                                                                                               |
+| solid_s6-grip.yaml         | SOLIS S6-GRIP                            |                                                                                                                               |
+| zcs_azzurro-ktl-v3.yaml    | ZCS Azzurro KTL-V3 inverters             | ZCS Azzurro 3.3/4.4/5.5/6.6 KTL-V3 (rebranded Sofar KTLX-G3)                                                                  |
 
 
 <br><br><br><br><br>
@@ -37,7 +37,7 @@ Liste (non exhaustives) des onduleurs pris en compte à l'heure actuelle et le f
 
 Pré-requis:
 ===
-Pour pouvoir récupérer les infos de votre onduleur il faut un onduleur compatible (liste ci dessus) équipé d'une clé wifi. Cela ressemble à ça:
+Pour pouvoir récupérer les infos de votre onduleur il faut un onduleur compatible (liste non exhaustive ci-dessus) équipé d'une clé wifi. Cela ressemble à ça:
 
 ![Clé Wifi](cle_wifi.png)
 
@@ -109,7 +109,29 @@ la page de configuration se visualise avec votre navigateur internet en saisissa
 Ensuite choississez la fréquence d'interrogation que vous souhaitez, seuls 1, 5, 10, 15 et 30 minutes sont valides.
 
 
-Si votre onduleur n'est pas dans la liste
+Widget template
+===
+
+ajout d'un template (merci à @Phpvarious) qui permet d'afficher les principales données de l'onduleur d'une façon plus visuelle. dans un premier temps je n'ai complété que pour mon onduleur (Sofar Solar HYD xxx ES) mais vous pouvez vous même l'élaborer (voir fichier de configuration ci-dessous
+
+![widgetgif](widget.gif)
+
+Si vous avez installé un version qui était antérieure à l'intégration de ce widget ou si vous modifiez le fichier de configuration il est nécessaire de cliquer sur le bouton de réinitialisation des données situés dans les paramètres de l'équipement.
+
+Vous verrez donc apparaitre dans les commandes de votre équipement une commande qui s'appelle "template". Vous pouvez ou non laisser s'afficher les commandes.
+
+![template1](template1.jpg)
+
+Si vous allez dans la partie configuration / affichage le widget utilisé.
+
+![template2](template2.jpg)
+
+En glissant vers le bas vous verrez appaitre les paramètres optionnels du widget
+
+![template3](template3.jpg)
+
+
+Si votre onduleur n'est pas dans la liste ou si vous avez besoin d'adapter le fichier existant
 ===
 
 Si vous pensez que votre onduleur peut faire partie de ceux pouvant être monitorés par Solarman et que vous connaissez les registres modbus à interroger alors en utilisant le ![fichier modèle](modele_onduleur.yaml) vous pouvez en recréér un en respectant bien les principes suivants:
@@ -135,25 +157,29 @@ exemple:
 parameters:
  - group: blablabla  
    items: blablablabla  
-    - name: "Le nom du registre"  
+    - name: "Le nom du registre"
+      widget: "Le nom de la partie du widget (voir l'aide ci dessous)"
       uom: "Wh"  
       scale: 0.01  
       rule: 1  
       registers: [0x0200]  
   
     - name: "Total Production"  
+      widget: "Le nom de la partie du widget (voir l'aide ci dessous)"
       uom: "kWh"  
       scale: 1  
       rule: 3  
       registers: [0x0255,0x0254]  
   
     - name: "Grid Current"  
+      widget: "Le nom de la partie du widget (voir l'aide ci dessous)"
       uom: "A"  
       scale: 0.01  
       rule: 2  
       registers: [0x10B0]  
   
     - name: "Inverter status"  
+      widget: "" (mettre cette commande si cette information n'est pas utilisée par le widget)
       uom: ""  
       scale: 1  
       rule: 1  
@@ -184,6 +210,7 @@ instructions clés:
    group: ne sert pas dans le plugin mais à conserver, le texte mis ensuite ne sert à rien. Il est nécessaire malgé tout de le conserver!  
    items: idem group. Sous cette instruction vous allez regrouper les différents registres que vous allez demander au plugin d'interroger.  
       name: nom qui sera affiché pour votre commande dans jeedom  
+      widget: nom de la partie du widget à alimenter par cette commande (voir l'aide ci dessous)
       uom: ici on indique entre guillemets l'unité de mesure de ce qui est stocké dans le registre, va être utilisé dans jeedom  
       scale: facteur multiplicateur à utiliser. Un scale de 0.1 transforme par exemple la valeur 100 en 10  
       rule: règle que le plugin devra appliquer pour interpréter les valeurs stockées dans le registre:  
@@ -204,6 +231,19 @@ instructions clés:
   
 Attention à bien respecter la structure de ce fichier, les tirets sur certaines lignes et pas sur les autres, l'identation, les guillements ou non, ...  
 
+Pour le widget voici les informations qu'il est possible de saisir:
+
+![widgetaide](widget_help.png)
+
+Légende :
+Noir : Commandes a renseigner dans l’équipement.
+Rouge : Paramètres optionnels.
+
+
+pour plus de détail vous pouvez aller consulter la page de @Phpvarious dédiée totalement à son widget:
+
+https://phpvarious.github.io/documentation/widget/fr_FR/widget_scenario/distribution_onduleur/
+
 
 Remerciements
 ===
@@ -211,6 +251,8 @@ Remerciements
 Merci à @jmccrohan pour avoir développé l'excellente librairie pySolarmanV5 [https://pysolarmanv5](https://pysolarmanv5.readthedocs.io/en/stable/#)  
 
 Merci à [@StephaneJoubert](https://github.com/StephanJoubert/home_assistant_solarman) qui a développé un module pour Home Assistant sur lequel j'ai récupéré queleques infos et fichiers python très bien écrits  
+
+Merci à [@Ppvarious](https://phpvarious.github.io/documentation/fr_FR/) pour son super widget.
 
 Merci enfin à [@Lydie13](https://community.jeedom.com/u/lydie13) qui a traduit les fichiers de configuration dans notre langue  
 

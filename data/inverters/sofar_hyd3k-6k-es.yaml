@@ -2,19 +2,22 @@
 # inverter family.
 
 requests:
-  - start: 0x0200
-    end:  0x0255
-    mb_functioncode: 0x03
   - start: 0x10B0
     end: 0x10BC
     mb_functioncode: 0x04
+  - start: 0x0200
+    end: 0x0220
+    mb_functioncode: 0x03
+  - start: 0x0221
+    end: 0x0255
+    mb_functioncode: 0x03
 
 
 parameters:
  - group: solar
    items:
     - name: "PV Puissance Instantanée"
-      class: "power"
+      widget: ""
       state_class: "measurement"
       uom: "kW"
       scale: 0.01
@@ -24,7 +27,7 @@ parameters:
 
 
     - name: "Puissance PV1"
-      class: "power"
+      widget: "pv1_power"
       state_class: "measurement"
       uom: "kW"
       scale: 0.01
@@ -33,7 +36,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Puissance PV2"
-      class: "power"
+      widget: "pv2_power"
       state_class: "measurement"
       uom: "kW"
       scale: 0.01
@@ -42,7 +45,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Tension PV1"
-      class: "voltage"
+      widget: "pv1_voltage"
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -51,7 +54,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Tension PV2"
-      class: "voltage"
+      widget: "pv2_voltage"
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -60,7 +63,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Courant PV1"
-      class: "current"
+      widget: "pv1_current"
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -69,7 +72,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Courant PV2"
-      class: "current"
+      widget: "pv2_current"
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -78,7 +81,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Production quotidienne"
-      class: "energy"
+      widget: "daily_solar"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -87,7 +90,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Production totale"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -96,7 +99,7 @@ parameters:
       icon: 'mdi:solar-power'
 
     - name: "Temps total de production"
-      class: ""
+      widget: ""
       state_class: "measurement"
       uom: "h"
       scale: 1
@@ -105,7 +108,7 @@ parameters:
       icon: 'mdi:clock-outline'
 
     - name: "Temps de production aujourd'hui"
-      class: ""
+      widget: ""
       state_class: "total_increasing"
       uom: "min"
       scale: 1
@@ -114,7 +117,7 @@ parameters:
       icon: 'mdi:clock-outline'
 
     - name: "Aujourd’hui total export"
-      class: "energy"
+      widget: "daily_grid_sell"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -123,7 +126,7 @@ parameters:
       icon: 'mdi:transmission-tower-export'
 
     - name: "Aujourd’hui Consommation du réseau"
-      class: "energy"
+      widget: "daily_grid_buy"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -132,7 +135,7 @@ parameters:
       icon: 'mdi:transmission-tower-import'
 
     - name: "Aujourd’hui Consommation d’énergie"
-      class: "energy"
+      widget: "daily_load"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -141,7 +144,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Total export vers réseau"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -150,7 +153,7 @@ parameters:
       icon: 'mdi:transmission-tower-export'
 
     - name: "Total consommation du réseau"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -159,7 +162,7 @@ parameters:
       icon: 'mdi:transmission-tower-import'
 
     - name: "Total consommation d’énergie"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -167,11 +170,29 @@ parameters:
       registers: [0x0223,0x0222]
       icon: 'mdi:lightning-bolt'
 
+    - name: "Secours Puissance"
+      widget: "load2_state"
+      state_class: ""
+      uom: "kW"
+      scale: 0.01
+      rule: 1
+      registers: [0x0217]
+      icon: ''
+
+    - name: "Secours Tension"
+      state_class: ""
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x0216]
+      icon: ''
+
+
  - group: Output
    items:
 
-    - name: "Consommation d’énergie"
-      class: ""
+    - name: "Installation Puissance"
+      widget: "load1_state"
       state_class: ""
       uom: "kW"
       scale: 0.01
@@ -180,7 +201,7 @@ parameters:
       icon: ''
 
     - name: "Fréquence du réseau"
-      class: "frequency"
+      widget: "frequency_state"
       state_class: "measurement"
       uom: "Hz"
       scale: 0.01
@@ -189,7 +210,7 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
 
     - name: "Tension du réseau"
-      class: "voltage"
+      widget: ""
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -198,7 +219,7 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
 
     - name: "Courant de réseau"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -209,8 +230,8 @@ parameters:
 
  - group: batteries
    items:
-    - name: "Tension de la batterie"
-      class: "voltage"
+    - name: "Batterie Tension"
+      widget: "battery_voltage"
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -218,8 +239,8 @@ parameters:
       registers: [0x020E]
       icon: 'mdi:battery-charging'
 
-    - name: "Courant de charge / décharge de la batterie"
-      class: "current"
+    - name: "Batterie Intensité"
+      widget: "battery_current"
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -227,8 +248,8 @@ parameters:
       registers: [0x020F]
       icon: 'mdi:battery-charging-10'
 
-    - name: "Pourcentage de batterie"
-      class: "battery"
+    - name: "Batterie SOC"
+      widget: "battery_state"
       state_class: "measurement"
       uom: "%"
       scale: 1
@@ -236,8 +257,8 @@ parameters:
       registers: [0x0210]
       icon: 'mdi:battery'
 
-    - name: "Température de la batterie"
-      class: "temperature"
+    - name: "Batterie Température"
+      widget: "battery_temp"
       state_class: "measurement"
       uom: "°C"
       scale: 1
@@ -247,7 +268,7 @@ parameters:
       icon: 'mdi:battery-heart-outline'
 
     - name: "Charge quotidienne de la batterie"
-      class: "energy"
+      widget: "daily_battery_charge"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -256,7 +277,7 @@ parameters:
       icon: 'mdi:battery-clock'
 
     - name: "Cycles de la batterie"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "Charges"
       scale: 1
@@ -265,7 +286,7 @@ parameters:
       icon: 'mdi:battery-check-outline'
 
     - name: "Alimentation par batterie"
-      class: "power"
+      widget: ""
       state_class: "measurement"
       uom: "kW"
       scale: 0.01
@@ -274,7 +295,7 @@ parameters:
       icon: 'mdi:battery-charging-high'
 
     - name: "Type de batterie"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -297,7 +318,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Capacité de la batterie"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "Ah"
       scale: 1
@@ -306,7 +327,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Décharge quotidienne de la batterie"
-      class: "energy"
+      widget: "daily_battery_discharge"
       state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
@@ -315,7 +336,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Charge totale de la batterie"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -324,7 +345,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Décharge totale de la batterie"
-      class: "energy"
+      widget: ""
       state_class: "total"
       uom: "kWh"
       scale: 1
@@ -333,7 +354,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Tension de charge maximale"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.1
@@ -342,7 +363,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Courant de charge max"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "A"
       scale: 0.01
@@ -351,7 +372,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Protection contre les surtensions"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.1
@@ -360,7 +381,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Tension de décharge minimale"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.1
@@ -369,7 +390,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Courant de décharge maximal"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "A"
       scale: 0.01
@@ -378,7 +399,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Protection contre les sous-tensions"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.1
@@ -387,7 +408,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Profondeur de décharge"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "%"
       scale: 1
@@ -396,7 +417,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Périodes de temps de décharge"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "h"
       scale: 1
@@ -405,7 +426,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Tension de la batterie vide"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.01
@@ -414,7 +435,7 @@ parameters:
       icon: 'mdi:battery'
 
     - name: "Tension totale de la batterie"
-      class: ""
+      widget: ""
       state_class: ""
       uom: "V"
       scale: 0.01
@@ -425,7 +446,7 @@ parameters:
  - group: Inverter
    items:
     - name: "État de l’onduleur"
-      class: ""
+      widget: ""
       uom: ""
       scale: 1
       rule: 1
@@ -451,7 +472,7 @@ parameters:
       icon: 'mdi:state-machine'
 
     - name: "Température du module onduleur"
-      class: "temperature"
+      widget: "ac_temp"
       uom: "°C"
       scale: 1
       rule: 2
@@ -459,7 +480,7 @@ parameters:
       icon: 'mdi:thermometer'
 
     - name: "Température interne de l’onduleur"
-      class: "temperature"
+      widget: "dc_temp"
       state_class: "measurement"
       uom: "°C"
       scale: 1
@@ -468,7 +489,7 @@ parameters:
       icon: 'mdi:thermometer'
 
     - name: "Tension du bus de l’onduleur"
-      class: "voltage"
+      widget: ""
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -477,7 +498,7 @@ parameters:
       icon: 'mdi:home-lightning-bolt'
 
     - name: "Compte à rebours"
-      class: ""
+      widget: ""
       state_class: "measurement"
       uom: "s"
       scale: 1
@@ -486,7 +507,7 @@ parameters:
       icon: ''
 
     - name: "Isolation du PV1+ à la terre"
-      class: ""
+      widget: ""
       state_class: "measurement"
       uom: ""
       scale: 1
@@ -495,7 +516,7 @@ parameters:
       icon: ''
 
     - name: "Isolation du PV2+ à la terre"
-      class: ""
+      widget: ""
       state_class: "measurement"
       uom: ""
       scale: 1
@@ -504,7 +525,7 @@ parameters:
       icon: ''
 
     - name: "Isolation du PV à la terre"
-      class: ""
+      widget: ""
       state_class: "measurement"
       uom: ""
       scale: 1
@@ -513,7 +534,7 @@ parameters:
       icon: ''
 
     - name: "Pays"
-      class: ""
+      widget: ""
       uom: ""
       scale: 1
       rule: 1
@@ -585,7 +606,7 @@ parameters:
  - group: Alert
    items:
     - name: "Défaut 1"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -631,7 +652,7 @@ parameters:
 
 
     - name: "Défaut 2"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -676,7 +697,7 @@ parameters:
       icon: 'mdi:wrench'
 
     - name: "Défaut 3"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -721,7 +742,7 @@ parameters:
       icon: 'mdi:wrench'
 
     - name: "Défaut 4"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -766,7 +787,7 @@ parameters:
       icon: 'mdi:wrench'
 
     - name: "Défaut 5"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -811,7 +832,7 @@ parameters:
       icon: 'mdi:wrench'
 
     - name: "Défaut 6"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -856,7 +877,7 @@ parameters:
       icon: 'mdi:alert'
 
     - name: "Défaut 7"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -901,7 +922,7 @@ parameters:
       icon: 'mdi:alert'
 
     - name: "Défaut 8"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -948,7 +969,7 @@ parameters:
  - group: Other energy
    items:
     - name: "Courant de chute"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -957,7 +978,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Tension R du réseau"
-      class: "voltage"
+      widget: "voltage_state"
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -966,7 +987,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille R"
-      class: "current"
+      widget: "current_state"
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -975,7 +996,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Courant de production"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -984,8 +1005,8 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
 
-    - name: "Puissance de charge / décharge"
-      class: ""
+    - name: "Batterie Puissance"
+      widget: "battery_power"
       state_class: ""
       uom: "kW"
       scale: 0.01
@@ -993,17 +1014,17 @@ parameters:
       registers: [0x020D]
       icon: ''
 
-    - name: "Alimentation en entrée/sortie"
-      class: ""
+    - name: "Réseau Puissance"
+      widget: "grid_power"
       state_class: ""
       uom: "kW"
-      scale: 0.01
+      scale: -0.01
       rule: 2
       registers: [0x0212]
       icon: ''
 
     - name: "Puissance d’entrée/sortie"
-      class: "power"
+      widget: ""
       state_class: "measurement"
       uom: "kW"
       scale: 0.01
@@ -1012,7 +1033,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Modèle de gestion de l’énergie"
-      class: ""
+      widget: ""
       state_class: ""
       uom: ""
       scale: 1
@@ -1021,7 +1042,7 @@ parameters:
       icon: ''
 
     - name: "Courant DCI"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "mA"
       scale: 1
@@ -1030,7 +1051,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Tension DCI"
-      class: "voltage"
+      widget: ""
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -1039,7 +1060,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Tension S du réseau"
-      class: "voltage"
+      widget: ""
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -1048,7 +1069,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille S"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "A"
       scale: 0.01
@@ -1057,7 +1078,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Tension T du réseau"
-      class: "voltage"
+      widget: ""
       state_class: "measurement"
       uom: "V"
       scale: 0.1
@@ -1066,7 +1087,7 @@ parameters:
       icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille T"
-      class: "current"
+      widget: ""
       state_class: "measurement"
       uom: "A"
       scale: 0.01
