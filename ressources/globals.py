@@ -13,3 +13,5 @@ inverter_port = 8899
 inverter_sn = 0
 inverter_mb_slaveid = 1
 path = '../data/inverters/'
+mb_fc = 10
+registre = '0x0000'

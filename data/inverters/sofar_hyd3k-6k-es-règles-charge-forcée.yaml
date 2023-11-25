@@ -1,0 +1,133 @@
+# Configuration file pour les commandes Sofar HYD3000/4000/5000/6000-ES
+# inverter family.
+
+requests:
+  - start: 0x1200
+    end: 0x120F
+    mb_functioncode: 0x03
+
+
+parameters:
+ - group: solar
+   items:
+    - name: "mode de travail"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1200]
+      isstr: true
+      lookup:
+      -  key: 0
+         value: "auto"
+      -  key: 1
+         value: "% SOC batterie"
+      -  key: 2
+         value: "horaire"
+      -  key: 3
+         value: "passif"
+
+    - name: "horaire: charge heure début"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1201]
+
+    - name: "horaire: charge heure fin"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1202]
+
+    - name: "horaire: décharge heure début"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1203]
+
+    - name: "horaire: décharge heure fin"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1204]
+
+    - name: "horaire: puissance charge"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1205]
+
+    - name: "horaire: puissance décharge"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1206]
+
+    - name: "SOC: règle n°"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1207]
+
+    - name: "SOC: heure début"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1208]
+
+    - name: "SOC: heure fin"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x1209]
+
+    - name: "SOC: SOC de fin"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120A]
+
+    - name: "SOC: puissance de charge"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120B]
+
+    - name: "SOC: date début"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120C]
+
+    - name: "SOC: date fin"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120D]
+
+    - name: "SOC: jour(s) de la semaine"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120E]
+
+    - name: "SOC: règle active"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x120F]

@@ -40,15 +40,10 @@ class solarman extends eqLogic {
   public static function cron() {
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='* * * *' or $autorefresh=='* * * * *' or $autorefresh==1){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -61,16 +56,10 @@ class solarman extends eqLogic {
   public static function cron5() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/5 * * *' or $autorefresh=='*/5 * * * *' or $autorefresh==5){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
-          system::kill('solarman.py');
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -83,15 +72,10 @@ class solarman extends eqLogic {
   public static function cron10() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/10 * * *' or $autorefresh=='*/10 * * * *' or $autorefresh==10){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -104,15 +88,10 @@ class solarman extends eqLogic {
   public static function cron15() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/15 * * *' or $autorefresh=='*/15 * * * *' or $autorefresh==15){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -125,15 +104,10 @@ class solarman extends eqLogic {
   public static function cron30() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/30 * * *' or $autorefresh=='*/30 * * * *' or $autorefresh==30){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -146,7 +120,8 @@ class solarman extends eqLogic {
   public static function cronHourly() {    
   }
   
-  public static function cronDaily() {    
+  public static function cronDaily() {   
+    exec("pkill -f 'solarman.py'");
   }
   
   /*     * *********************Méthodes d'instance************************* */

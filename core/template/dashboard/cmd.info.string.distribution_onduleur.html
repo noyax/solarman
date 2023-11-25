@@ -507,7 +507,7 @@
 				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
 				  if (_options.value != undefined) 
 				  {
-					//_options.value = '0.745'
+					//_options.value = 745
 					if (_options.unit.toLowerCase() == 'kw') {
 					  _options.value = parseFloat(_options.value) * 1000
 					  _options.unit = 'W'
@@ -1225,7 +1225,7 @@
 					  _options.unit = 'Wh'
 					}
 					let batteryMpptEnergy = autoValueArray#id#(parseFloat(_options.value),'Wh')
-					document.getElementById("battery-mppt-energy-#id#").innerHTML = trunc#id#(batteryMpptEnergy.value, 3, 1) + ' ' + batteryMpptEnergy.unit
+					document.getElementById("battery-mppt-energy-#id#").innerHTML = trunc#id#(batteryMpptEnergy.value, 3, 0) + ' ' + batteryMpptEnergy.unit
 				  }
 				})
 			  }
@@ -1256,7 +1256,7 @@
 					  _options.unit = 'Wh'
 					}
 					let dailyGridBuy = autoValueArray#id#(_options.value,'Wh')
-					document.getElementById("daily_grid_buy_value#id#").innerHTML = trunc#id#(dailyGridBuy.value, 3, 1) + ' ' + dailyGridBuy.unit
+					document.getElementById("daily_grid_buy_value#id#").innerHTML = trunc#id#(dailyGridBuy.value, 3, 0) + ' ' + dailyGridBuy.unit
 				  }
 				})
 			  }
@@ -1287,7 +1287,7 @@
 					  _options.unit = 'Wh'
 					}
 					let dailySellBuy = autoValueArray#id#(_options.value,'Wh')
-					document.getElementById("daily_grid_sell_value#id#").innerHTML = trunc#id#(dailySellBuy.value, 3, 1) + ' ' + dailySellBuy.unit
+					document.getElementById("daily_grid_sell_value#id#").innerHTML = trunc#id#(dailySellBuy.value, 3, 0) + ' ' + dailySellBuy.unit
 				  }
 				})
 			  }
@@ -1985,7 +1985,7 @@
           html += '<text id="daily_solar_value#id#" x="226" y="' + ((config#id#.solar.mppts == 1) ? '85' : '26') + '" class="ft16-#id# left-align#id#" display="'
           html += (config#id#.solar.daily.show !== true || config#id#.show_solar === false || config#id#.solar.daily.remaining_show != false) ? 'none' : ''
           html += '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(dailySolar.value, 3, 1) + ' ' + dailySolar.unit
+          html += trunc#id#(dailySolar.value, 3, 0) + ' ' + dailySolar.unit
           html += '</text>'
           
           html += '<text id="daily_solar#id#" x="226" y="' + ((config#id#.solar.mppts == 1) ? '100' : '40') + '" class="ft9-#id# left-align#id#" fill="' + ((config#id#.solar.daily.show !== true || config#id#.show_solar === false || config#id#.solar.daily.remaining_show != false) ? 'transparent' : 'var(--solar_colour#id#)') + '">' + config#id#.solar.daily.text + '</text>'
@@ -2018,7 +2018,7 @@
           html += '<text id="pv1_energy#id#" x="' + ((config#id#.solar.mppts == 1) ? '238.8' : '188.1') + '" y="' + (config#id#.solar.mppts == 1 ? '154' : '90') + '" class="ft8-#id# center-align#id#" display="'
           html += (config#id#.show_solar === false || config#id#.solar.pv1.energy === false || config#id#.solar.mppts === 0) ? 'none' : ''
           html += '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(pv1_energy.value, 3, 1) + ' ' + pv1_energy.unit
+          html += trunc#id#(pv1_energy.value, 3, 0) + ' ' + pv1_energy.unit
           html += '</text>'
           
           // entities.pv1_voltage_109
@@ -2049,7 +2049,7 @@
           
           let pv2_energy = autoValueArray#id#((config#id#.solar.pv2.energy || 0),config#id#.solar.pv2.energy_unit)
           html += '<text id="pv2_energy#id#" x="289.5" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv2.energy === false || config#id#.solar.mppts < 2) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(pv2_energy.value, 3, 1) + ' ' + pv2_energy.unit
+          html += trunc#id#(pv2_energy.value, 3, 0) + ' ' + pv2_energy.unit
           html += '</text>'
           
           // entities.pv2_voltage_111
@@ -2075,7 +2075,7 @@
           
           let pv3_energy = autoValueArray#id#((config#id#.solar.pv3.energy || 0),config#id#.solar.pv3.energy_unit)
           html += '<text id="pv3_energy#id#" x="113" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv3.energy === false || config#id#.solar.mppts < 3) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(pv3_energy.value, 3, 1) + ' ' + pv3_energy.unit
+          html += trunc#id#(pv3_energy.value, 3, 0) + ' ' + pv3_energy.unit
           html += '</text>'
           
           // entities.pv3_voltage_113
@@ -2101,7 +2101,7 @@
           
           let pv4_energy = autoValueArray#id#((config#id#.solar.pv4.energy || 0),config#id#.solar.pv4.energy_unit)
           html += '<text id="pv4_energy#id#" x="366" y="90" class="ft8-#id# center-align#id#" display="' + ((config#id#.show_solar === false || config#id#.solar.pv4.energy === false  || config#id#.solar.mppts < 4) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(pv4_energy.value, 3, 1) + ' ' + pv4_energy.unit
+          html += trunc#id#(pv4_energy.value, 3, 0) + ' ' + pv4_energy.unit
           html += '</text>'
           
           // entities.pv4_voltage_115
@@ -2135,7 +2135,7 @@
           
           // entities.day_load_energy_84
           let dailyLoad = autoValueArray#id#(config#id#.load.daily.state,config#id#.load.daily.unit)
-          html += '<text id="daily_load_value#id#" x="' + ((config#id#.load.additional_loads == 1) ? '400.4' : '335') + '" y="' + ((config#id#.load.additional_loads == 1) ? '277.9' : '178') + '" class="ft16-#id# left-align#id# ' + (((config#id#.load.daily.show === true) && (config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power)) ? '' : 'hidden-#id#') + '" fill="var(--load_colour#id#)">' + trunc#id#(dailyLoad.value, 3, 1) + ' ' + dailyLoad.unit + '</text>'
+          html += '<text id="daily_load_value#id#" x="' + ((config#id#.load.additional_loads == 1) ? '400.4' : '335') + '" y="' + ((config#id#.load.additional_loads == 1) ? '277.9' : '178') + '" class="ft16-#id# left-align#id# ' + (((config#id#.load.daily.show === true) && (config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power)) ? '' : 'hidden-#id#') + '" fill="var(--load_colour#id#)">' + trunc#id#(dailyLoad.value, 3, 0) + ' ' + dailyLoad.unit + '</text>'
           
           html += '<text id="daily_load#id#" x="' + ((config#id#.load.additional_loads == 1) ? '400.4' : '335') + '" y="' + ((config#id#.load.additional_loads == 1) ? '292.1' : '192.2') + '" class="ft9-#id# left-align#id# ' + (((config#id#.load.daily.show === true) && (config#id#.load.additional_loads >= 1 || config#id#.load.has_load_power)) ? '' : 'hidden-#id#') + '" fill="var(--load_colour#id#)" >' + config#id#.load.daily.text + '</text>'
           ///////////////////////////////////////////////////////
@@ -2150,7 +2150,7 @@
           
           let load1_energy = autoValueArray#id#((config#id#.load.load1.energy || 0),config#id#.load.load1.energy_unit)
           html += '<text id="load1_energy#id#" x="440" y="154" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load1.energy === false || config#id#.load.additional_loads <= 0) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
-          html += trunc#id#(load1_energy.value, 3, 1) + ' ' + load1_energy.unit
+          html += trunc#id#(load1_energy.value, 3, 0) + ' ' + load1_energy.unit
           html += '</text>'
           
           html += '<text id="es-load1-name#id#" x="440" y="122" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 1) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load1.name) ? config#id#.load.load1.name : '') + '</text>'
@@ -2171,7 +2171,7 @@
           
           let load2_energy = autoValueArray#id#((config#id#.load.load2.energy || 0),config#id#.load.load2.energy_unit)
           html += '<text id="load2_energy#id#" x="440" y="325.5" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load2.energy === false || config#id#.load.additional_loads <= 1) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
-          html += trunc#id#(load2_energy.value, 3, 1) + ' ' + load2_energy.unit
+          html += trunc#id#(load2_energy.value, 3, 0) + ' ' + load2_energy.unit
           html += '</text>'
           
           html += '<text id="es-load2-name#id#" x="440" y="343" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 2) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load2.name) ? config#id#.load.load2.name : '') + '</text>'
@@ -2192,7 +2192,7 @@
           
           let load3_energy = autoValueArray#id#((config#id#.load.load3.energy || 0),config#id#.load.load3.energy_unit)
           html += '<text id="load3_energy#id#" x="520" y="154" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load3.energy === false || config#id#.load.additional_loads <= 2) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
-          html += trunc#id#(load3_energy.value, 3, 1) + ' ' + load3_energy.unit
+          html += trunc#id#(load3_energy.value, 3, 0) + ' ' + load3_energy.unit
           html += '</text>'
           
           html += '<text id="es-load3-name#id#" x="520" y="122" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 3) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load3.name) ? config#id#.load.load3.name : '') + '</text>'
@@ -2213,7 +2213,7 @@
           
           let load4_energy = autoValueArray#id#((config#id#.load.load4.energy || 0),config#id#.load.load4.energy_unit)
           html += '<text id="load4_energy#id#" x="520" y="325.5" class="ft8-#id# center-align#id#" display="' + ((config#id#.load.load4.energy === false || config#id#.load.additional_loads <= 3) ? 'none' : '') + '" fill="var(--load_colour#id#)">'
-          html += trunc#id#(load4_energy.value, 3, 1) + ' ' + load4_energy.unit
+          html += trunc#id#(load4_energy.value, 3, 0) + ' ' + load4_energy.unit
           html += '</text>'
           
           html += '<text id="es-load4-name#id#" x="520" y="343" class="ft9-#id# center-align#id#" display="' + ((config#id#.load.additional_loads >= 4) ? '' : 'none') + '" fill="var(--load_colour#id#)" >' + ((config#id#.load.load4.name) ? config#id#.load.load4.name : '') + '</text>'
@@ -2264,7 +2264,7 @@
           // entities.day_grid_import_76
           let dailyGridBuy = autoValueArray#id#(config#id#.grid.daily.buy_state,config#id#.grid.daily.buy_unit)
           html += '<text id="daily_grid_buy_value#id#" x="5" y="277.9" class="ft16-#id# left-align#id#" display="' + ((config#id#.grid.daily.show_buy !== true) ? 'none' : '')
-          html += '" fill="var(--grid_colour#id#)">' + trunc#id#(dailyGridBuy.value, 3, 1) + ' ' + dailyGridBuy.unit + '</text>'
+          html += '" fill="var(--grid_colour#id#)">' + trunc#id#(dailyGridBuy.value, 3, 0) + ' ' + dailyGridBuy.unit + '</text>'
           // entities.day_grid_export_77
           let dailyGridSell = autoValueArray#id#(config#id#.grid.daily.sell_state,config#id#.grid.daily.sell_unit)
           html += '<text id="daily_grid_sell_value#id#" x="5" y="175" class="ft16-#id# left-align#id#" display="' + ((config#id#.grid.daily.show_sell !== true) ? 'none' : '')
@@ -2297,13 +2297,13 @@
           // entities.day_battery_charge_70
           html += '<text id="daily_bat_charge_value#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="343" class= "ft16-#id# left-align#id#" display="' + ((config#id#.battery.has_battery === false || config#id#.battery.daily.show_charge !== true) ? 'none' : '') + '" fill="var(--battery_colour#id#)">'
           let dailyBatteryCharge = autoValueArray#id#(config#id#.battery.daily.charge_state,config#id#.battery.daily.charge_unit)
-          html += trunc#id#(dailyBatteryCharge.value, 3, 1) + ' ' + dailyBatteryCharge.unit
+          html += trunc#id#(dailyBatteryCharge.value, 3, 0) + ' ' + dailyBatteryCharge.unit
           html += '</text>'
           
           // entities.day_battery_discharge_71
           let dailyBatteryDischarge = autoValueArray#id#(config#id#.battery.daily.discharge_state,config#id#.battery.daily.discharge_unit)
           html += '<text id="daily_bat_discharge_value#id#" x="' + ((config#id#.aux.has_aux_power) ? '29' : '135') + '" y="380.1" class="ft16-#id# left-align#id#" display="' + ((config#id#.battery.has_battery === false || config#id#.battery.daily.show_discharge !== true) ? 'none' : '')
-          html += '" fill="var(--battery_colour#id#)" >' + trunc#id#(dailyBatteryDischarge.value, 3, 1) + ' ' + dailyBatteryDischarge.unit + '</text>'
+          html += '" fill="var(--battery_colour#id#)" >' + trunc#id#(dailyBatteryDischarge.value, 3, 0) + ' ' + dailyBatteryDischarge.unit + '</text>'
           
           html += '<text id="duration#id#" x="' + ((config#id#.aux.has_aux_power) ? '171' : '270') + '" y="377.5" class="' + ((config#id#.large_font !== true) ? 'ft12-#id#' : 'ft14-#id#') + ' left-align#id#" fill="'
           html += (config#id#.battery.energy == 0 || !config#id#.battery.energy) ? 'transparent' : 'var(--battery_colour#id#)'
@@ -2344,7 +2344,7 @@
           
           let mppt_energy = autoValueArray#id#((config#id#.battery.mppt.energy || 0),config#id#.battery.mppt.energy_unit)
           html += '<text id="battery-mppt-energy-#id#" x="' + ((config#id#.aux.has_aux_power) ? '240' : '337') + '" y="325" class="ft8-#id# center-align#id#" display="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.mppt.energy === false || config#id#.battery.has_battery === false) ? 'none' : '') + '" fill="var(--solar_colour#id#)">'
-          html += trunc#id#(mppt_energy.value, 3, 1) + ' ' + mppt_energy.unit
+          html += trunc#id#(mppt_energy.value, 3, 0) + ' ' + mppt_energy.unit
           html += '</text>'
           
           html += '<path id="battery-mppt-line-#id#" d="' + ((config#id#.aux.has_aux_power) ? 'M 175 315 L 204 315' : 'M 274 315 L 303 315') + '" class="' + ((config#id#.battery.mppt.has_mppt === false || config#id#.battery.has_battery === false) ? 'hidden-#id#' : '') + '" fill="none" stroke="var(--solar_colour#id#)" stroke-width="1" stroke-miterlimit="10"  pointer-events="stroke"/>'
@@ -2370,7 +2370,7 @@
           let dailyAux = autoValueArray#id#(config#id#.aux.daily.state,config#id#.aux.daily.unit)
           html += '<text id="daily_aux_value#id#" x="' + ((config#id#.battery.has_battery) ? '385' : '115') + '" y="' + ((config#id#.battery.has_battery) ? '380' : '343') + '" class="ft16-#id# left-align#id#" display="' //77.2
           html += (config#id#.aux.has_aux_power !== true) ? 'none' : ''
-          html += '" fill="var(--aux_colour#id#)" >' + trunc#id#(dailyAux.value, 3, 1) + ' ' + dailyAux.unit + '</text>'
+          html += '" fill="var(--aux_colour#id#)" >' + trunc#id#(dailyAux.value, 3, 0) + ' ' + dailyAux.unit + '</text>'
             
           html += '<text id="daily_aux_text#id#" x="' + ((config#id#.battery.has_battery) ? '385' : '115') + '" y="' + ((config#id#.battery.has_battery) ? '393.7' : '357.2') + '" class="ft9-#id# left-align#id#" display="' 
           html += (config#id#.aux.has_aux_power !== true) ? 'none' : ''
@@ -2513,26 +2513,27 @@
       if (debug#id#) console.log("| ElDomExist calculatePv?",ElDomExist);
       if (ElDomExist) {  
         if (el != '' && debug#id#) console.log('| calculatePv launched by ' + el)
-		let solar1 = config#id#.solar.pv1.power
-		let solar2 = config#id#.solar.pv2.power
-		let solar3 = config#id#.solar.pv3.power
-		let solar4 = config#id#.solar.pv4.power
-		if (config#id#.solar.pv1.power_unit.toLowerCase() == 'kw') solar1 = config#id#.solar.pv1.power * 1000
-		if (config#id#.solar.pv2.power_unit.toLowerCase() == 'kw') solar2 = config#id#.solar.pv2.power * 1000
-		if (config#id#.solar.pv3.power_unit.toLowerCase() == 'kw') solar3 = config#id#.solar.pv3.power * 1000
-		if (config#id#.solar.pv4.power_unit.toLowerCase() == 'kw') solar4 = config#id#.solar.pv4.power * 1000
+		let solar1 = parseFloat(config#id#.solar.pv1.power)
+		let solar2 = parseFloat(config#id#.solar.pv2.power)
+		let solar3 = parseFloat(config#id#.solar.pv3.power)
+		let solar4 = parseFloat(config#id#.solar.pv4.power)
+		if (config#id#.solar.pv1.power_unit.toLowerCase() == 'kw') solar1 = parseFloat(config#id#.solar.pv1.power) * 1000
+		if (config#id#.solar.pv2.power_unit.toLowerCase() == 'kw') solar2 = parseFloat(config#id#.solar.pv2.power) * 1000
+		if (config#id#.solar.pv3.power_unit.toLowerCase() == 'kw') solar3 = parseFloat(config#id#.solar.pv3.power) * 1000
+		if (config#id#.solar.pv4.power_unit.toLowerCase() == 'kw') solar4 = parseFloat(config#id#.solar.pv4.power) * 1000
 		let solarTot = solar1 + solar2 + solar3 + solar4
         let total_pv = autoValueArray#id#(solarTot, 'W')
+        if (debug#id#) console.log('| solarTot = ' + solarTot)
         if (debug#id#) console.log('| total_pv = ' + total_pv.value + ' = ' + solarTot)
 		
         let solar_animation_speed = config#id#.solar.animation_speed;
         if (debug#id#) console.log('| animation_speed = ' + config#id#.solar.animation_speed)
         if (debug#id#) console.log('| max power = ' + config#id#.solar.max_power)
         let speed = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solarTot / (config#id#.solar.max_power || solarTot)));
-        let speed1 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar1 / (config#id#.solar.max_power || solarTot)));
-        let speed2 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar2 / (config#id#.solar.max_power || solarTot)));
-        let speed3 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar3 / (config#id#.solar.max_power || solarTot)));
-        let speed4 = config#id#.load.animation_speed - ((config#id#.load.animation_speed - 1.5) * (solar4 / (config#id#.solar.max_power || solarTot)));
+        let speed1 = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solar1 / (config#id#.solar.max_power || solarTot)));
+        let speed2 = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solar2 / (config#id#.solar.max_power || solarTot)));
+        let speed3 = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solar3 / (config#id#.solar.max_power || solarTot)));
+        let speed4 = config#id#.solar.animation_speed - ((config#id#.solar.animation_speed - 1.5) * (solar4 / (config#id#.solar.max_power || solarTot)));
         speed = (speed >= 1.5) ? speed : 1.5;
         speed1 = (speed1 >= 1.5) ? speed1 : 1.5;
         speed2 = (speed2 >= 1.5) ? speed2 : 1.5;
