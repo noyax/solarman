@@ -200,6 +200,14 @@ class solarman extends eqLogic {
         $cmd->setDisplay('parameters', $displayParam);
         $cmd->save();
         $cmd->refresh();
+
+        $refresh = new solcastCmd();
+        $refresh->setName(__('Rafraîchir', __FILE__));
+        $refresh->setEqLogic_id($this->getId());
+        $refresh->setLogicalId('refresh');
+        $refresh->setType('action');
+        $refresh->setSubType('other');
+        $refresh->save();
       }
            
       
@@ -222,6 +230,16 @@ class solarman extends eqLogic {
 
   // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
   public function postSave() {
+    $refresh = $this->getCmd(null, 'refresh');
+    if (!is_object($refresh)) {
+      $refresh = new solcastCmd();
+      $refresh->setName(__('Rafraîchir', __FILE__));
+    }
+    $refresh->setEqLogic_id($this->getId());
+    $refresh->setLogicalId('refresh');
+    $refresh->setType('action');
+    $refresh->setSubType('other');
+    $refresh->save();
   }
 
   // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -492,6 +510,17 @@ class solarmanCmd extends cmd {
 
   // Exécution d'une commande
   public function execute($_options = array()) {
+    $eqLogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
+    switch ($this->getLogicalId()) { //vérifie le logicalid de la commande      
+      case 'refresh': // LogicalId de la commande rafraîchir que l’on a créé dans la méthode Postsave
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      break;
+      default:
+        log::add('solarman', 'debug', 'Erreur durant execute');
+        break;
+    }
   }
 
   /*     * **********************Getteur Setteur*************************** */

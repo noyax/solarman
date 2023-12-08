@@ -4,6 +4,13 @@
 >
 >S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.
 
+# 1.0.7 (xxx) => béta
+
+   - ajout fichier onduleur Sofar Solar xxx TL Génération 2
+   - ajout de la commande refresh
+   - corresction bugs dans le template
+   - ajout fichiers doc des onduleurs lorsque je les ai
+
 # 1.0.6 (25/11/2023) => béta
 
    - amélioration gestion du process python

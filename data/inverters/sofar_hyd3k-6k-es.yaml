@@ -18,285 +18,215 @@ parameters:
    items:
     - name: "PV Puissance Instantanée"
       widget: ""
-      state_class: "measurement"
       uom: "kW"
       scale: 0.01
       rule: 1
       registers: [0x0215]
-      icon: 'mdi:solar-power'
-
 
     - name: "Puissance PV1"
       widget: "pv1_power"
-      state_class: "measurement"
       uom: "kW"
       scale: 0.01
       rule: 1
       registers: [0x0252]
-      icon: 'mdi:solar-power'
 
     - name: "Puissance PV2"
       widget: "pv2_power"
-      state_class: "measurement"
       uom: "kW"
       scale: 0.01
       rule: 1
       registers: [0x0255]
-      icon: 'mdi:solar-power'
 
     - name: "Tension PV1"
       widget: "pv1_voltage"
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0250]
-      icon: 'mdi:solar-power'
 
     - name: "Tension PV2"
       widget: "pv2_voltage"
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0253]
-      icon: 'mdi:solar-power'
 
     - name: "Courant PV1"
       widget: "pv1_current"
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0251]
-      icon: 'mdi:solar-power'
 
     - name: "Courant PV2"
       widget: "pv2_current"
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0254]
-      icon: 'mdi:solar-power'
 
     - name: "Production quotidienne"
       widget: "daily_solar"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x0218]
-      icon: 'mdi:solar-power'
 
     - name: "Production totale"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x021D,0x021C]
-      icon: 'mdi:solar-power'
 
     - name: "Temps total de production"
       widget: ""
-      state_class: "measurement"
       uom: "h"
       scale: 1
       rule: 3
       registers: [0x0245,0x0244]
-      icon: 'mdi:clock-outline'
 
     - name: "Temps de production aujourd'hui"
       widget: ""
-      state_class: "total_increasing"
       uom: "min"
       scale: 1
       rule: 1
       registers: [0x0243]
-      icon: 'mdi:clock-outline'
 
     - name: "Aujourd’hui total export"
       widget: "daily_grid_sell"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x0219]
-      icon: 'mdi:transmission-tower-export'
 
     - name: "Aujourd’hui Consommation du réseau"
       widget: "daily_grid_buy"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x021A]
-      icon: 'mdi:transmission-tower-import'
 
     - name: "Aujourd’hui Consommation d’énergie"
       widget: "daily_load"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x021B]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Total export vers réseau"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x021F,0x021E]
-      icon: 'mdi:transmission-tower-export'
 
     - name: "Total consommation du réseau"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x0221,0x0220]
-      icon: 'mdi:transmission-tower-import'
 
     - name: "Total consommation d’énergie"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x0223,0x0222]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Secours Puissance"
       widget: "load2_state"
-      state_class: ""
       uom: "kW"
       scale: 0.01
       rule: 1
       registers: [0x0217]
-      icon: ''
 
     - name: "Secours Tension"
-      state_class: ""
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0216]
-      icon: ''
-
-
- - group: Output
-   items:
 
     - name: "Installation Puissance"
       widget: "load1_state"
-      state_class: ""
       uom: "kW"
       scale: 0.01
       rule: 1
       registers: [0x0213]
-      icon: ''
 
     - name: "Fréquence du réseau"
       widget: "frequency_state"
-      state_class: "measurement"
       uom: "Hz"
       scale: 0.01
       rule: 1
       registers: [0x020C]
-      icon: 'mdi:home-lightning-bolt'
 
     - name: "Tension du réseau"
       widget: ""
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0206]
-      icon: 'mdi:home-lightning-bolt'
 
     - name: "Courant de réseau"
       widget: ""
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 2
       registers: [0x0207]
-      icon: 'mdi:home-lightning-bolt'
 
-
- - group: batteries
-   items:
     - name: "Batterie Tension"
       widget: "battery_voltage"
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x020E]
-      icon: 'mdi:battery-charging'
 
     - name: "Batterie Intensité"
       widget: "battery_current"
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 2
       registers: [0x020F]
-      icon: 'mdi:battery-charging-10'
 
     - name: "Batterie SOC"
       widget: "battery_state"
-      state_class: "measurement"
       uom: "%"
       scale: 1
       rule: 1
       registers: [0x0210]
-      icon: 'mdi:battery'
 
     - name: "Batterie Température"
       widget: "battery_temp"
-      state_class: "measurement"
       uom: "°C"
       scale: 1
-      #se non funziona cambia questo in 2
       rule: 1
       registers: [0x0211]
-      icon: 'mdi:battery-heart-outline'
 
     - name: "Charge quotidienne de la batterie"
       widget: "daily_battery_charge"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x0224]
-      icon: 'mdi:battery-clock'
 
     - name: "Cycles de la batterie"
       widget: ""
-      state_class: ""
       uom: "Charges"
       scale: 1
       rule: 1
       registers: [0x022C]
-      icon: 'mdi:battery-check-outline'
 
     - name: "Alimentation par batterie"
       widget: ""
-      state_class: "measurement"
       uom: "kW"
       scale: 0.01
       rule: 2
       registers: [0x0237]
-      icon: 'mdi:battery-charging-high'
 
     - name: "Type de batterie"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -315,136 +245,105 @@ parameters:
          value: "GENERAL"
       -  key: 256
          value: "DEFAULT"
-      icon: 'mdi:battery'
 
     - name: "Capacité de la batterie"
       widget: ""
-      state_class: ""
       uom: "Ah"
       scale: 1
       rule: 1
       registers: [0x10B1]
-      icon: 'mdi:battery'
 
     - name: "Décharge quotidienne de la batterie"
       widget: "daily_battery_discharge"
-      state_class: "total_increasing"
       uom: "kWh"
       scale: 0.01
       rule: 1
       registers: [0x0225]
-      icon: 'mdi:battery'
 
     - name: "Charge totale de la batterie"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x0227,0x0226]
-      icon: 'mdi:battery'
 
     - name: "Décharge totale de la batterie"
       widget: ""
-      state_class: "total"
       uom: "kWh"
       scale: 1
       rule: 3
       registers: [0x0229,0x0228]
-      icon: 'mdi:battery'
 
     - name: "Tension de charge maximale"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x10B3]
-      icon: 'mdi:battery'
 
     - name: "Courant de charge max"
       widget: ""
-      state_class: ""
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x10B4]
-      icon: 'mdi:battery'
 
     - name: "Protection contre les surtensions"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x10B5]
-      icon: 'mdi:battery'
 
     - name: "Tension de décharge minimale"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x10B6]
-      icon: 'mdi:battery'
 
     - name: "Courant de décharge maximal"
       widget: ""
-      state_class: ""
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x10B7]
-      icon: 'mdi:battery'
 
     - name: "Protection contre les sous-tensions"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x10B8]
-      icon: 'mdi:battery'
 
     - name: "Profondeur de décharge"
       widget: ""
-      state_class: ""
       uom: "%"
       scale: 1
       rule: 1
       registers: [0x10B9]
-      icon: 'mdi:battery'
 
-    - name: "Périodes de temps de décharge"
+    - name: "Profondeur décharge sur secteur"
       widget: ""
-      state_class: ""
-      uom: "h"
+      uom: "%"
       scale: 1
       rule: 1
       registers: [0x10BA]
-      icon: 'mdi:battery'
 
     - name: "Tension de la batterie vide"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.01
       rule: 1
       registers: [0x10BB]
-      icon: 'mdi:battery'
 
     - name: "Tension totale de la batterie"
       widget: ""
-      state_class: ""
       uom: "V"
       scale: 0.01
       rule: 1
       registers: [0x10BC]
-      icon: 'mdi:battery'
 
- - group: Inverter
-   items:
     - name: "État de l’onduleur"
       widget: ""
       uom: ""
@@ -469,7 +368,6 @@ parameters:
          value: "État de défaut"
       -  key: 7
          value: "État permanent"
-      icon: 'mdi:state-machine'
 
     - name: "Température du module onduleur"
       widget: "ac_temp"
@@ -477,61 +375,48 @@ parameters:
       scale: 1
       rule: 2
       registers: [0x0239]
-      icon: 'mdi:thermometer'
 
     - name: "Température interne de l’onduleur"
       widget: "dc_temp"
-      state_class: "measurement"
       uom: "°C"
       scale: 1
       rule: 2
       registers: [0x0238]
-      icon: 'mdi:thermometer'
 
     - name: "Tension du bus de l’onduleur"
       widget: ""
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 2
       registers: [0x022D]
-      icon: 'mdi:home-lightning-bolt'
 
     - name: "Compte à rebours"
       widget: ""
-      state_class: "measurement"
       uom: "s"
       scale: 1
       rule: 1
       registers: [0x022A]
-      icon: ''
 
     - name: "Isolation du PV1+ à la terre"
       widget: ""
-      state_class: "measurement"
       uom: ""
       scale: 1
       rule: 1
       registers: [0x0246]
-      icon: ''
 
     - name: "Isolation du PV2+ à la terre"
       widget: ""
-      state_class: "measurement"
       uom: ""
       scale: 1
       rule: 1
       registers: [0x0247]
-      icon: ''
 
     - name: "Isolation du PV à la terre"
       widget: ""
-      state_class: "measurement"
       uom: ""
       scale: 1
       rule: 1
       registers: [0x0248]
-      icon: ''
 
     - name: "Pays"
       widget: ""
@@ -601,13 +486,9 @@ parameters:
          value: "Réserver"
       -  key: 29
          value: "Réserver"
-      icon: ''
 
- - group: Alert
-   items:
     - name: "Défaut 1"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -648,12 +529,9 @@ parameters:
          value: "ID15 Surintensité sortie AC"
       -  key: 32768
          value: "ID16 PV courant non équilibré"
-      icon: 'mdi:wrench'
-
 
     - name: "Défaut 2"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -694,11 +572,9 @@ parameters:
          value: "ID31 Protection contre les surintensités de sortie"
       -  key: 32768
          value: "ID32 Le courant d’entrée est trop élevé"
-      icon: 'mdi:wrench'
 
     - name: "Défaut 3"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -739,11 +615,9 @@ parameters:
          value: "ID47 Réservée"
       -  key: 32768
          value: "ID48 Erreur sur consistance courant résiduel"
-      icon: 'mdi:wrench'
 
     - name: "Défaut 4"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -784,11 +658,9 @@ parameters:
          value: "ID63 Réservée"
       -  key: 32768
          value: "ID64 Réservée"
-      icon: 'mdi:wrench'
 
     - name: "Défaut 5"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -829,11 +701,9 @@ parameters:
          value: "ID79 Réservée"
       -  key: 32768
          value: "ID80 Réservée"
-      icon: 'mdi:wrench'
 
     - name: "Défaut 6"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -874,11 +744,9 @@ parameters:
          value: "Réservé"
       -  key: 32768
          value: "Réservé"
-      icon: 'mdi:alert'
 
     - name: "Défaut 7"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -919,11 +787,9 @@ parameters:
          value: "Réservé"
       -  key: 32768
          value: "Réservé"
-      icon: 'mdi:alert'
 
     - name: "Défaut 8"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
@@ -964,133 +830,102 @@ parameters:
          value: "Réservé"
       -  key: 32768
          value: "Réservé"
-      icon: 'mdi:alert'
 
- - group: Other energy
-   items:
     - name: "Courant de chute"
       widget: ""
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x022F]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Tension R du réseau"
       widget: "voltage_state"
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0230]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille R"
       widget: "current_state"
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0231]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Courant de production"
       widget: ""
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0236]
-      icon: 'mdi:lightning-bolt'
 
 
     - name: "Batterie Puissance"
       widget: "battery_power"
-      state_class: ""
       uom: "kW"
       scale: 0.01
       rule: 2
       registers: [0x020D]
-      icon: ''
 
     - name: "Réseau Puissance"
       widget: "grid_power"
-      state_class: ""
       uom: "kW"
       scale: -0.01
       rule: 2
       registers: [0x0212]
-      icon: ''
 
     - name: "Puissance d’entrée/sortie"
       widget: ""
-      state_class: "measurement"
       uom: "kW"
       scale: 0.01
       rule: 2
       registers: [0x0214]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Modèle de gestion de l’énergie"
       widget: ""
-      state_class: ""
       uom: ""
       scale: 1
       rule: 1
       registers: [0x10B2]
-      icon: ''
 
     - name: "Courant DCI"
       widget: ""
-      state_class: "measurement"
       uom: "mA"
       scale: 1
       rule: 1
       registers: [0x023B]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Tension DCI"
       widget: ""
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x023C]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Tension S du réseau"
       widget: ""
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0232]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille S"
       widget: ""
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0233]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Tension T du réseau"
       widget: ""
-      state_class: "measurement"
       uom: "V"
       scale: 0.1
       rule: 1
       registers: [0x0234]
-      icon: 'mdi:lightning-bolt'
 
     - name: "Courant de grille T"
       widget: ""
-      state_class: "measurement"
       uom: "A"
       scale: 0.01
       rule: 1
       registers: [0x0235]
-      icon: 'mdi:lightning-bolt'
