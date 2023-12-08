@@ -40,15 +40,10 @@ class solarman extends eqLogic {
   public static function cron() {
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='* * * *' or $autorefresh=='* * * * *' or $autorefresh==1){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -61,16 +56,10 @@ class solarman extends eqLogic {
   public static function cron5() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/5 * * *' or $autorefresh=='*/5 * * * *' or $autorefresh==5){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
-          system::kill('solarman.py');
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -83,15 +72,10 @@ class solarman extends eqLogic {
   public static function cron10() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/10 * * *' or $autorefresh=='*/10 * * * *' or $autorefresh==10){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -104,15 +88,10 @@ class solarman extends eqLogic {
   public static function cron15() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/15 * * *' or $autorefresh=='*/15 * * * *' or $autorefresh==15){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -125,15 +104,10 @@ class solarman extends eqLogic {
   public static function cron30() {    
     $debug = false;
     $idOnduleur = 'Aucun';
-    $i = 0;
     foreach (eqLogic::byType('solarman') as $eqLogic) {
       if ($eqLogic->getisEnable()==1){
         $autorefresh = $eqLogic->getConfiguration('autorefresh');
         if ($autorefresh=='*/30 * * *' or $autorefresh=='*/30 * * * *' or $autorefresh==30){
-          if ($i==0){
-            system::kill('solarman.py');
-            $i += 1;
-          }
           $idOnduleur = $eqLogic->getId();
           $nameOnduleur = $eqLogic->getName();
           log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
@@ -146,7 +120,8 @@ class solarman extends eqLogic {
   public static function cronHourly() {    
   }
   
-  public static function cronDaily() {    
+  public static function cronDaily() {   
+    exec("pkill -f 'solarman.py'");
   }
   
   /*     * *********************Méthodes d'instance************************* */
@@ -169,6 +144,7 @@ class solarman extends eqLogic {
           $commandes = $group;
           foreach ($commandes as $value3 => $comm){
             $isstr = 'numeric';
+            $widget = '';
             foreach ($comm as $value4 => $details){
               switch($value4){
                 case 'name':
@@ -189,6 +165,9 @@ class solarman extends eqLogic {
                 case 'rule':
                   $rule = $details;
                 break;
+                case 'widget':
+                  $widget = $details;
+                break;
                 default:
                   //toutes les autres valeurs
               }
@@ -203,11 +182,35 @@ class solarman extends eqLogic {
             $cmd->setSubType($isstr);
             $cmd->setConfiguration('scale', $scale);
             $cmd->setConfiguration('rule', $rule);
+            if($widget!=''){
+            	$cmd->setConfiguration('widget', $widget);
+            }
             $cmd->save();
             $cmd->refresh();
           }
         }
+        $displayParam = displayParams();
+        $cmd = (new solarmanCmd());
+        $cmd->setEqLogic_id($this->id);
+        $cmd->setname('01-Template');
+        $cmd->setLogicalId('Template');
+        $cmd->setType('info');
+        $cmd->setSubType('string');
+        $cmd->setTemplate('dashboard', 'solarman::distribution_onduleur');
+        $cmd->setDisplay('parameters', $displayParam);
+        $cmd->save();
+        $cmd->refresh();
+
+        $refresh = new solcastCmd();
+        $refresh->setName(__('Rafraîchir', __FILE__));
+        $refresh->setEqLogic_id($this->getId());
+        $refresh->setLogicalId('refresh');
+        $refresh->setType('action');
+        $refresh->setSubType('other');
+        $refresh->save();
       }
+           
+      
     } catch (Exception $e) {
       log::add('solarman', 'error', ' Attention, erreur lors du postInsert : ' . $e->getMessage());
     }
@@ -227,6 +230,16 @@ class solarman extends eqLogic {
 
   // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
   public function postSave() {
+    $refresh = $this->getCmd(null, 'refresh');
+    if (!is_object($refresh)) {
+      $refresh = new solcastCmd();
+      $refresh->setName(__('Rafraîchir', __FILE__));
+    }
+    $refresh->setEqLogic_id($this->getId());
+    $refresh->setLogicalId('refresh');
+    $refresh->setType('action');
+    $refresh->setSubType('other');
+    $refresh->save();
   }
 
   // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -285,8 +298,6 @@ class solarman extends eqLogic {
     $interro = solarman::interroSolarman($eqLogic);
     return("ok");
   }
-
-
 
   public static function getInvertersLists(){
     $return = array();
@@ -380,6 +391,7 @@ class solarman extends eqLogic {
           $commandes = $group;
           foreach ($commandes as $value3 => $comm){
             $isstr = 'numeric';
+            $widget = '';
             foreach ($comm as $value4 => $details){
               switch($value4){
                 case 'name':
@@ -400,6 +412,9 @@ class solarman extends eqLogic {
                 case 'rule':
                   $rule = $details;
                 break;
+                case 'widget':
+                  $widget = $details;
+                break;
                 default:
                   //toutes les autres valeurs
               }
@@ -417,6 +432,9 @@ class solarman extends eqLogic {
                   $cmd->setSubType($isstr);
                   $cmd->setConfiguration('scale', $scale);
                   $cmd->setConfiguration('rule', $rule);
+                  if ($widget != '') {
+                    $cmd->setConfiguration('widget', $widget);
+                  }
                   $cmd->save();
                   $cmd->refresh();
                   log::add('solarman', 'debug', " commande existante remise à l'état initial si besoin : " . '  ' . $name . ' registre : ' . $registers[0]);
@@ -435,6 +453,9 @@ class solarman extends eqLogic {
                   $cmd->setSubType($isstr);
                   $cmd->setConfiguration('scale', $scale);
                   $cmd->setConfiguration('rule', $rule);
+                  if ($widget != '') {
+                    $cmd->setConfiguration('widget', $widget);
+                  }
                   $cmd->save();
                   $cmd->refresh();
                   log::add('solarman', 'debug', ' commande absente (re) créée : ' . '  ' . $name . ' registre : ' . $registers[0]);
@@ -445,6 +466,20 @@ class solarman extends eqLogic {
             } 
           }
         }
+      }
+      $cmd = $eqLogic->getCmd('info', 'Template');
+      if (!is_object($cmd)) {
+        $displayParam = displayParams();
+        $cmd = (new solarmanCmd());
+        $cmd->setEqLogic_id($id);
+        $cmd->setname('01-Template');
+        $cmd->setLogicalId('Template');
+        $cmd->setType('info');
+        $cmd->setSubType('string');
+        $cmd->setTemplate('dashboard', 'solarman::distribution_onduleur');
+        $cmd->setDisplay('parameters',$displayParam);
+        $cmd->save();
+        $cmd->refresh();
       }
     }
     else{
@@ -475,7 +510,113 @@ class solarmanCmd extends cmd {
 
   // Exécution d'une commande
   public function execute($_options = array()) {
+    $eqLogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
+    switch ($this->getLogicalId()) { //vérifie le logicalid de la commande      
+      case 'refresh': // LogicalId de la commande rafraîchir que l’on a créé dans la méthode Postsave
+        $nameOnduleur = $eqLogic->getName();
+        log::add('solarman', 'debug', " récupération des données de l'onduleur : " . '  ' . $nameOnduleur);
+        solarman::interroSolarman($eqLogic);
+      break;
+      default:
+        log::add('solarman', 'debug', 'Erreur durant execute');
+        break;
+    }
   }
 
   /*     * **********************Getteur Setteur*************************** */
 }
+
+
+ /*     * **********************Fonctions locales*************************** */
+
+
+
+function displayParams(){
+/*
+ Background : Couleur arrière plan du widget [ Exemple : #fffff, white, linear-gradient... | Défaut : transparent ]
+inverterColor : Couleur des éléments de catégorie "onduleur" [ Exemple : #fffff, white]
+noGridColor : Couleur du logo "noGridColor" [ Exemple : #fffff, white]
+------------ Solar ------------
+pv1Name : personnalisation du nom du Pv1. (Ex: Ouest, Nord, PV1 ...)
+pv2Name : personnalisation du nom du Pv2. (Ex: Ouest, Nord, PV2 ...)
+pv3Name : personnalisation du nom du Pv3. (Ex: Ouest, Nord, PV3 ...)
+pv4Name : personnalisation du nom du Pv4. (Ex: Ouest, Nord, PV4 ...)
+dailySolarText : personnalisation du texte. (défaut : DAILY SOLAR)
+pvMaxPower : Puissance max des PV. (permet la gestion de vitesse de l'animation)
+solarColor : Couleur des éléments de catégorie "solaire" [ Exemple : #fffff, white]
+------------ Load ------------
+load1Name : personnalisation du nom du Load1. (Ex: C.E, Clim, ...)
+load1Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+load2Name : personnalisation du nom du Load2. (Ex: C.E, Clim, ....)
+load2Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+load3Name : personnalisation du nom du Load3. (Ex: C.E, Clim, ....)
+load3Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+load4Name : personnalisation du nom du Load4. (Ex: C.E, Clim, ....)
+load4Icon : Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+dailyLoadText : personnalisation du texte. (défaut : DAILY LOAD)
+loadMaxPower : Puissance max des équipements "Load". (permet la gestion de vitesse de l'animation)
+loadColor : Couleur des éléments de catégorie "load" [ Exemple : #fffff, white]
+loadAnimate: Pour désactiver l'animation des Load passer ce paramètre a 0
+------------ Grid ------------
+dailyGridSellText : personnalisation du texte. (défaut : DAILY GRID SELL)
+dailyGridBuyText : personnalisation du texte. (défaut : DAILY GRID BUYL)
+gridMaxPower : Puissance max de consommation. (permet la gestion de vitesse de l'animation)
+gridColor : Couleur des éléments de catégorie "réseau" [ Exemple : #fffff, white]
+------------ Battery ------------
+dailyBatteryChargeText : personnalisation du texte. (défaut : DAILY CHARGE)
+dailyBatteryDischargeText : personnalisation du texte. (défaut : DAILY DISCHARGE)
+batteryMaxPower : Puissance max de la batterie. (permet la gestion de vitesse de l'animation)
+batterySocShutdown : SOC mini. (defaut: 0)
+mpptName : personnalisation du nom du Chargeur PV.
+batteryColor : Couleur des éléments de catégorie "batterie" [ Exemple : #fffff, white]
+------------ Aux ------------
+auxColor : Couleur des éléments de catégorie "aux" [ Exemple : #fffff, white]
+auxMaxPower : Puissance max des "Aux". (permet la gestion de vitesse de l'animation)
+*/
+
+  $return = array();
+  $return = array(
+    'Background'=>'transparent',
+    'inverterColor'=>'', // : Couleur des éléments de catégorie "onduleur" [ Exemple : #fffff, white]
+    'noGridColor'=> '', // : Couleur du logo "noGridColor" [ Exemple : #fffff, white]
+    //------------ Solar ------------//
+    'pv1Name'=>'PV1',
+    'pv2Name'=>'PV2', // : personnalisation du nom du Pv2. (Ex: Ouest, Nord, PV2 ...)
+    'pv3Name'=>'PV3', // : personnalisation du nom du Pv3. (Ex: Ouest, Nord, PV3 ...)
+    'pv4Name'=>'PV4', // : personnalisation du nom du Pv4. (Ex: Ouest, Nord, PV4 ...)
+    'dailySolarText'=>'Production du jour', // : personnalisation du texte. (défaut : DAILY SOLAR)
+    'pvMaxPower'=>6000, //Puissance max des PV. (permet la gestion de vitesse de l animation)
+    'solarColor'=>'', // Couleur des éléments de catégorie "solaire" [ Exemple : #fffff, white]
+    //------------ Load ------------
+    'load1Name'=>'Charge 1', // : personnalisation du nom du Load1. (Ex: C.E, Clim, ...)
+    'load1Icon'=>'', //: Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+    'load2Name'=>'Charge 2', //: personnalisation du nom du Load2. (Ex: C.E, Clim, ....)
+    'load2Icon'=>'', //: Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+    'load3Name'=>'Charge 3', //: personnalisation du nom du Load3. (Ex: C.E, Clim, ....)
+    'load3Icon'=>'', //: Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+    'load4Name'=>'Charge 4',// : personnalisation du nom du Load4. (Ex: C.E, Clim, ....)
+    'load4Icon'=>'',// : Afficher Icone. Choix : oven, pump, aircon, boiler, charging
+    'dailyLoadText'=>'Conso du jour',// : personnalisation du texte. (défaut : DAILY LOAD)
+    'loadMaxPower'=>6000,// : Puissance max des équipements "Load". (permet la gestion de vitesse de l'animation)
+    'loadColor'=>'',// : Couleur des éléments de catégorie "load" [ Exemple : #fffff, white]
+    'loadAnimate'=>1,//: Pour désactiver l'animation des Load passer ce paramètre a 0
+    //------------ Grid ------------
+    'dailyGridSellText'=>'Surplus du jour',// : personnalisation du texte. (défaut : DAILY GRID SELL)
+    'dailyGridBuyText'=>'Conso réseau du jour',// : personnalisation du texte. (défaut : DAILY GRID BUYL)
+    'gridMaxPower'=>6000,// : Puissance max de consommation. (permet la gestion de vitesse de l'animation)
+    'gridColor'=>'',// : Couleur des éléments de catégorie "réseau" [ Exemple : #fffff, white]
+    //------------ Battery ------------
+    'dailyBatteryChargeText'=>'Charge du jour',// : personnalisation du texte. (défaut : DAILY CHARGE)
+    'dailyBatteryDischargeText'=>'Décharge du jour',// : personnalisation du texte. (défaut : DAILY DISCHARGE)
+    'batteryMaxPower'=>2640,// : Puissance max de la batterie. (permet la gestion de vitesse de l'animation)
+    'batterySocShutdown'=>0,// : SOC mini. (defaut: 0)
+    'mpptName'=>'Nom du chargeur supplémentaire',// : personnalisation du nom du Chargeur PV.
+    'batteryColor'=>'',// : Couleur des éléments de catégorie "batterie" [ Exemple : #fffff, white]
+    // ------------ Aux ------------
+    'auxColor'=>'',// : Couleur des éléments de catégorie "aux" [ Exemple : #fffff, white]
+    'auxMaxPower'=>0,// : Puissance max des "Aux". (permet la gestion de vitesse de l'animation)    );
+  );
+  return($return);
+}
+
+/*     * **********************Fonctions locales*************************** */

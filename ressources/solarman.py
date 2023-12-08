@@ -22,7 +22,6 @@ import sys
 import os
 from optparse import OptionParser
 from os.path import join
-import json
 import argparse
 import globals
 import yaml
@@ -45,7 +44,7 @@ def lire():
 	with open('/var/www/html/plugins/solarman/data/inverters/' + globals.lookup_file) as f:
 		parameter_definition = yaml.full_load(f)
 	
-	result = 1
+	result = 0
 	erreur = 0
 	noLogger = 0
 	params = ParameterParser(parameter_definition)
@@ -98,9 +97,10 @@ def lire():
 			logging.debug(f"Interrogations OK, mise a jour des donnees.")
 			current_val = params.get_result()
 			logging.debug('Resultat : ')
-			logging.debug(current_val)
+			# logging.debug(current_val)
 			try:
 				_SendData = current_val
+				_SendData['PID'] = str(pid)
 				logging.debug(_SendData)
 				globals.JEEDOM_COM.add_changes('device::' + globals.ideqpmnt, _SendData)
 			except Exception:
@@ -109,11 +109,27 @@ def lire():
 		else:
 			current_val = {}
 			if noLogger == intervalles * QUERY_RETRY_ATTEMPTS:
+				try:
+					_SendData = current_val
+					_SendData['PID'] = str(pid)
+					logging.debug(_SendData)
+					globals.JEEDOM_COM.add_changes('device::' + globals.ideqpmnt, _SendData)
+				except Exception:
+					error_com = "Connexion error"
+					logging.error(error_com)
 				logging.error("Attention le plugin ne trouve pas votre logger, il est peut etre eteint sinon verifiez que son adresse IP n'a pas change")
 		sys.exit()
 	except Exception as e:
 		logging.warning(f"Interrogation de l'onduleur {globals.inverter_sn} a {globals.inverter_host}:{globals.inverter_port} non aboutie avec l'exception [{type(e).__name__}: {e}]")
 		current_val = {}
+		try:
+			_SendData = current_val
+			_SendData['PID'] = str(pid)
+			logging.debug(_SendData)
+			globals.JEEDOM_COM.add_changes('device::' + globals.ideqpmnt, _SendData)
+		except Exception:
+			error_com = "Connexion error"
+			logging.error(error_com)
 		sys.exit()
 
     

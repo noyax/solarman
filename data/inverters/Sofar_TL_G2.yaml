@@ -1,0 +1,494 @@
+
+requests:
+  - start: 0x0000
+    end:  0x0029
+    mb_functioncode: 0x03
+
+
+parameters:
+ - group: Inverter
+   items: 
+    - name: "État de l’onduleur"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0000]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Veille"
+      -  key: 1
+         value: "Autocontrôle"
+      -  key: 2
+         value: "Normal"
+      -  key: 3
+         value: "Erreur"
+      -  key: 4
+         value: "Permanent"
+
+    - name: "Défaut 1"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0001]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Pas d'erreur"
+      -  key: 1
+         value: "ID01 Protection contre les surtensions du réseau"
+      -  key: 2
+         value: "ID02 Protection contre les sous-tensions du réseau"
+      -  key: 4
+         value: "ID03 Protection contre les surfréquences de grille"
+      -  key: 8
+         value: "ID04 Grille sous protection de fréquence"
+      -  key: 16
+         value: "ID05 PV Protection contre les sous-tensions"
+      -  key: 32
+         value: "ID06 Traversée basse tension du réseau"
+      -  key: 64
+         value: "ID07"
+      -  key: 128
+         value: "ID08"
+      -  key: 256
+         value: "ID09 Protection contre les surtensions PV"
+      -  key: 512
+         value: "ID10 Courant d’entrée PV asymétrique"
+      -  key: 1024
+         value: "ID11 Mode d’entrée PV configuration incorrecte"
+      -  key: 2048
+         value: "ID12 Défaut des disjoncteurs de fuite à la terre"
+      -  key: 4096
+         value: "ID13 Défaut de séquence de phase"
+      -  key: 8192
+         value: "ID14 Protection contre les surintensités d’augmentation du matériel"
+      -  key: 16384
+         value: "ID15 Protection matérielle contre les surintensités CA"
+      -  key: 32768
+         value: "ID16 Le courant du réseau est trop élevé"
+
+    - name: "Défaut 2"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0002]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Pas d'erreur"
+      -  key: 1
+         value: "ID17 Erreur d’échantillonnage du courant de grille"
+      -  key: 2
+         value: "Erreur d’échantillonnage ID18 DCI"
+      -  key: 4
+         value: "ID19 Erreur d’échantillonnage de la tension du réseau"
+      -  key: 8
+         value: "ID20 Erreur d’échantillonnage du dispositif GFCI"
+      -  key: 16
+         value: "ID21 Défaut de la puce principale"
+      -  key: 32
+         value: "ID22 Défaut d’alimentation auxiliaire matérielle"
+      -  key: 64
+         value: "ID23 Tension du bus zéro défaut"
+      -  key: 128
+         value: "ID24 Courant de sortie non symétrique"
+      -  key: 256
+         value: "Protection contre les sous-tensions du bus ID25"
+      -  key: 512
+         value: "ID26 Protection contre les surtensions de bus"
+      -  key: 1024
+         value: "ID27 Tension de bus asymétrique"
+      -  key: 2048
+         value: "ID28 DCI est trop élevé"
+      -  key: 4096
+         value: "ID29 Le courant du réseau est trop élevé"
+      -  key: 8192
+         value: "ID30 Le courant d’entrée est trop élevé"
+      -  key: 16384
+         value: "ID31"
+      -  key: 32768
+         value: "ID32"
+
+    - name: "Défaut 3"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0003]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Pas d'erreur"
+      -  key: 1
+         value: "ID33 Réservée"
+      -  key: 2
+         value: "ID34 Réservée"
+      -  key: 4
+         value: "ID35 Réservée"
+      -  key: 8
+         value: "ID36 Réservée"
+      -  key: 16
+         value: "ID37 Réservée"
+      -  key: 32
+         value: "ID38 Réservée"
+      -  key: 64
+         value: "ID39 Réservée"
+      -  key: 128
+         value: "ID40 Réservée"
+      -  key: 256
+         value: "ID41 Réservée"
+      -  key: 512
+         value: "ID42 Réservée"
+      -  key: 1024
+         value: "ID43 Réservée"
+      -  key: 2048
+         value: "ID44 Réservée"
+      -  key: 4096
+         value: "ID45 Réservée"
+      -  key: 8192
+         value: "ID46 Réservée"
+      -  key: 16384
+         value: "ID47 Réservée"
+      -  key: 32768
+         value: "ID48 Réservée"
+
+    - name: "Défaut 4"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0004]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "pas d'erreur"
+      -  key: 1
+         value: "ID49 La valeur d’échantillonnage de la tension du réseau entre le DSP maîtresse et l’esclave varie considérablement"
+      -  key: 2
+         value: "ID50 La valeur d’échantillonnage de la fréquence de la grille entre le DSP maître et l’esclave varie considérablement"
+      -  key: 4
+         value: "ID51 La valeur d’échantillonnage DCI entre le DSP maître et l’esclave varie considérablement"
+      -  key: 8
+         value: "La valeur d’échantillonnage du disjoncteur différentiel ID52 entre le DSP maîtresse et le DSP esclave varie considérablement"
+      -  key: 16
+         value: "ID53 Échec de la communication entre le DSP maîtresse et l’esclave"
+      -  key: 32
+         value: "ID53 Échec de la communication entre l’esclave et la carte de communication"
+      -  key: 64
+         value: "ID55 Défaut de relais"
+      -  key: 128
+         value: "ID56 La résistance d’isolement entre le champ photovoltaïque et la terre est trop faible"
+      -  key: 256
+         value: "ID57 La température de l’onduleur est trop élevée"
+      -  key: 512
+         value: "ID58 La température d’amplification est trop élevée"
+      -  key: 1024
+         value: "ID59 La température ambiante est trop élevée"
+      -  key: 2048
+         value: "ID60 Brak podłączenie falownika do kabla PE"
+      -  key: 4096
+         value: "ID61 Réservée"
+      -  key: 8192
+         value: "ID62 Réservée"
+      -  key: 16384
+         value: "ID63 Réservée"
+      -  key: 32768
+         value: "ID64 Réservée"
+
+    - name: "Défaut 5"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0005]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Pas d'erreur"
+      -  key: 1
+         value: "ID65 Le courant du réseau est trop élevé et provoque un défaut irrécupérable"
+      -  key: 2
+         value: "ID66 La tension du bus est trop élevée et provoque une fatigue irrécupérablet"
+      -  key: 4
+         value: "ID67 Le courant du réseau est déséquilibré et provoque un défaut irrécupérable"
+      -  key: 8
+         value: "ID68 Le courant d’entrée est déséquilibré et provoque un défaut irrécupérable"
+      -  key: 16
+         value: "ID69 La tension du bus est déséquilibrée et provoque un défaut irrécupérable"
+      -  key: 32
+         value: "ID70 Le courant du réseau est trop élevé et provoque un défaut irrécupérable"
+      -  key: 64
+         value: "ID65 La configuration du mode d’entrée PV est incorrecte et provoque une erreur irrécupérable"
+      -  key: 128
+         value: "ID72 Réservée"
+      -  key: 256
+         value: "ID73 Réservée"
+      -  key: 512
+         value: "ID74 Le courant d’entrée est trop élevé et provoque un défaut irrécupérable"
+      -  key: 1024
+         value: "ID75 Erreur de lecture à partir de l’EEPROM"
+      -  key: 2048
+         value: "ID76 Erreur d’écriture dans l’EEPROM"
+      -  key: 4096
+         value: "ID77 La fatigue du relais provoque un défaut irrécupérable"
+      -  key: 8192
+         value: "ID78 Réservée"
+      -  key: 16384
+         value: "ID79 Réservée"
+      -  key: 32768
+         value: "ID80 Réservée"
+
+    - name: "Tension PV1"
+      widget: "pv1_voltage"
+      uom: "V"
+      scale: 0.1
+      rule: 1 
+      registers: [0x0006]
+
+    - name: "Courant PV1"
+      widget: "pv1_current"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x0007]
+
+    - name: "Tension PV2"
+      widget: "pv2_voltage"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x0008]
+
+    - name: "Courant PV2"
+      widget: "pv2_current"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x0009]
+
+    - name: "Puissance PV1"
+      widget: "pv1_power"
+      uom: "W"
+      scale: 10
+      rule: 1
+      registers: [0x000A]
+
+    - name: "Puissance PV2"
+      widget: "pv2_power"
+      uom: "W"
+      scale: 10
+      rule: 1
+      registers: [0x000B]
+
+    - name: "Puissance active de sortie"
+      uom: "W"
+      scale: 10
+      rule: 1
+      registers: [0x000C]
+
+    - name: "Puissance réactive de sortie"
+      uom: "Var"
+      scale: 10
+      rule: 1
+      registers: [0x000D]
+
+    - name: "Fréquence du réseau"
+      widget: "frequency_state"
+      uom: "Hz"
+      scale: 0.01
+      rule: 1
+      registers: [0x000E]
+
+    - name: "Tension L1"
+      widget: "voltage_state"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x000F]
+
+    - name: "Courant L1"
+      widget: "current_state"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x0010]
+
+    - name: "Tension L2"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x0011]
+
+    - name: "Courant L2"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x0012]
+
+    - name: "Tension L3"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x0013]
+
+    - name: "Courant L3"
+      uom: "A"
+      scale: 0.01
+      rule: 1
+      registers: [0x0014]
+
+    - name: "Production totale"
+      uom: "kWh"
+      scale: 1
+      rule: 3
+      registers: [0x0016,0x0015]
+
+    - name: "Temps totale de production"
+      uom: "h"
+      scale: 1
+      rule: 3
+      registers: [0x0018,0x0017]
+
+    - name: "Production aujourd'hui"
+      widget: "daily_solar"
+      uom: "kWh"
+      scale: 0.01
+      rule: 1
+      registers: [0x0019]
+
+    - name: "Temps de production aujourd'hui"
+      uom: "min"
+      scale: 1
+      rule: 1
+      registers: [0x001A]
+
+    - name: "Température module onduleur"
+      widget: "ac_temp"
+      uom: "°C"
+      scale: 1
+      rule: 1
+      registers: [0x001B]
+
+    - name: "Température onduleur inner(?)"
+      widget: "dc_temp"
+      uom: "°C"
+      scale: 1
+      rule: 1
+      registers: [0x001C]
+
+    - name: "Temsion bus onduleur"
+      uom: "V"
+      scale: 0.1
+      rule: 1
+      registers: [0x001D]
+
+    - name: "Mode entrée des PV"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0022]
+      isstr: true
+      lookup: 
+      -  key: 0
+         value: "Parallèle"
+      -  key: 1
+         value: "Indépendant"
+
+    - name: "Isolement PV1+"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0024]
+
+    - name: "Isolement PV2+"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0025]
+
+    - name: "Isolement PV-"
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0026]
+
+    - name: "Pays"
+      widget: ""
+      uom: ""
+      scale: 1
+      rule: 1
+      registers: [0x0027]
+      isstr: true
+      lookup:
+      -  key: 0
+         value: "Allemagne"
+      -  key: 1
+         value: "CEI0-21 Interne"
+      -  key: 2
+         value: "Australie"
+      -  key: 3
+         value: "Espagne RD1699"
+      -  key: 4
+         value: "Turquie"
+      -  key: 5
+         value: "Danemark"
+      -  key: 6
+         value: "Grèce"
+      -  key: 7
+         value: "Pays-Bas"
+      -  key: 8
+         value: "Belgique"
+      -  key: 9
+         value: "Royaume-Uni-G59"
+      -  key: 10
+         value: "Chine"
+      -  key: 11
+         value: "France"
+      -  key: 12
+         value: "Pologne"
+      -  key: 13
+         value: "Allemagne BDEW"
+      -  key: 14
+         value: "Allemagne VDE0126"
+      -  key: 15
+         value: "Italie CEI0-16"
+      -  key: 16
+         value: "Royaume-Uni-G83"
+      -  key: 17
+         value: "Îles grecques"
+      -  key: 18
+         value: "EN50438 de l’UE"
+      -  key: 19
+         value: "EN61727 de l’UE"
+      -  key: 20
+         value: "Corée"
+      -  key: 21
+         value: "Suède"
+      -  key: 22
+         value: "Europe General"
+      -  key: 23
+         value: "CEI0-21 Externe"
+      -  key: 24
+         value: "Chypre"
+      -  key: 25
+         value: "Inde"
+      -  key: 26
+         value: "Philippines"
+      -  key: 27
+         value: "Nouvelle-Zélande"
+      -  key: 28
+         value: "Réserver"
+      -  key: 29
+         value: "Réserver"
+
+    - name: "CT intensité"
+      uom: "A"
+      scale: 0.01
+      rule: 2
+      registers: [0x0028]
+
+    - name: "CT puissance"
+      widget: "grid_power"
+      uom: "W"
+      scale: 10
+      rule: 2
+      registers: [0x0029]
+

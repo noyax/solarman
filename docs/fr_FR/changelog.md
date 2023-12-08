@@ -4,6 +4,26 @@
 >
 >S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.
 
+# 1.0.7 (08/12/2023) => béta + stable
+
+   - ajout fichier onduleur Sofar Solar xxx TL Génération 2
+   - ajout de la commande refresh
+   - corresction bugs dans le template
+   - ajout fichiers doc des onduleurs lorsque je les ai
+
+# 1.0.6 (25/11/2023) => béta
+
+   - amélioration gestion du process python
+   - corection qq bugs
+   - ajout compatibilité widget pour le fichier sofar_XXTL-G3.yaml
+   - ajout d'un fichier pour pouvoir envoyer des commandes à l'onduleur
+
+# 1.0.5 (11/11/2023) => béta
+
+   - ajout d'un template pour rendre l'affichage de certaines données plus sympas
+   - template OK pour SOFAR SOLAR HYD x000 EP
+   - corection qq bugs
+
 # 1.0.4 (29/10/2023) => béta + stable
    
    - correction de bugs
