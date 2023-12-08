@@ -1135,6 +1135,7 @@
 				})
 				jeedom.cmd.addUpdateFunction(cmds[j].id, function(_options) {
 				  if (debug#id# == 1) console.log('event for ' + name + '[' + id_eql + '] -> ' + _options.value)
+				  //_options.value = -0.1
 				  if (_options.value != undefined) 
 				  {
 					if (_options.unit.toLowerCase() == 'kw') {
@@ -1157,6 +1158,7 @@
 					  document.getElementById("power-dot-discharge#id#").setAttribute("fill", "transparent");
 					}
 					config#id#.battery.power_state = trunc#id#(parseFloat(dailyBatteryPower.value), 1)
+					config#id#.battery.power_unit = dailyBatteryPower.unit
 					calculateBattery#id#('battery power')
 				  }
 				})
@@ -2716,14 +2718,20 @@
         
         //calculate battery capacity
         let battery_capacity = 0
-        if (config#id#.battery.power_state > 0) {
+        if (config#id#.battery.power_state < 0) {
           battery_capacity = config#id#.battery.soc.shutdown
         }
-        else if (config#id#.battery.power_state < 0) {
+        else if (config#id#.battery.power_state > 0) {
           battery_capacity = 100
         }
+		puissbat = config#id#.battery.power_state
+		if (config#id#.battery.power_unit=="kW") (puissbat = puissbat * 1000)
+        if (debug#id#) console.log('| config#id#.battery.power_unit = ' + config#id#.battery.power_unit)
         if (debug#id#) console.log('| battery_capacity = ' + battery_capacity)
         if (debug#id#) console.log('| config#id#.battery.soc.state = ' + config#id#.battery.soc.state)
+        if (debug#id#) console.log('| config#id#.battery.soc.shutdown = ' + config#id#.battery.soc.shutdown)
+        if (debug#id#) console.log('| config#id#.battery.power_state = ' + puissbat)
+        if (debug#id#) console.log('| config#id#.battery.energy = ' + config#id#.battery.energy)
         
         //calculate remaining battery time to charge or discharge
         let totalSeconds = 0
@@ -2734,16 +2742,17 @@
           if (config#id#.battery.power_state == 0) {
             if (debug#id#) console.log('| power_state == 0')
             totalSeconds = (((parseInt(config#id#.battery.soc.state) - config#id#.battery.soc.shutdown) / 100) * config#id#.battery.energy) / 1 * 60 * 60;
-          } else if (config#id#.battery.power_state > 0) {
-            if (debug#id#) console.log('| power_state > 0')
-            //totalSeconds = (((parseInt(config#id#.battery.soc.state) - battery_capacity) / 100) * config#id#.battery.energy) / config#id#.battery.power_state * 60 * 60;
-            totalSeconds = (((config#id#.battery.soc.state - battery_capacity) / 100) * config#id#.battery.energy) / config#id#.battery.power_state * 60 * 60;
-            if (debug#id#) console.log('| energie restante = ' + ((config#id#.battery.soc.state - battery_capacity) / 100) * config#id#.battery.energy)
           } else if (config#id#.battery.power_state < 0) {
             if (debug#id#) console.log('| power_state < 0')
+            //totalSeconds = (((parseInt(config#id#.battery.soc.state) - battery_capacity) / 100) * config#id#.battery.energy) / config#id#.battery.power_state * 60 * 60;
+            totalSeconds = (((config#id#.battery.soc.shutdown - config#id#.battery.soc.state) / 100) * config#id#.battery.energy) / puissbat * 60 * 60;
+            if (debug#id#) console.log('| energie restante à consommer = ' + ((config#id#.battery.soc.state - config#id#.battery.soc.shutdown) / 100) * config#id#.battery.energy)
+          } else if (config#id#.battery.power_state > 0) {
+            if (debug#id#) console.log('| power_state > 0')
             //totalSeconds = ((((battery_capacity - parseInt(config#id#.battery.soc.state)) / 100) * config#id#.battery.energy) / config#id#.battery.power_state) * 60 * 60 * -1;
-            totalSeconds = ((((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy) / config#id#.battery.power_state) * 60 * 60 * -1;
-            if (debug#id#) console.log('| energie restante = ' + ((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy)
+            totalSeconds = ((((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy) / puissbat) * 60 * 60;
+            if (debug#id#) console.log('| energie à compléter = ' + ((battery_capacity - config#id#.battery.soc.state) / 100) * config#id#.battery.energy)
+            if (debug#id#) console.log('| energie restante = ' + ((config#id#.battery.soc.state) / 100) * config#id#.battery.energy)
           }
           if (debug#id#) console.log('| totalSeconds = ' + totalSeconds)
           
@@ -2778,8 +2787,8 @@
             }
             else {
               document.getElementById("duration#id#").innerHTML = duration
-              if (config#id#.battery.power_state <= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'TO ' + battery_capacity + '% CHARGE @ ' + formattedResultTime
-              if (config#id#.battery.power_state >= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'RUNTIME TO ' + battery_capacity+ '% @ ' + formattedResultTime
+              if (config#id#.battery.power_state >= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'TO ' + battery_capacity + '% CHARGE @ ' + formattedResultTime
+              if (config#id#.battery.power_state <= 0) document.getElementById("duration_text_etat#id#").innerHTML = 'RUNTIME TO ' + battery_capacity+ '% @ ' + formattedResultTime
             }
           }
           if(timer_in#id# === false) {

@@ -7,7 +7,7 @@ requests:
 parameters:
  - group: solar
    items: 
-    - name: "Alimentation PV1"
+    - name: "Puissance PV1"
       class: "power"
       state_class: "measurement"      
       uom: "W"
@@ -16,7 +16,7 @@ parameters:
       registers: [0x000A]
       icon: 'mdi:solar-power'
 
-    - name: "Alimentation PV2"
+    - name: "Puissance PV2"
       class: "power"
       state_class: "measurement"      
       uom: "W"
@@ -189,6 +189,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0000]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Veille"
@@ -316,6 +317,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0027]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Allemagne"
@@ -388,6 +390,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0001]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Pas d'erreur"
@@ -432,6 +435,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0002]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Pas d'erreur"
@@ -476,6 +480,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0003]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Pas d'erreur"
@@ -520,6 +525,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0004]
+      isstr: true
       lookup: 
       -  key: 0
          value: "pas d'erreur"
@@ -564,6 +570,7 @@ parameters:
       scale: 1
       rule: 1
       registers: [0x0005]
+      isstr: true
       lookup: 
       -  key: 0
          value: "Pas d'erreur"

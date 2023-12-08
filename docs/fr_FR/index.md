@@ -9,6 +9,8 @@ Fichiers de configuration auto pour: Afore_BNTxxxKTL-2mppt, deye_2mppt, deye_4mp
 
 Liste (non exhaustives) des onduleurs pris en compte à l'heure actuelle et le fichier de configuration associé:  
 <br>
+Les docs des onduleurs peuvent se trouver dans [ce répertoire](\doc_onduleurs\ )
+<br>
 
 | Fichier de configuration   | Onduleurs supportés                      | Observations                                                                                                                  |
 |----------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
@@ -23,6 +25,7 @@ Liste (non exhaustives) des onduleurs pris en compte à l'heure actuelle et le f
 | sofar_g3hyd.yaml           | SOFAR Hybrid Three-Phase inverter        | HYD 6000 or rebranded (three-phase), ex. ZCS Azzurro 3PH HYD-ZSS                                                              |
 | sofar_hyd3k-6k-es.yaml     | SOFAR Hybrid Single-Phase inverter       | Monophasé, fonctionne sur Sofar Solar HYD xxxx ES (testé sur le 6000) ou rebranded, ex. ZCS Azzurro HYD-ZSS                   |
 | sofar_lsw3.yaml            | SOFAR Inverters                          |                                                                                                                               |
+| sofar_TL_G2.yaml           | SOFAR Inverters X Gen 2                  |                                                                                                                               |
 | sofar_wifikit.yaml         | ?                                        |                                                                                                                               |
 | sofar_XXTL-G3.yaml         | SOFAR xxxx TL G3                         | Testé sur Sofar Solar 3000 TL G3                                                                                              |
 | solid_1p8k-5g.yaml         | SOLIS 1P8K-5G                            |                                                                                                                               |
@@ -30,7 +33,6 @@ Liste (non exhaustives) des onduleurs pris en compte à l'heure actuelle et le f
 | solis_hybrid.yaml          | SOLIS Hybrid inverter                    |                                                                                                                               |
 | solid_s6-grip.yaml         | SOLIS S6-GRIP                            |                                                                                                                               |
 | zcs_azzurro-ktl-v3.yaml    | ZCS Azzurro KTL-V3 inverters             | ZCS Azzurro 3.3/4.4/5.5/6.6 KTL-V3 (rebranded Sofar KTLX-G3)                                                                  |
-
 
 <br><br><br><br><br>
 
@@ -60,7 +62,7 @@ Configuration générale du plugin
 Un bouton permet de chercher sur le réseau les onduleurs qui s'y trouvent:
 <br>
 
-Pour rechercher: cliquer sur 1, si le bouton de log 3 n'apparait pas alors cliquer sur 4 et enfin cliquer sur le bouton 3.
+Pour rechercher le niveau de log doit être au minimum à "info": cliquer sur 1, si le bouton de log 3 n'apparait pas alors cliquer sur 2 et enfin cliquer sur le bouton 3.
 
 Voici le genre de log que vous verrez apparaitre:
 
@@ -134,7 +136,7 @@ En glissant vers le bas vous verrez appaitre les paramètres optionnels du widge
 Si votre onduleur n'est pas dans la liste ou si vous avez besoin d'adapter le fichier existant
 ===
 
-Si vous pensez que votre onduleur peut faire partie de ceux pouvant être monitorés par Solarman et que vous connaissez les registres modbus à interroger alors en utilisant le ![fichier modèle](modele_onduleur.yaml) vous pouvez en recréér un en respectant bien les principes suivants:
+Si vous pensez que votre onduleur peut faire partie de ceux pouvant être monitorés par Solarman et que vous connaissez les registres modbus à interroger alors en utilisant le [fichier modèle](modele_onduleur.yaml) vous pouvez en recréér un en respectant bien les principes suivants:
 
 ## pour la partie "requests":
 
@@ -262,3 +264,6 @@ Bug
 En cas de bug sur le plugin il est possible de demander de l'aide :
 
 [https://community.jeedom.com/tag/plugin-solarman](https://community.jeedom.com/tag/plugin-solarman)
+
+
+Si vous avez une erreur "Cannot uninstall 'PyYAML'. It is a distutils installed project..." lors de l'installation des dépendances alors allez dans "réglages/système/configuration" puis allez dans l'onglet ">_OS/DB" et enfin dans ">_administration système" et exécutez la commande "sudo -H pip3 install --ignore-installed PyYAML". Ensuite relancez l'installation des dépendances et tout devrait rentrer dans l'ordre.
