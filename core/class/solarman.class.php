@@ -232,7 +232,7 @@ class solarman extends eqLogic {
   public function postSave() {
     $refresh = $this->getCmd(null, 'refresh');
     if (!is_object($refresh)) {
-      $refresh = new solcastCmd();
+      $refresh = new solarmanCmd();
       $refresh->setName(__('Rafraîchir', __FILE__));
     }
     $refresh->setEqLogic_id($this->getId());
